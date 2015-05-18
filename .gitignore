@@ -1,7 +1,19 @@
-.gradle
+# Built application files
+*.apk
+*.ap_
+
+# Java class files
+*.class
+
+# OSX files
+.DS_Store
+
+# Local configuration files
 /local.properties
+
+# Android Studio files
+.gradle
 /.idea/workspace.xml
 /.idea/libraries
-.DS_Store
 /build
 /captures
