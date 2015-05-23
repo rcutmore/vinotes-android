@@ -21,10 +21,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Fetch list of tasting notes.
-        notes = new ArrayList<String>();
-        notes.add("Tasting note 1");
-        notes.add("Tasting note 2");
+        // Fetch existing tasting notes.
+        notes = this.getNotes();
 
         // Display tasting notes in list view.
         notesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, notes);
@@ -57,5 +55,12 @@ public class MainActivity extends ActionBarActivity {
     public void onAddNote(View view) {
         final String noteText = String.format("Tasting note %d", notes.size() + 1);
         notesAdapter.add(noteText);
+    }
+
+    private ArrayList<String> getNotes() {
+        ArrayList<String> notes = new ArrayList<String>();
+        notes.add("Tasting note 1");
+        notes.add("Tasting note 2");
+        return notes;
     }
 }
