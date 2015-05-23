@@ -1,5 +1,6 @@
 package com.robcutmore.vinotes;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -53,8 +54,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void onAddNote(View view) {
-        final String noteText = String.format("Tasting note %d", notes.size() + 1);
-        notesAdapter.add(noteText);
+        Intent intent = new Intent(this, AddNoteActivity.class);
+        startActivity(intent);
     }
 
     private ArrayList<String> getNotes() {
