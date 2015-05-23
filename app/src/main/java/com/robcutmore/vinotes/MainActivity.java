@@ -22,13 +22,14 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Fetch existing tasting notes.
-        notes = this.getNotes();
-
-        // Display tasting notes in list view.
+        // Connect list view to note array list.
+        notes = new ArrayList<String>();
         notesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, notes);
         lvNotes = (ListView) findViewById(R.id.lvNotes);
         lvNotes.setAdapter(notesAdapter);
+
+        // Display any existing tasting notes.
+        this.populateNoteList();
     }
 
     @Override
@@ -63,5 +64,11 @@ public class MainActivity extends ActionBarActivity {
         notes.add("Tasting note 1");
         notes.add("Tasting note 2");
         return notes;
+    }
+
+    private void populateNoteList() {
+        notes.clear();
+        notes.addAll(this.getNotes());
+        notesAdapter.notifyDataSetChanged();
     }
 }
