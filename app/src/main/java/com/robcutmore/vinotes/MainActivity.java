@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
+
     private ArrayList<String> notes;
     private ArrayAdapter<String> notesAdapter;
     private ListView lvNotes;
@@ -23,8 +24,8 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         // Connect list view to note array list.
-        notes = new ArrayList<String>();
-        notesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, notes);
+        notes = new ArrayList<>();
+        notesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, notes);
         lvNotes = (ListView) findViewById(R.id.lvNotes);
         lvNotes.setAdapter(notesAdapter);
 
