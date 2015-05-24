@@ -4,14 +4,20 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 
 public class AddNoteActivity extends ActionBarActivity {
+
+    private TextView tvTastingDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
+
+        tvTastingDate = (TextView) findViewById(R.id.tvTastingDate);
     }
 
     @Override
@@ -34,5 +40,14 @@ public class AddNoteActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showDatePickerDialog(View view) {
+        DatePickerFragment newFragment = new DatePickerFragment();
+        newFragment.show(getFragmentManager(), "datePicker");
+    }
+
+    public void setTastingDate(final String newTastingDate) {
+        tvTastingDate.setText(newTastingDate);
     }
 }

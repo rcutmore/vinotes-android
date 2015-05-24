@@ -5,4 +5,12 @@
     android:layout_width="match_parent"
     tools:context="com.robcutmore.vinotes.AddNoteActivity">
 
+    <TextView
+        android:id="@+id/tvTastingDate"
+        android:hint="@string/text_view_add_note_tasting_date_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="showDatePickerDialog"
+        style="@android:style/Widget.DeviceDefault.Light.Spinner" />
+
 </RelativeLayout>
