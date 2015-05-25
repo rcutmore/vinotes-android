@@ -7,15 +7,15 @@
     android:orientation="vertical"
     tools:context="com.robcutmore.vinotes.AddNoteActivity">
 
-    <TextView
-        android:id="@+id/tvTastingDate"
+    <EditText
+        android:editable="false"
+        android:id="@+id/etTastingDate"
         android:gravity="center"
-        android:hint="@string/text_view_add_note_tasting_date_hint"
+        android:hint="@string/edit_text_add_note_tasting_date_hint"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:onClick="showDatePickerDialog"
-        android:padding="16dip"
-        style="@android:style/Widget.DeviceDefault.Light.Spinner" />
+        android:padding="16dip" />
 
     <EditText
         android:id="@+id/etWinery"

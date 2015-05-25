@@ -10,14 +10,14 @@ import android.widget.TextView;
 
 public class AddNoteActivity extends ActionBarActivity {
 
-    private TextView tvTastingDate;
+    private TextView etTastingDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
 
-        tvTastingDate = (TextView) findViewById(R.id.tvTastingDate);
+        etTastingDate = (TextView) findViewById(R.id.etTastingDate);
     }
 
     @Override
@@ -48,6 +48,6 @@ public class AddNoteActivity extends ActionBarActivity {
     }
 
     public void setTastingDate(final String newTastingDate) {
-        tvTastingDate.setText(newTastingDate);
+        etTastingDate.setText(newTastingDate);
     }
 }
