@@ -48,4 +48,12 @@
         android:numStars="5"
         android:stepSize="1.0" />
 
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:onClick="onSaveNote"
+        android:padding="16dip"
+        android:text="@string/button_save_note" />
+
 </LinearLayout>

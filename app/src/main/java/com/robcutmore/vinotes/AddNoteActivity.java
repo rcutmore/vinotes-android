@@ -42,6 +42,12 @@ public class AddNoteActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void onSaveNote(View view) {
+        // Validate user input.
+
+        // Save new note.
+    }
+
     public void showDatePickerDialog(View view) {
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(), "datePicker");
