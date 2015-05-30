@@ -16,7 +16,14 @@ public class TastingNote {
     private Integer rating;
 
     public TastingNote(final Wine wine) {
+        this.url = null;
+        this.tasted = null;
         this.wine = wine;
+        this.colorTraits = new ArrayList<>();
+        this.noseTraits = new ArrayList<>();
+        this.tasteTraits = new ArrayList<>();
+        this.finishTraits = new ArrayList<>();
+        this.rating = null;
     }
 
     public String getUrl() {
