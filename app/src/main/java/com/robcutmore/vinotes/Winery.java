@@ -36,4 +36,9 @@ public class Winery {
     public void setWines(final ArrayList<Wine> wines) {
         this.wines = wines;
     }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }
