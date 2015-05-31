@@ -33,4 +33,9 @@ public class Wine {
     public int getVintage() {
         return this.vintage;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s %d", this.winery.toString(), this.name, this.vintage);
+    }
 }
