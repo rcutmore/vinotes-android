@@ -6,19 +6,19 @@ import java.util.Date;
 
 public class TastingNote {
 
-    private String url;
-    private Date tasted;
+    private long id;
     private Wine wine;
+    private Date tasted;
     private ArrayList<NoteTrait> colorTraits;
     private ArrayList<NoteTrait> noseTraits;
     private ArrayList<NoteTrait> tasteTraits;
     private ArrayList<NoteTrait> finishTraits;
     private Integer rating;
 
-    public TastingNote(final Wine wine) {
-        this.url = null;
-        this.tasted = null;
+    public TastingNote(final long id, final Wine wine) {
+        this.id = id;
         this.wine = wine;
+        this.tasted = null;
         this.colorTraits = new ArrayList<>();
         this.noseTraits = new ArrayList<>();
         this.tasteTraits = new ArrayList<>();
@@ -26,8 +26,12 @@ public class TastingNote {
         this.rating = null;
     }
 
-    public String getUrl() {
-        return this.url;
+    public long getId() {
+        return this.id;
+    }
+
+    public Wine getWine() {
+        return this.wine;
     }
 
     public Date getTasted() {
@@ -36,10 +40,6 @@ public class TastingNote {
 
     public void setTasted(final Date tasted) {
         this.tasted = tasted;
-    }
-
-    public Wine getWine() {
-        return this.wine;
     }
 
     public ArrayList<NoteTrait> getColorTraits() {
