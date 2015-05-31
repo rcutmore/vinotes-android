@@ -90,4 +90,9 @@ public class TastingNote {
             this.rating = rating;
         }
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s\nRating: %d", this.wine.toString(), this.rating);
+    }
 }
