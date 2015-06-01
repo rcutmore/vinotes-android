@@ -5,20 +5,17 @@ import java.util.ArrayList;
 
 public class Winery {
 
-    private String url;
+    private long id;
     private String name;
     private ArrayList<Wine> wines;
 
-    public Winery(final String name) {
+    public Winery(final long id, final String name) {
+        this.id = id;
         this.name = name;
     }
 
-    public String getUrl() {
-        return this.url;
-    }
-
-    public void setUrl(final String url) {
-        this.url = url;
+    public long getId() {
+        return this.id;
     }
 
     public String getName() {
