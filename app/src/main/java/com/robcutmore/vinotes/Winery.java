@@ -1,18 +1,18 @@
 package com.robcutmore.vinotes;
 
+import java.util.HashMap;
 
-import java.util.ArrayList;
 
 public class Winery {
 
     private long id;
     private String name;
-    private ArrayList<Wine> wines;
+    private HashMap<Long, Wine> wines;
 
     public Winery(final long id, final String name) {
         this.id = id;
         this.name = name;
-        this.wines = new ArrayList<>();
+        this.wines = new HashMap<>();
     }
 
     public long getId() {
@@ -23,15 +23,15 @@ public class Winery {
         return this.name;
     }
 
-    public ArrayList<Wine> getWines() {
+    public HashMap<Long, Wine> getWines() {
         return this.wines;
     }
 
     public void addWine(final Wine wine) {
-        this.wines.add(wine);
+        this.wines.put(wine.getId(), wine);
     }
 
-    public void setWines(final ArrayList<Wine> wines) {
+    public void setWines(final HashMap<Long, Wine> wines) {
         this.wines = wines;
     }
 
