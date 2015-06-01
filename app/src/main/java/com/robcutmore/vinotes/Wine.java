@@ -13,6 +13,8 @@ public class Wine {
         this.winery = winery;
         this.name = name;
         this.vintage = vintage;
+
+        this.winery.addWine(this);
     }
 
     public long getId() {
