@@ -3,23 +3,20 @@ package com.robcutmore.vinotes;
 
 public class Wine {
 
-    private String url;
+    private long id;
     private Winery winery;
     private String name;
     private int vintage;
 
-    public Wine(final Winery winery, final String name, final int vintage) {
+    public Wine(final long id, final Winery winery, final String name, final int vintage) {
+        this.id = id;
         this.winery = winery;
         this.name = name;
         this.vintage = vintage;
     }
 
-    public String getUrl() {
-        return this.url;
-    }
-
-    public void setUrl(final String url) {
-        this.url = url;
+    public long getId() {
+        return this.id;
     }
 
     public Winery getWinery() {
