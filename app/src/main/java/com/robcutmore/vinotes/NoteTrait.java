@@ -3,19 +3,16 @@ package com.robcutmore.vinotes;
 
 public class NoteTrait {
 
-    private String url;
+    private long id;
     private String name;
 
-    public NoteTrait(final String name) {
+    public NoteTrait(final long id, final String name) {
+        this.id = id;
         this.name = name;
     }
 
-    public String getUrl() {
-        return this.url;
-    }
-
-    public void setUrl(final String url) {
-        this.url = url;
+    public long getId() {
+        return this.id;
     }
 
     public String getName() {
