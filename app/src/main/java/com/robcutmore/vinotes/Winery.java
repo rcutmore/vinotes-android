@@ -12,6 +12,7 @@ public class Winery {
     public Winery(final long id, final String name) {
         this.id = id;
         this.name = name;
+        this.wines = new ArrayList<>();
     }
 
     public long getId() {
