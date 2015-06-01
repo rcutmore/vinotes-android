@@ -2,6 +2,7 @@ package com.robcutmore.vinotes;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 
 public class TastingNote {
@@ -9,20 +10,20 @@ public class TastingNote {
     private long id;
     private Wine wine;
     private Date tasted;
-    private ArrayList<NoteTrait> colorTraits;
-    private ArrayList<NoteTrait> noseTraits;
-    private ArrayList<NoteTrait> tasteTraits;
-    private ArrayList<NoteTrait> finishTraits;
+    private HashMap<Long, NoteTrait> colorTraits;
+    private HashMap<Long, NoteTrait> noseTraits;
+    private HashMap<Long, NoteTrait> tasteTraits;
+    private HashMap<Long, NoteTrait> finishTraits;
     private Integer rating;
 
     public TastingNote(final long id, final Wine wine) {
         this.id = id;
         this.wine = wine;
         this.tasted = null;
-        this.colorTraits = new ArrayList<>();
-        this.noseTraits = new ArrayList<>();
-        this.tasteTraits = new ArrayList<>();
-        this.finishTraits = new ArrayList<>();
+        this.colorTraits = new HashMap<>();
+        this.noseTraits = new HashMap<>();
+        this.tasteTraits = new HashMap<>();
+        this.finishTraits = new HashMap<>();
         this.rating = null;
     }
 
@@ -42,35 +43,35 @@ public class TastingNote {
         this.tasted = tasted;
     }
 
-    public ArrayList<NoteTrait> getColorTraits() {
+    public HashMap<Long, NoteTrait> getColorTraits() {
         return this.colorTraits;
     }
 
-    public void setColorTraits(final ArrayList<NoteTrait> colorTraits) {
+    public void setColorTraits(final HashMap<Long, NoteTrait> colorTraits) {
         this.colorTraits = colorTraits;
     }
 
-    public ArrayList<NoteTrait> getNoseTraits() {
+    public HashMap<Long, NoteTrait> getNoseTraits() {
         return this.noseTraits;
     }
 
-    public void setNoseTraits(final ArrayList<NoteTrait> noseTraits) {
+    public void setNoseTraits(final HashMap<Long, NoteTrait> noseTraits) {
         this.noseTraits = noseTraits;
     }
 
-    public ArrayList<NoteTrait> getTasteTraits() {
+    public HashMap<Long, NoteTrait> getTasteTraits() {
         return this.tasteTraits;
     }
 
-    public void setTasteTraits(final ArrayList<NoteTrait> tasteTraits) {
+    public void setTasteTraits(final HashMap<Long, NoteTrait> tasteTraits) {
         this.tasteTraits = tasteTraits;
     }
 
-    public ArrayList<NoteTrait> getFinishTraits() {
+    public HashMap<Long, NoteTrait> getFinishTraits() {
         return this.finishTraits;
     }
 
-    public void setFinishTraits(final ArrayList<NoteTrait> finishTraits) {
+    public void setFinishTraits(final HashMap<Long, NoteTrait> finishTraits) {
         this.finishTraits = finishTraits;
     }
 
