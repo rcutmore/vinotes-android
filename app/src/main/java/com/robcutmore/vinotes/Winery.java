@@ -27,12 +27,16 @@ public class Winery {
         return this.wines;
     }
 
-    public void addWine(final Wine wine) {
-        this.wines.put(wine.getId(), wine);
-    }
-
     public void setWines(final HashMap<Long, Wine> wines) {
         this.wines = wines;
+    }
+
+    public void addWine(final Wine wine) {
+        // Add new wine only if it's not already in wines.
+        Wine existingWine = this.wines.get(wine.getId());
+        if (existingWine == null) {
+            this.wines.put(wine.getId(), wine);
+        }
     }
 
     @Override
