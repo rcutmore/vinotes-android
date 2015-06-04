@@ -19,7 +19,7 @@ public class TastingNote {
         this.wine = wine;
     }
 
-    public long getId() {
+    public Long getId() {
         return this.id;
     }
 

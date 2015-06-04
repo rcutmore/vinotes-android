@@ -15,7 +15,7 @@ public class Wine {
         this.vintage = vintage;
     }
 
-    public long getId() {
+    public Long getId() {
         return this.id;
     }
 

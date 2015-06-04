@@ -13,7 +13,7 @@ public class Winery {
         this.name = name;
     }
 
-    public long getId() {
+    public Long getId() {
         return this.id;
     }
 
