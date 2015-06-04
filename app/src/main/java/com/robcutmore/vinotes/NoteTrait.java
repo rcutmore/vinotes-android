@@ -3,16 +3,20 @@ package com.robcutmore.vinotes;
 
 public class NoteTrait {
 
-    private long id;
+    private Long id = null;
     private String name;
 
-    public NoteTrait(final long id, final String name) {
-        this.id = id;
+    public NoteTrait(final String name) {
         this.name = name;
     }
 
     public long getId() {
         return this.id;
+    }
+
+    public void setId(final long id) {
+        // Only allow id to be set once.
+        this.id = this.id == null ? id : this.id;
     }
 
     public String getName() {
