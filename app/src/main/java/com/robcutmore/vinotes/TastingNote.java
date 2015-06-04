@@ -1,34 +1,31 @@
 package com.robcutmore.vinotes;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
 
 public class TastingNote {
 
-    private long id;
+    private Long id = null;
     private Wine wine;
-    private Date tasted;
-    private HashMap<Long, NoteTrait> colorTraits;
-    private HashMap<Long, NoteTrait> noseTraits;
-    private HashMap<Long, NoteTrait> tasteTraits;
-    private HashMap<Long, NoteTrait> finishTraits;
-    private Integer rating;
+    private Date tasted = null;
+    private HashMap<Long, NoteTrait> colorTraits = new HashMap<>();
+    private HashMap<Long, NoteTrait> noseTraits = new HashMap<>();
+    private HashMap<Long, NoteTrait> tasteTraits = new HashMap<>();
+    private HashMap<Long, NoteTrait> finishTraits = new HashMap<>();
+    private Integer rating = null;
 
-    public TastingNote(final long id, final Wine wine) {
-        this.id = id;
+    public TastingNote(final Wine wine) {
         this.wine = wine;
-        this.tasted = null;
-        this.colorTraits = new HashMap<>();
-        this.noseTraits = new HashMap<>();
-        this.tasteTraits = new HashMap<>();
-        this.finishTraits = new HashMap<>();
-        this.rating = null;
     }
 
     public long getId() {
         return this.id;
+    }
+
+    public void setId(final long id) {
+        // Only allow id to be set once.
+        this.id = this.id == null ? id : this.id;
     }
 
     public Wine getWine() {
@@ -96,4 +93,5 @@ public class TastingNote {
     public String toString() {
         return String.format("%s\nRating: %d", this.wine.toString(), this.rating);
     }
+
 }
