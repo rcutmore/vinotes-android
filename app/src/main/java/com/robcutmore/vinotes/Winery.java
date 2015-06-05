@@ -37,7 +37,12 @@ public class Winery {
     public void addWine(final Wine wine) {
         // Add new wine only if it's not already in wines.
         Wine existingWine = this.wines.get(wine.getId());
-        if (existingWine == null) {
+        boolean isFound = existingWine != null;
+
+        // Make sure wine has an id set.
+        boolean hasId = wine.getId() != null;
+
+        if (!isFound && hasId) {
             this.wines.put(wine.getId(), wine);
         }
     }
