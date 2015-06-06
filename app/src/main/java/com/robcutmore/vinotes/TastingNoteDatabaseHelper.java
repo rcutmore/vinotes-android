@@ -5,13 +5,13 @@ import android.content.Context;
 import java.util.HashMap;
 
 
-public class NoteDatabaseHelper extends DatabaseHelper {
+public class TastingNoteDatabaseHelper extends DatabaseHelper {
 
     private String tableName = "notes";
     private HashMap<String, String> columns = new HashMap<>();
     private String sqlCreateTable;
 
-    public NoteDatabaseHelper(Context context) {
+    public TastingNoteDatabaseHelper(Context context) {
         super(context);
 
         // Store all columns in notes table.
