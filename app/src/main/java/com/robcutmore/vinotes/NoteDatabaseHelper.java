@@ -24,7 +24,8 @@ public class NoteDatabaseHelper extends DatabaseHelper {
         this.sqlCreateTable = String.format(
             "CREATE TABLE %s(%s INTEGER PRIMARY KEY, %s INTEGER NOT NULL, %s DATE, %s INTEGER);",
             this.tableName, this.columns.get("id"), this.columns.get("wine"),
-            this.columns.get("tasted"), this.columns.get("rating"));
+            this.columns.get("tasted"), this.columns.get("rating")
+        );
     }
 
 }
