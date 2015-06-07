@@ -22,8 +22,8 @@ public class WineDatabaseHelper extends DatabaseHelper {
 
         // Store SQL command to create wines table.
         this.sqlCreateTable = String.format(
-            "CREATE TABLE %s(%s INTEGER PRIMARY KEY, %s INTEGER NOT NULL, " +
-            "%s TEXT NOT NULL, %s INTEGER NOT NULL);",
+            "CREATE TABLE %s(%s INTEGER PRIMARY KEY NOT NULL, %s INTEGER NOT NULL UNIQUE, " +
+            "%s TEXT NOT NULL UNIQUE, %s INTEGER NOT NULL);",
             this.tableName, this.columns.get("id"), this.columns.get("winery"),
             this.columns.get("name"), this.columns.get("vintage")
         );
