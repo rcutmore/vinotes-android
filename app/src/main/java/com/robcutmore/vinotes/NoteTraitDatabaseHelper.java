@@ -20,7 +20,7 @@ public class NoteTraitDatabaseHelper extends DatabaseHelper {
 
         // Store SQL command to create traits table.
         this.sqlCreateTable = String.format(
-            "CREATE TABLE %s(%s INTEGER PRIMARY KEY, %s TEXT NOT NULL);",
+            "CREATE TABLE %s(%s INTEGER PRIMARY KEY NOT NULL, %s TEXT NOT NULL UNIQUE);",
             this.tableName, this.columns.get("id"), this.columns.get("name")
         );
     }
