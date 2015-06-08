@@ -1,11 +1,10 @@
 package com.robcutmore.vinotes;
 
-
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+
 
 abstract class DataSource {
 
