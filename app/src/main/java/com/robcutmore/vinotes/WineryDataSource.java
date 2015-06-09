@@ -37,6 +37,27 @@ public class WineryDataSource extends DataSource {
         this.database.delete(table, whereClause, null);
     }
 
+    public Winery getWinery(final long id) {
+        // Query wineries table for winery with given id.
+        String table = this.dbHelper.getTableName();
+        String[] columns = {
+            this.dbColumns.get("id"),
+            this.dbColumns.get("name")
+        };
+        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
+        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
+
+        // Store and return winery.
+        Winery winery;
+        cursor.moveToFirst();
+        if(!cursor.isAfterLast()) {
+            winery = this.cursorToWinery(cursor);
+        } else {
+            winery = null;
+        }
+        return winery;
+    }
+
     public HashMap<Long, Winery> getAllWineries() {
         // Query wineries table for all wineries.
         String table = this.dbHelper.getTableName();
