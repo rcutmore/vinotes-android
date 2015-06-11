@@ -55,6 +55,7 @@ public class WineryDataSource extends DataSource {
         } else {
             winery = null;
         }
+        cursor.close();
         return winery;
     }
 
