@@ -63,6 +63,7 @@ public class WineDataSource extends DataSource {
         } else {
             wine = null;
         }
+        cursor.close();
         return wine;
     }
 
