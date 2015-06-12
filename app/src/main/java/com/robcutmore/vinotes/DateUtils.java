@@ -6,23 +6,11 @@ import java.util.Date;
 public final class DateUtils {
 
     public static Long convertDateToTimestamp(Date date) {
-        Long timestamp;
-        if (date != null) {
-            timestamp = date.getTime();
-        } else {
-            timestamp = null;
-        }
-        return timestamp;
+        return (date != null) ? date.getTime() : null;
     }
 
     public static Date convertTimestampToDate(Long timestamp) {
-        Date date;
-        if (timestamp != null) {
-            date = new Date(timestamp);
-        } else {
-            date = null;
-        }
-        return date;
+        return (timestamp != null) ? new Date(timestamp) : null;
     }
 
 }
