@@ -51,13 +51,8 @@ public class WineDataSource extends DataSource {
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
 
         // Store and return wine.
-        Wine wine;
         cursor.moveToFirst();
-        if (!cursor.isAfterLast()) {
-            wine = this.cursorToWine(cursor);
-        } else {
-            wine = null;
-        }
+        Wine wine = !cursor.isAfterLast() ? this.cursorToWine(cursor) : null;
         cursor.close();
         return wine;
     }
