@@ -79,8 +79,13 @@ public class NoteTraitDataSource extends DataSource {
     }
 
     private NoteTrait cursorToTrait(final Cursor cursor) {
-        NoteTrait trait = new NoteTrait(cursor.getString(1));
-        trait.setId(cursor.getLong(0));
+        // Get information for cursor's current position.
+        long id = cursor.getLong(0);
+        String name = cursor.getString(1);
+
+        // Crete note trait object with information from cursor.
+        NoteTrait trait = new NoteTrait(name);
+        trait.setId(id);
         return trait;
     }
 
