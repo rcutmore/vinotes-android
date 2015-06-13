@@ -45,13 +45,8 @@ public class WineryDataSource extends DataSource {
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
 
         // Store and return winery.
-        Winery winery;
         cursor.moveToFirst();
-        if (!cursor.isAfterLast()) {
-            winery = this.cursorToWinery(cursor);
-        } else {
-            winery = null;
-        }
+        Winery winery = !cursor.isAfterLast() ? this.cursorToWinery(cursor) : null;
         cursor.close();
         return winery;
     }
