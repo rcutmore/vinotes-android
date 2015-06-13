@@ -55,7 +55,9 @@ public class TastingNoteDataSource extends DataSource {
 
         // Store and return tasting note.
         cursor.moveToFirst();
-        return !cursor.isAfterLast() ? this.cursorToNote(cursor) : null;
+        TastingNote note = !cursor.isAfterLast() ? this.cursorToNote(cursor) : null;
+        cursor.close();
+        return note;
     }
 
     public HashMap<Long, TastingNote> getAllNotes() {
