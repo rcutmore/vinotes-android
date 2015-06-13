@@ -37,6 +37,20 @@ public class NoteTraitDataSource extends DataSource {
         this.database.delete(table, whereClause, null);
     }
 
+    public NoteTrait getTrait(final long id) {
+        // Query traits table for trait with given id.
+        String table = this.dbHelper.getTableName();
+        String[] columns = this.getDatabaseTableColumns();
+        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
+        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
+
+        // Store and return note trait.
+        cursor.moveToFirst();
+        NoteTrait trait = !cursor.isAfterLast() ? this.cursorToTrait(cursor) : null;
+        cursor.close();
+        return trait;
+    }
+
     public HashMap<Long, NoteTrait> getAllTraits() {
         // Query traits table for all traits.
         String table = this.dbHelper.getTableName();
