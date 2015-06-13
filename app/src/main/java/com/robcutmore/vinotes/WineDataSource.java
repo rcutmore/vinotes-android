@@ -46,12 +46,7 @@ public class WineDataSource extends DataSource {
     public Wine getWine(final long id) {
         // Query wines table for wine with given id.
         String table = this.dbHelper.getTableName();
-        String[] columns = {
-            this.dbColumns.get("id"),
-            this.dbColumns.get("winery"),
-            this.dbColumns.get("name"),
-            this.dbColumns.get("vintage")
-        };
+        String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
 
@@ -70,12 +65,7 @@ public class WineDataSource extends DataSource {
     public HashMap<Long, Wine> getAllWines() {
         // Query wines table for all wines.
         String table = this.dbHelper.getTableName();
-        String[] columns = {
-            this.dbColumns.get("id"),
-            this.dbColumns.get("winery"),
-            this.dbColumns.get("name"),
-            this.dbColumns.get("vintage")
-        };
+        String[] columns = this.getDatabaseTableColumns();
         Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
 
         // Store and return all wines.
@@ -88,6 +78,17 @@ public class WineDataSource extends DataSource {
         }
         cursor.close();
         return wines;
+    }
+
+    @Override
+    protected String[] getDatabaseTableColumns() {
+        String[] columns = {
+                this.dbColumns.get("id"),
+                this.dbColumns.get("winery"),
+                this.dbColumns.get("name"),
+                this.dbColumns.get("vintage")
+        };
+        return columns;
     }
 
     private Wine cursorToWine(final Cursor cursor) {
