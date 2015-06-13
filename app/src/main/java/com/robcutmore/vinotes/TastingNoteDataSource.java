@@ -67,7 +67,7 @@ public class TastingNoteDataSource extends DataSource {
         // Store and return all notes.
         HashMap<Long, TastingNote> notes = new HashMap<>();
         cursor.moveToFirst();
-        while(!cursor.isAfterLast()) {
+        while (!cursor.isAfterLast()) {
             TastingNote note = this.cursorToNote(cursor);
             notes.put(note.getId(), note);
             cursor.moveToNext();
@@ -79,10 +79,10 @@ public class TastingNoteDataSource extends DataSource {
     @Override
     protected String[] getDatabaseTableColumns() {
         String[] columns = {
-                this.dbColumns.get("id"),
-                this.dbColumns.get("wine"),
-                this.dbColumns.get("tasted"),
-                this.dbColumns.get("rating")
+            this.dbColumns.get("id"),
+            this.dbColumns.get("wine"),
+            this.dbColumns.get("tasted"),
+            this.dbColumns.get("rating")
         };
         return columns;
     }

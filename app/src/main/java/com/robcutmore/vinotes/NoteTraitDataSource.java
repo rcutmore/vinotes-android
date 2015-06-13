@@ -46,7 +46,7 @@ public class NoteTraitDataSource extends DataSource {
         // Store and return all traits.
         HashMap<Long, NoteTrait> traits = new HashMap<>();
         cursor.moveToFirst();
-        while(!cursor.isAfterLast()) {
+        while (!cursor.isAfterLast()) {
             NoteTrait trait = this.cursorToTrait(cursor);
             traits.put(trait.getId(), trait);
             cursor.moveToNext();
@@ -58,8 +58,8 @@ public class NoteTraitDataSource extends DataSource {
     @Override
     protected String[] getDatabaseTableColumns() {
         String[] columns = {
-                this.dbColumns.get("id"),
-                this.dbColumns.get("name")
+            this.dbColumns.get("id"),
+            this.dbColumns.get("name")
         };
         return columns;
     }

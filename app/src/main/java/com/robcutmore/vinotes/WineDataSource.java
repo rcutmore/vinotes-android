@@ -53,7 +53,7 @@ public class WineDataSource extends DataSource {
         // Store and return wine.
         Wine wine;
         cursor.moveToFirst();
-        if(!cursor.isAfterLast()) {
+        if (!cursor.isAfterLast()) {
             wine = this.cursorToWine(cursor);
         } else {
             wine = null;
@@ -71,7 +71,7 @@ public class WineDataSource extends DataSource {
         // Store and return all wines.
         HashMap<Long, Wine> wines = new HashMap<>();
         cursor.moveToFirst();
-        while(!cursor.isAfterLast()) {
+        while (!cursor.isAfterLast()) {
             Wine wine = this.cursorToWine(cursor);
             wines.put(wine.getId(), wine);
             cursor.moveToNext();
@@ -83,10 +83,10 @@ public class WineDataSource extends DataSource {
     @Override
     protected String[] getDatabaseTableColumns() {
         String[] columns = {
-                this.dbColumns.get("id"),
-                this.dbColumns.get("winery"),
-                this.dbColumns.get("name"),
-                this.dbColumns.get("vintage")
+            this.dbColumns.get("id"),
+            this.dbColumns.get("winery"),
+            this.dbColumns.get("name"),
+            this.dbColumns.get("vintage")
         };
         return columns;
     }
