@@ -20,4 +20,6 @@ abstract class DataSource {
         this.dbHelper.close();
     }
 
+    abstract protected String[] getDatabaseTableColumns();
+
 }
