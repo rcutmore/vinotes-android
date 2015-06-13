@@ -79,8 +79,13 @@ public class WineryDataSource extends DataSource {
     }
 
     private Winery cursorToWinery(Cursor cursor) {
-        Winery winery = new Winery(cursor.getString(1));
-        winery.setId(cursor.getLong(0));
+        // Get information for cursor's current position.
+        long id = cursor.getLong(0);
+        String name = cursor.getString(1);
+
+        // Create winery object with information from cursor.
+        Winery winery = new Winery(name);
+        winery.setId(id);
         return winery;
     }
 
