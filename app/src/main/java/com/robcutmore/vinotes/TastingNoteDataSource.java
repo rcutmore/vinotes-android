@@ -49,12 +49,7 @@ public class TastingNoteDataSource extends DataSource {
     public TastingNote getNote(final long id) {
         // Query notes table for note with given id.
         String table = this.dbHelper.getTableName();
-        String[] columns = {
-                this.dbColumns.get("id"),
-                this.dbColumns.get("wine"),
-                this.dbColumns.get("tasted"),
-                this.dbColumns.get("rating")
-        };
+        String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
 
@@ -66,12 +61,7 @@ public class TastingNoteDataSource extends DataSource {
     public HashMap<Long, TastingNote> getAllNotes() {
         // Query notes table for all notes.
         String table = this.dbHelper.getTableName();
-        String[] columns = {
-            this.dbColumns.get("id"),
-            this.dbColumns.get("wine"),
-            this.dbColumns.get("tasted"),
-            this.dbColumns.get("rating")
-        };
+        String[] columns = this.getDatabaseTableColumns();
         Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
 
         // Store and return all notes.
@@ -84,6 +74,17 @@ public class TastingNoteDataSource extends DataSource {
         }
         cursor.close();
         return notes;
+    }
+
+    @Override
+    protected String[] getDatabaseTableColumns() {
+        String[] columns = {
+                this.dbColumns.get("id"),
+                this.dbColumns.get("wine"),
+                this.dbColumns.get("tasted"),
+                this.dbColumns.get("rating")
+        };
+        return columns;
     }
 
     private TastingNote cursorToNote(Cursor cursor) {
