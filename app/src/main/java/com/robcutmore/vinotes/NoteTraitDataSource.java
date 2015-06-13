@@ -40,10 +40,7 @@ public class NoteTraitDataSource extends DataSource {
     public HashMap<Long, NoteTrait> getAllTraits() {
         // Query traits table for all traits.
         String table = this.dbHelper.getTableName();
-        String[] columns = {
-            this.dbColumns.get("id"),
-            this.dbColumns.get("name")
-        };
+        String[] columns = this.getDatabaseTableColumns();
         Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
 
         // Store and return all traits.
@@ -56,6 +53,15 @@ public class NoteTraitDataSource extends DataSource {
         }
         cursor.close();
         return traits;
+    }
+
+    @Override
+    protected String[] getDatabaseTableColumns() {
+        String[] columns = {
+                this.dbColumns.get("id"),
+                this.dbColumns.get("name")
+        };
+        return columns;
     }
 
     private NoteTrait cursorToTrait(final Cursor cursor) {
