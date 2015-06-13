@@ -40,10 +40,7 @@ public class WineryDataSource extends DataSource {
     public Winery getWinery(final long id) {
         // Query wineries table for winery with given id.
         String table = this.dbHelper.getTableName();
-        String[] columns = {
-            this.dbColumns.get("id"),
-            this.dbColumns.get("name")
-        };
+        String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
 
@@ -62,10 +59,7 @@ public class WineryDataSource extends DataSource {
     public HashMap<Long, Winery> getAllWineries() {
         // Query wineries table for all wineries.
         String table = this.dbHelper.getTableName();
-        String[] columns = {
-            this.dbColumns.get("id"),
-            this.dbColumns.get("name")
-        };
+        String[] columns = this.getDatabaseTableColumns();
         Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
 
         // Store and return all wineries.
@@ -78,6 +72,15 @@ public class WineryDataSource extends DataSource {
         }
         cursor.close();
         return wineries;
+    }
+
+    @Override
+    protected String[] getDatabaseTableColumns() {
+        String[] columns = {
+                this.dbColumns.get("id"),
+                this.dbColumns.get("name")
+        };
+        return columns;
     }
 
     private Winery cursorToWinery(Cursor cursor) {
