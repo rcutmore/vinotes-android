@@ -1,9 +1,14 @@
-package com.robcutmore.vinotes;
+package com.robcutmore.vinotes.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.robcutmore.vinotes.utils.DateUtils;
+import com.robcutmore.vinotes.model.TastingNote;
+import com.robcutmore.vinotes.database.TastingNoteDatabaseHelper;
+import com.robcutmore.vinotes.model.Wine;
 
 import java.util.Date;
 import java.util.HashMap;

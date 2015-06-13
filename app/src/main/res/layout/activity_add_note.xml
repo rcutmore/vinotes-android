@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:padding="16dip"
-    tools:context="com.robcutmore.vinotes.AddNoteActivity">
+    tools:context="com.robcutmore.vinotes.ui.AddNoteActivity">
 
     <EditText
         android:editable="false"

@@ -1,12 +1,14 @@
-package com.robcutmore.vinotes;
+package com.robcutmore.vinotes.dao;
 
 import android.database.sqlite.SQLiteDatabase;
+
+import com.robcutmore.vinotes.database.DatabaseHelper;
 
 import java.sql.SQLException;
 import java.util.HashMap;
 
 
-abstract class DataSource {
+public abstract class DataSource {
 
     protected SQLiteDatabase database;
     protected DatabaseHelper dbHelper;

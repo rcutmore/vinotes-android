@@ -1,4 +1,4 @@
-package com.robcutmore.vinotes;
+package com.robcutmore.vinotes.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,7 +8,7 @@ import android.util.Log;
 import java.util.HashMap;
 
 
-abstract class DatabaseHelper extends SQLiteOpenHelper {
+public abstract class DatabaseHelper extends SQLiteOpenHelper {
 
     protected static final String DATABASE_NAME = "vinotes.db";
     protected static final int DATABASE_VERSION = 1;

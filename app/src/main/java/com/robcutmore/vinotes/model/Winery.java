@@ -1,4 +1,4 @@
-package com.robcutmore.vinotes;
+package com.robcutmore.vinotes.model;
 
 import java.util.HashMap;
 
@@ -51,4 +51,5 @@ public class Winery {
     public String toString() {
         return this.name;
     }
+
 }

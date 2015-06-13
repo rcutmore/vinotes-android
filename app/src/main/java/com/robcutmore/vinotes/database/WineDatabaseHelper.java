@@ -1,4 +1,4 @@
-package com.robcutmore.vinotes;
+package com.robcutmore.vinotes.database;
 
 import android.content.Context;
 

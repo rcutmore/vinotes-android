@@ -1,24 +1,24 @@
-package com.robcutmore.vinotes;
-
+package com.robcutmore.vinotes.database;
 
 import android.content.Context;
 
 import java.util.HashMap;
 
-public class NoteTraitDatabaseHelper extends DatabaseHelper {
 
-    private String tableName = "traits";
+public class WineryDatabaseHelper extends DatabaseHelper {
+
+    private String tableName = "wineries";
     private HashMap<String, String> columns = new HashMap<>();
     private String sqlCreateTable;
 
-    public NoteTraitDatabaseHelper(Context context) {
+    public WineryDatabaseHelper(Context context) {
         super(context);
 
-        // Store all columns in traits table.
+        // Store all columns in wineries table.
         this.columns.put("id", "_id");
         this.columns.put("name", "name");
 
-        // Store SQL command to create traits table.
+        // Store SQL command to create wineries table.
         this.sqlCreateTable = String.format(
             "CREATE TABLE %s(%s INTEGER PRIMARY KEY NOT NULL, %s TEXT NOT NULL UNIQUE);",
             this.tableName, this.columns.get("id"), this.columns.get("name")

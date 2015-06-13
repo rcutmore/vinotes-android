@@ -1,4 +1,4 @@
-package com.robcutmore.vinotes;
+package com.robcutmore.vinotes.model;
 
 
 public class NoteTrait {
@@ -27,4 +27,5 @@ public class NoteTrait {
     public String toString() {
         return this.name;
     }
+
 }

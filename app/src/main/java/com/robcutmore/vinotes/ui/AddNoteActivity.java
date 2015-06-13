@@ -1,4 +1,4 @@
-package com.robcutmore.vinotes;
+package com.robcutmore.vinotes.ui;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.robcutmore.vinotes.R;
 
 
 public class AddNoteActivity extends ActionBarActivity {
@@ -56,4 +58,5 @@ public class AddNoteActivity extends ActionBarActivity {
     public void setTastingDate(final String newTastingDate) {
         etTastingDate.setText(newTastingDate);
     }
+
 }

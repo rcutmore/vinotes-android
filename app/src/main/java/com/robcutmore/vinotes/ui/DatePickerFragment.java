@@ -1,4 +1,4 @@
-package com.robcutmore.vinotes;
+package com.robcutmore.vinotes.ui;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

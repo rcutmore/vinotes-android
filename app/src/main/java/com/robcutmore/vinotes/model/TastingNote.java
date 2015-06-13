@@ -1,4 +1,4 @@
-package com.robcutmore.vinotes;
+package com.robcutmore.vinotes.model;
 
 import java.util.Date;
 import java.util.HashMap;
