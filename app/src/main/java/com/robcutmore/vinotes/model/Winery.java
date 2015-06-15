@@ -5,12 +5,18 @@ import java.util.HashMap;
 
 public class Winery {
 
-    private Long id = null;
+    private Long id;
     private String name;
     private HashMap<Long, Wine> wines = new HashMap<>();
 
     public Winery(final String name) {
         this.name = name;
+        this.id = null;
+    }
+
+    public Winery(final long id, final String name) {
+        this(name);
+        this.id = id;
     }
 
     public Long getId() {
