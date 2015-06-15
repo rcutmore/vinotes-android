@@ -6,17 +6,25 @@ import java.util.HashMap;
 
 public class TastingNote {
 
-    private Long id = null;
+    private Long id;
     private Wine wine;
-    private Date tasted = null;
+    private Date tasted;
     private HashMap<Long, NoteTrait> colorTraits = new HashMap<>();
     private HashMap<Long, NoteTrait> noseTraits = new HashMap<>();
     private HashMap<Long, NoteTrait> tasteTraits = new HashMap<>();
     private HashMap<Long, NoteTrait> finishTraits = new HashMap<>();
-    private Integer rating = null;
+    private Integer rating;
 
     public TastingNote(final Wine wine) {
         this.wine = wine;
+        this.id = null;
+        this.tasted = null;
+        this.rating = null;
+    }
+
+    public TastingNote(final long id, final Wine wine) {
+        this(wine);
+        this.id = id;
     }
 
     public Long getId() {
