@@ -45,9 +45,9 @@ public class TastingNoteDataSource extends DataSource {
         return note;
     }
 
-    public void deleteNote(final TastingNote note) {
+    public void deleteNote(final long id) {
         String table = this.dbHelper.getTableName();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), note.getId());
+        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         this.database.delete(table, whereClause, null);
     }
 
