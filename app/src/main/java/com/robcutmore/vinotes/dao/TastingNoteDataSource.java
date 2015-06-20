@@ -102,12 +102,8 @@ public class TastingNoteDataSource extends DataSource {
         int rating = cursor.getInt(4);
 
         // Create tasting note object with information from cursor.
-        Wine wine = this.wineDataSource.getWine(wineId);
-        TastingNote note = new TastingNote(wine);
-        note.setId(id);
-        note.setTasted(tasted);
-        note.setRating(rating);
-        return note;
+        final Wine wine = this.wineDataSource.getWine(wineId);
+        return new TastingNote(id, wine, tasted, rating);
     }
 
 }

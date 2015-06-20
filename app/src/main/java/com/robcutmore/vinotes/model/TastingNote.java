@@ -27,6 +27,12 @@ public class TastingNote {
         this.id = id;
     }
 
+    public TastingNote(final long id, final Wine wine, final Date tasted, final Integer rating) {
+        this(id, wine);
+        this.tasted = tasted;
+        this.rating = rating;
+    }
+
     public Long getId() {
         return this.id;
     }
