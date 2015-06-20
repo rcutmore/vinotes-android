@@ -87,9 +87,7 @@ public class WineryDataSource extends DataSource {
         String name = cursor.getString(1);
 
         // Create winery object with information from cursor.
-        Winery winery = new Winery(name);
-        winery.setId(id);
-        return winery;
+        return new Winery(id, name);
     }
 
 }
