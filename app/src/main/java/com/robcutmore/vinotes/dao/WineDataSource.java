@@ -41,9 +41,9 @@ public class WineDataSource extends DataSource {
         return wine;
     }
 
-    public void deleteWine(final Wine wine) {
+    public void deleteWine(final long id) {
         String table = this.dbHelper.getTableName();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), wine.getId());
+        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         this.database.delete(table, whereClause, null);
     }
 
