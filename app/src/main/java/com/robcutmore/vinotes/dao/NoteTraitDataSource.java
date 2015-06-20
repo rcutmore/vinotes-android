@@ -86,10 +86,8 @@ public class NoteTraitDataSource extends DataSource {
         long id = cursor.getLong(0);
         String name = cursor.getString(1);
 
-        // Crete note trait object with information from cursor.
-        NoteTrait trait = new NoteTrait(name);
-        trait.setId(id);
-        return trait;
+        // Create note trait object with information from cursor.
+        return new NoteTrait(id, name);
     }
 
 }
