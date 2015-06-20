@@ -98,8 +98,8 @@ public class TastingNoteDataSource extends DataSource {
         // Get information for cursor's current position.
         long id = cursor.getLong(0);
         long wineId = cursor.getLong(1);
-        Date tasted = DateUtils.convertTimestampToDate(cursor.getLong(3));
-        int rating = cursor.getInt(4);
+        Date tasted = !cursor.isNull(3) ? DateUtils.convertTimestampToDate(cursor.getLong(3)) : null;
+        Integer rating = !cursor.isNull(4) ? cursor.getInt(4) : null;
 
         // Create tasting note object with information from cursor.
         final Wine wine = this.wineDataSource.getWine(wineId);
