@@ -98,7 +98,7 @@ public class WineDataSource extends DataSource {
         int vintage = cursor.getInt(3);
 
         // Create wine object using information from cursor.
-        Winery winery = this.wineryDataSource.getWinery(wineryId);
+        final Winery winery = this.wineryDataSource.getWinery(wineryId);
         return new Wine(id, winery, name, vintage);
     }
 
