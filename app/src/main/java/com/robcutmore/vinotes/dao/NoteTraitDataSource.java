@@ -34,9 +34,9 @@ public class NoteTraitDataSource extends DataSource {
         return trait;
     }
 
-    public void deleteTrait(final NoteTrait trait) {
+    public void deleteTrait(final long id) {
         String table = this.dbHelper.getTableName();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), trait.getId());
+        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         this.database.delete(table, whereClause, null);
     }
 
