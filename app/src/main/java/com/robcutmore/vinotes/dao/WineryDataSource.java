@@ -32,6 +32,7 @@ public class WineryDataSource extends DataSource {
     }
 
     public void remove(final long id) {
+        // Only remove from database, wineries cannot be removed from API.
         String table = this.dbHelper.getTableName();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         this.database.delete(table, whereClause, null);
