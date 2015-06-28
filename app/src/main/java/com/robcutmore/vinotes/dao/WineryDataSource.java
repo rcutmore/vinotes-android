@@ -26,7 +26,7 @@ public class WineryDataSource extends DataSource {
 
         // If winery was successfully added to API then add to local database as well.
         if (winery != null) {
-            this.addToDatabase(winery.getId(), winery.getName());
+            this.addToDatabase(winery);
         }
 
         return winery;
@@ -56,7 +56,7 @@ public class WineryDataSource extends DataSource {
         HashMap<Long, Winery> wineries = new HashMap<>();
         for (int i = 0; i < wineriesFromAPI.length; i++) {
             Winery winery = wineriesFromAPI[i];
-            this.addToDatabase(winery.getId(), winery.getName());
+            this.addToDatabase(winery);
             wineries.put(winery.getId(), winery);
         }
 
@@ -72,11 +72,11 @@ public class WineryDataSource extends DataSource {
         return columns;
     }
 
-    private void addToDatabase(final long id, final String name) {
+    private void addToDatabase(final Winery winery) {
         // Prepare winery values to be inserted into database.
         ContentValues values = new ContentValues();
-        values.put(this.dbColumns.get("id"), id);
-        values.put(this.dbColumns.get("name"), name);
+        values.put(this.dbColumns.get("id"), winery.getId());
+        values.put(this.dbColumns.get("name"), winery.getName());
 
         // Insert winery into database if it doesn't exist yet.
         String table = this.dbHelper.getTableName();
