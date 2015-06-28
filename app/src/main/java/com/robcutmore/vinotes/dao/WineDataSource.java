@@ -35,7 +35,7 @@ public class WineDataSource extends DataSource {
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 
         // Create and return wine with given information.
-        Winery winery = this.wineryDataSource.getWinery(wineryId);
+        Winery winery = this.wineryDataSource.get(wineryId);
         Wine wine = new Wine(winery, name, vintage);
         wine.setId(id);
         return wine;
@@ -98,7 +98,7 @@ public class WineDataSource extends DataSource {
         int vintage = cursor.getInt(3);
 
         // Create wine object using information from cursor.
-        final Winery winery = this.wineryDataSource.getWinery(wineryId);
+        final Winery winery = this.wineryDataSource.get(wineryId);
         return new Wine(id, winery, name, vintage);
     }
 
