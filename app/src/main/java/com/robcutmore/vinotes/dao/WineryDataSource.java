@@ -20,17 +20,6 @@ public class WineryDataSource extends DataSource {
         this.dbColumns = this.dbHelper.getColumns();
     }
 
-    public void add(final long id, final String name) {
-        // Prepare winery values to be inserted into database.
-        ContentValues values = new ContentValues();
-        values.put(this.dbColumns.get("id"), id);
-        values.put(this.dbColumns.get("name"), name);
-
-        // Insert winery into database if it doesn't exist yet.
-        String table = this.dbHelper.getTableName();
-        this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
-    }
-
     public void remove(final long id) {
         // Only remove from database, wineries cannot be removed from API.
         String table = this.dbHelper.getTableName();
@@ -55,7 +44,7 @@ public class WineryDataSource extends DataSource {
         HashMap<Long, Winery> wineries = new HashMap<>();
         for (int i = 0; i < wineriesFromAPI.length; i++) {
             Winery winery = wineriesFromAPI[i];
-            this.add(winery.getId(), winery.getName());
+            this.addToDatabase(winery.getId(), winery.getName());
             wineries.put(winery.getId(), winery);
         }
 
@@ -69,6 +58,17 @@ public class WineryDataSource extends DataSource {
             this.dbColumns.get("name")
         };
         return columns;
+    }
+
+    private void addToDatabase(final long id, final String name) {
+        // Prepare winery values to be inserted into database.
+        ContentValues values = new ContentValues();
+        values.put(this.dbColumns.get("id"), id);
+        values.put(this.dbColumns.get("name"), name);
+
+        // Insert winery into database if it doesn't exist yet.
+        String table = this.dbHelper.getTableName();
+        this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
     private Winery getFromDatabase(final long id) {
