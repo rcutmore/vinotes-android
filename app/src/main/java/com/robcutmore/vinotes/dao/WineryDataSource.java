@@ -38,16 +38,11 @@ public class WineryDataSource extends DataSource {
     }
 
     public Winery get(final long id) {
-        // Query wineries table for winery with given id.
-        String table = this.dbHelper.getTableName();
-        String[] columns = this.getDatabaseTableColumns();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
-
-        // Store and return winery.
-        cursor.moveToFirst();
-        Winery winery = !cursor.isAfterLast() ? this.cursorToWinery(cursor) : null;
-        cursor.close();
+        // Fetch winery from local database. If null then request from API before returning.
+        Winery winery = this.getFromDatabase(id);
+        if (winery == null) {
+            winery = WineryRequest.get(id);
+        }
         return winery;
     }
 
@@ -73,6 +68,20 @@ public class WineryDataSource extends DataSource {
             this.dbColumns.get("name")
         };
         return columns;
+    }
+
+    private Winery getFromDatabase(final long id) {
+        // Query wineries table for winery with given id.
+        String table = this.dbHelper.getTableName();
+        String[] columns = this.getDatabaseTableColumns();
+        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
+        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
+
+        // Store and return winery.
+        cursor.moveToFirst();
+        Winery winery = !cursor.isAfterLast() ? this.cursorToWinery(cursor) : null;
+        cursor.close();
+        return winery;
     }
 
     private Winery cursorToWinery(Cursor cursor) {
