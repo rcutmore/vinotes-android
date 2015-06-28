@@ -1,5 +1,6 @@
 package com.robcutmore.vinotes.dao;
 
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.robcutmore.vinotes.model.Winery;
 import com.robcutmore.vinotes.database.WineryDatabaseHelper;
+import com.robcutmore.vinotes.request.WineryRequest;
 
 import java.util.HashMap;
 
@@ -18,7 +20,7 @@ public class WineryDataSource extends DataSource {
         this.dbColumns = this.dbHelper.getColumns();
     }
 
-    public Winery createWinery(final long id, final String name) {
+    public void add(final long id, final String name) {
         // Prepare winery values to be inserted into database.
         ContentValues values = new ContentValues();
         values.put(this.dbColumns.get("id"), id);
@@ -27,20 +29,15 @@ public class WineryDataSource extends DataSource {
         // Insert winery into database if it doesn't exist yet.
         String table = this.dbHelper.getTableName();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
-
-        // Create and return winery object with given information.
-        Winery winery = new Winery(name);
-        winery.setId(id);
-        return winery;
     }
 
-    public void deleteWinery(final long id) {
+    public void remove(final long id) {
         String table = this.dbHelper.getTableName();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         this.database.delete(table, whereClause, null);
     }
 
-    public Winery getWinery(final long id) {
+    public Winery get(final long id) {
         // Query wineries table for winery with given id.
         String table = this.dbHelper.getTableName();
         String[] columns = this.getDatabaseTableColumns();
@@ -54,21 +51,18 @@ public class WineryDataSource extends DataSource {
         return winery;
     }
 
-    public HashMap<Long, Winery> getAllWineries() {
-        // Query wineries table for all wineries.
-        String table = this.dbHelper.getTableName();
-        String[] columns = this.getDatabaseTableColumns();
-        Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
+    public HashMap<Long, Winery> getAll() {
+        // Request all wineries from external API.
+        Winery[] wineriesFromAPI =  WineryRequest.getAll();
 
-        // Store and return all wineries.
+        // Add each winery to local database and ArrayList to be returned.
         HashMap<Long, Winery> wineries = new HashMap<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Winery winery = this.cursorToWinery(cursor);
+        for (int i = 0; i < wineriesFromAPI.length; i++) {
+            Winery winery = wineriesFromAPI[i];
+            this.add(winery.getId(), winery.getName());
             wineries.put(winery.getId(), winery);
-            cursor.moveToNext();
         }
-        cursor.close();
+
         return wineries;
     }
 
