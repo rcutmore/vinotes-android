@@ -6,6 +6,12 @@ import com.robcutmore.vinotes.model.Winery;
 
 public final class WineryRequest {
 
+    public static Winery add(final String name) {
+        String response = sendPOST(name);
+        Winery[] wineries = parseResponse(response);
+        return (wineries.length > 0) ? wineries[0] : null;
+    }
+
     public static Winery get(final long id) {
         String response = sendGET(id);
         Winery[] wineries = parseResponse(response);
@@ -25,6 +31,10 @@ public final class WineryRequest {
 
     private static String sendGET() {
         return sendGET(null);
+    }
+
+    private static String sendPOST(final String name) {
+        return "";
     }
 
     private static Winery[] parseResponse(final String response) {
