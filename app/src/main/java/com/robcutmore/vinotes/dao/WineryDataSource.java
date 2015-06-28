@@ -20,6 +20,18 @@ public class WineryDataSource extends DataSource {
         this.dbColumns = this.dbHelper.getColumns();
     }
 
+    public Winery add(final String name) {
+        // Add new winery to API.
+        Winery winery = WineryRequest.add(name);
+
+        // If winery was successfully added to API then add to local database as well.
+        if (winery != null) {
+            this.addToDatabase(winery.getId(), winery.getName());
+        }
+
+        return winery;
+    }
+
     public void remove(final long id) {
         // Only remove from database, wineries cannot be removed from API.
         String table = this.dbHelper.getTableName();
