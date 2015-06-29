@@ -1,5 +1,6 @@
 package com.robcutmore.vinotes.dao;
 
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -18,7 +19,7 @@ public class NoteTraitDataSource extends DataSource {
         this.dbColumns = this.dbHelper.getColumns();
     }
 
-    public NoteTrait createTrait(final long id, final String name) {
+    public NoteTrait add(final long id, final String name) {
         // Prepare trait values to be inserted into database.
         ContentValues values = new ContentValues();
         values.put(this.dbColumns.get("id"), id);
@@ -34,13 +35,13 @@ public class NoteTraitDataSource extends DataSource {
         return trait;
     }
 
-    public void deleteTrait(final long id) {
+    public void remove(final long id) {
         String table = this.dbHelper.getTableName();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         this.database.delete(table, whereClause, null);
     }
 
-    public NoteTrait getTrait(final long id) {
+    public NoteTrait get(final long id) {
         // Query traits table for trait with given id.
         String table = this.dbHelper.getTableName();
         String[] columns = this.getDatabaseTableColumns();
@@ -54,7 +55,7 @@ public class NoteTraitDataSource extends DataSource {
         return trait;
     }
 
-    public HashMap<Long, NoteTrait> getAllTraits() {
+    public HashMap<Long, NoteTrait> getAll() {
         // Query traits table for all traits.
         String table = this.dbHelper.getTableName();
         String[] columns = this.getDatabaseTableColumns();
