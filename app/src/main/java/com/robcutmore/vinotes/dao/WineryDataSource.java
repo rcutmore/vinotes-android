@@ -44,6 +44,11 @@ public class WineryDataSource extends DataSource {
         Winery winery = this.getFromDatabase(id);
         if (winery == null) {
             winery = WineryRequest.get(id);
+
+            // Add to database since it was missing.
+            if (winery != null) {
+                this.addToDatabase(winery);
+            }
         }
         return winery;
     }
