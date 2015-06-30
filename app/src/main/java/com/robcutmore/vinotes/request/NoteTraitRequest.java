@@ -6,6 +6,12 @@ import com.robcutmore.vinotes.model.NoteTrait;
 
 public final class NoteTraitRequest {
 
+    public static NoteTrait add(final String name) {
+        String response = sendPOST(name);
+        NoteTrait[] traits = parseResponse(response);
+        return (traits.length > 0) ? traits[0] : null;
+    }
+
     public static NoteTrait get(final long id) {
         String response = sendGET(id);
         NoteTrait[] traits = parseResponse(response);
@@ -24,6 +30,11 @@ public final class NoteTraitRequest {
 
     private static String sendGET() {
         return sendGET(null);
+    }
+
+    private static String sendPOST(final String name) {
+        // Test stub, replace with request to API.
+        return "";
     }
 
     private static NoteTrait[] parseResponse(final String response) {
