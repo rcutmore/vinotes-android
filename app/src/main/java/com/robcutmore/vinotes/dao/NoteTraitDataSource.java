@@ -43,6 +43,11 @@ public class NoteTraitDataSource extends DataSource {
         NoteTrait trait = this.getFromDatabase(id);
         if (trait == null) {
             trait = NoteTraitRequest.get(id);
+
+            // Add to database since it was missing.
+            if (trait != null) {
+                this.addToDatabase(trait);
+            }
         }
         return trait;
     }
