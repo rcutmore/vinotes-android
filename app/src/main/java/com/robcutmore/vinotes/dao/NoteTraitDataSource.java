@@ -20,6 +20,18 @@ public class NoteTraitDataSource extends DataSource {
         this.dbColumns = this.dbHelper.getColumns();
     }
 
+    public NoteTrait add(final String name) {
+        // Add new note trait to API.
+        NoteTrait trait = NoteTraitRequest.add(name);
+
+        // If note trait was successfully added to API then add to local database as well.
+        if (trait != null) {
+            this.addToDatabase(trait);
+        }
+
+        return trait;
+    }
+
     public void remove(final long id) {
         String table = this.dbHelper.getTableName();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
