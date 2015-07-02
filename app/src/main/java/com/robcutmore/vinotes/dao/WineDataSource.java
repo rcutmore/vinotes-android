@@ -1,5 +1,6 @@
 package com.robcutmore.vinotes.dao;
 
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.robcutmore.vinotes.model.Wine;
 import com.robcutmore.vinotes.database.WineDatabaseHelper;
 import com.robcutmore.vinotes.model.Winery;
+import com.robcutmore.vinotes.request.WineRequest;
 
 import java.util.HashMap;
 
@@ -28,21 +30,32 @@ public class WineDataSource extends DataSource {
         this.database.delete(table, whereClause, null);
     }
 
-    public HashMap<Long, Wine> getAll() {
-        // Query wines table for all wines.
-        String table = this.dbHelper.getTableName();
-        String[] columns = this.getDatabaseTableColumns();
-        Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
+    public Wine get(final long id) {
+        // Fetch winery from local database. If missing then request from API.
+        Wine wine = this.getFromDatabase(id);
+        if (wine == null) {
+            wine = WineRequest.get(id);
 
-        // Store and return all wines.
-        HashMap<Long, Wine> wines = new HashMap<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Wine wine = this.cursorToWine(cursor);
-            wines.put(wine.getId(), wine);
-            cursor.moveToNext();
+            // If wine is found then add to database since it was missing.
+            if (wine != null) {
+                this.addToDatabase(wine);
+            }
         }
-        cursor.close();
+        return wine;
+    }
+
+    public HashMap<Long, Wine> getAll() {
+        // Request all wines from external API.
+        Wine[] winesFromAPI = WineRequest.getAll();
+
+        // Add each wine to local database and HashMap to be returned.
+        HashMap<Long, Wine> wines = new HashMap<>();
+        for (int i = 0; i < winesFromAPI.length; i++) {
+            Wine wine = winesFromAPI[i];
+            this.addToDatabase(wine);
+            wines.put(wine.getId(), wine);
+        }
+
         return wines;
     }
 
