@@ -39,12 +39,12 @@ public class NoteTraitDataSource extends DataSource {
     }
 
     public NoteTrait get(final long id) {
-        // Fetch winery from local database. If null then request from API before returning.
+        // Fetch winery from local database. If missing then request from API.
         NoteTrait trait = this.getFromDatabase(id);
         if (trait == null) {
             trait = NoteTraitRequest.get(id);
 
-            // Add to database since it was missing.
+            // If trait is found then add to database since it was missing.
             if (trait != null) {
                 this.addToDatabase(trait);
             }
@@ -56,7 +56,7 @@ public class NoteTraitDataSource extends DataSource {
         // Request all wineries from external API.
         NoteTrait[] traitsFromAPI =  NoteTraitRequest.getAll();
 
-        // Add each winery to local database and ArrayList to be returned.
+        // Add each winery to local database and HashMap to be returned.
         HashMap<Long, NoteTrait> traits = new HashMap<>();
         for (int i = 0; i < traitsFromAPI.length; i++) {
             NoteTrait trait = traitsFromAPI[i];
