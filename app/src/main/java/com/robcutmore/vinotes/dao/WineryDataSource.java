@@ -40,12 +40,12 @@ public class WineryDataSource extends DataSource {
     }
 
     public Winery get(final long id) {
-        // Fetch winery from local database. If null then request from API before returning.
+        // Fetch winery from local database. If missing then request from API.
         Winery winery = this.getFromDatabase(id);
         if (winery == null) {
             winery = WineryRequest.get(id);
 
-            // Add to database since it was missing.
+            // If winery is found then add to database since it was missing.
             if (winery != null) {
                 this.addToDatabase(winery);
             }
@@ -57,7 +57,7 @@ public class WineryDataSource extends DataSource {
         // Request all wineries from external API.
         Winery[] wineriesFromAPI =  WineryRequest.getAll();
 
-        // Add each winery to local database and ArrayList to be returned.
+        // Add each winery to local database and HashMap to be returned.
         HashMap<Long, Winery> wineries = new HashMap<>();
         for (int i = 0; i < wineriesFromAPI.length; i++) {
             Winery winery = wineriesFromAPI[i];
