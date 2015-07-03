@@ -3,14 +3,13 @@ package com.robcutmore.vinotes.model;
 
 public class Wine {
 
-    private Long id = null;
+    private Long id;
     private Winery winery;
     private String name;
     private int vintage;
 
     public Wine(final Winery winery, final String name, final int vintage) {
         this.winery = winery;
-        this.winery.addWine(this);
         this.name = name;
         this.vintage = vintage;
         this.id = null;
