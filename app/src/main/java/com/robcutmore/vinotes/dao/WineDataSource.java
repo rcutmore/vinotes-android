@@ -24,6 +24,18 @@ public class WineDataSource extends DataSource {
         this.wineryDataSource = new WineryDataSource(context);
     }
 
+    public Wine add(final long wineryId, final String name, final int vintage) {
+        // Add new wine to API.
+        Wine wine = WineRequest.add(wineryId, name, vintage);
+
+        // If wine was successfully added to API then add to local database as well.
+        if (wine != null) {
+            this.addToDatabase(wine);
+        }
+
+        return wine;
+    }
+
     public void remove(final long id) {
         String table = this.dbHelper.getTableName();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
