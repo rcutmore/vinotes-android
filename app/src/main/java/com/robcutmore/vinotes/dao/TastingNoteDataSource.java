@@ -1,5 +1,6 @@
 package com.robcutmore.vinotes.dao;
 
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -37,7 +38,7 @@ public class TastingNoteDataSource extends DataSource {
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 
         // Create and return tasting note with given information.
-        Wine wine = this.wineDataSource.getWine(wineId);
+        Wine wine = this.wineDataSource.get(wineId);
         TastingNote note = new TastingNote(wine);
         note.setId(id);
         note.setTasted(tasted);
@@ -102,7 +103,7 @@ public class TastingNoteDataSource extends DataSource {
         Integer rating = !cursor.isNull(4) ? cursor.getInt(4) : null;
 
         // Create tasting note object with information from cursor.
-        final Wine wine = this.wineDataSource.getWine(wineId);
+        final Wine wine = this.wineDataSource.get(wineId);
         return new TastingNote(id, wine, tasted, rating);
     }
 
