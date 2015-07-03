@@ -7,6 +7,12 @@ import com.robcutmore.vinotes.model.Winery;
 
 public class WineRequest {
 
+    public static Wine add(final long wineryId, final String name, final int vintage) {
+        String response = sendPOST(wineryId, name, vintage);
+        Wine[] wines = parseResponse(response);
+        return (wines.length > 0) ? wines[0] : null;
+    }
+
     public static Wine get(final long id) {
         String response = sendGET(id);
         Wine[] wines = parseResponse(response);
@@ -26,6 +32,11 @@ public class WineRequest {
 
     private static String sendGET() {
         return sendGET(null);
+    }
+
+    private static String sendPOST(final long wineryId, final String name, final int vintage) {
+        // Test stub, replace with request to API.
+        return "";
     }
 
     private static Wine[] parseResponse(final String response) {
