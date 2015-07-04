@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robcutmore.vinotes.request.TastingNoteRequest;
 import com.robcutmore.vinotes.utils.DateUtils;
 import com.robcutmore.vinotes.model.TastingNote;
 import com.robcutmore.vinotes.database.TastingNoteDatabaseHelper;
@@ -31,21 +32,32 @@ public class TastingNoteDataSource extends DataSource {
         this.database.delete(table, whereClause, null);
     }
 
-    public HashMap<Long, TastingNote> getAll() {
-        // Query notes table for all notes.
-        String table = this.dbHelper.getTableName();
-        String[] columns = this.getDatabaseTableColumns();
-        Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
+    public TastingNote get(final long id) {
+        // Fetch note from local database. If missing then request from API.
+        TastingNote note = this.getFromDatabase(id);
+        if (note == null) {
+            note = TastingNoteRequest.get(id);
 
-        // Store and return all notes.
-        HashMap<Long, TastingNote> notes = new HashMap<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            TastingNote note = this.cursorToNote(cursor);
-            notes.put(note.getId(), note);
-            cursor.moveToNext();
+            // If note was found then add to database since it was missing.
+            if (note != null) {
+                this.addToDatabase(note);
+            }
         }
-        cursor.close();
+        return note;
+    }
+
+    public HashMap<Long, TastingNote> getAll() {
+        // Request all notes from external API.
+        TastingNote[] notesFromAPI = TastingNoteRequest.getAll();
+
+        // Add each note to local database and HashMap to be returned.
+        HashMap<Long, TastingNote> notes = new HashMap<>();
+        for (int i = 0; i < notesFromAPI.length; i++) {
+            TastingNote note = notesFromAPI[i];
+            this.addToDatabase(note);
+            notes.put(note.getId(), note);
+        }
+
         return notes;
     }
 
@@ -60,13 +72,13 @@ public class TastingNoteDataSource extends DataSource {
         return columns;
     }
 
-    private void addToDatabase(final long id, final long wineId, final Date tasted, final int rating) {
+    private void addToDatabase(final TastingNote note) {
         // Prepare tasting note values to be inserted into database.
         ContentValues values = new ContentValues();
-        values.put(this.dbColumns.get("id"), id);
-        values.put(this.dbColumns.get("wine"), wineId);
-        values.put(this.dbColumns.get("tasted"), DateUtils.convertDateToTimestamp(tasted));
-        values.put(this.dbColumns.get("rating"), rating);
+        values.put(this.dbColumns.get("id"), note.getId());
+        values.put(this.dbColumns.get("wine"), note.getWine().getId());
+        values.put(this.dbColumns.get("tasted"), DateUtils.convertDateToTimestamp(note.getTasted()));
+        values.put(this.dbColumns.get("rating"), note.getRating());
 
         // Insert tasting note into database if it doesn't exist yet.
         String table = this.dbHelper.getTableName();
