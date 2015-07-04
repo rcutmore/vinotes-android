@@ -25,48 +25,13 @@ public class TastingNoteDataSource extends DataSource {
         this.wineDataSource = new WineDataSource(context);
     }
 
-    public TastingNote createNote(final long id, final long wineId, final Date tasted, final int rating) {
-        // Prepare tasting note values to be inserted into database.
-        ContentValues values = new ContentValues();
-        values.put(this.dbColumns.get("id"), id);
-        values.put(this.dbColumns.get("wine"), wineId);
-        values.put(this.dbColumns.get("tasted"), DateUtils.convertDateToTimestamp(tasted));
-        values.put(this.dbColumns.get("rating"), rating);
-
-        // Insert tasting note into database if it doesn't exist yet.
-        String table = this.dbHelper.getTableName();
-        this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
-
-        // Create and return tasting note with given information.
-        Wine wine = this.wineDataSource.get(wineId);
-        TastingNote note = new TastingNote(wine);
-        note.setId(id);
-        note.setTasted(tasted);
-        note.setRating(rating);
-        return note;
-    }
-
-    public void deleteNote(final long id) {
+    public void remove(final long id) {
         String table = this.dbHelper.getTableName();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         this.database.delete(table, whereClause, null);
     }
 
-    public TastingNote getNote(final long id) {
-        // Query notes table for note with given id.
-        String table = this.dbHelper.getTableName();
-        String[] columns = this.getDatabaseTableColumns();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
-
-        // Store and return tasting note.
-        cursor.moveToFirst();
-        TastingNote note = !cursor.isAfterLast() ? this.cursorToNote(cursor) : null;
-        cursor.close();
-        return note;
-    }
-
-    public HashMap<Long, TastingNote> getAllNotes() {
+    public HashMap<Long, TastingNote> getAll() {
         // Query notes table for all notes.
         String table = this.dbHelper.getTableName();
         String[] columns = this.getDatabaseTableColumns();
@@ -93,6 +58,33 @@ public class TastingNoteDataSource extends DataSource {
             this.dbColumns.get("rating")
         };
         return columns;
+    }
+
+    private void addToDatabase(final long id, final long wineId, final Date tasted, final int rating) {
+        // Prepare tasting note values to be inserted into database.
+        ContentValues values = new ContentValues();
+        values.put(this.dbColumns.get("id"), id);
+        values.put(this.dbColumns.get("wine"), wineId);
+        values.put(this.dbColumns.get("tasted"), DateUtils.convertDateToTimestamp(tasted));
+        values.put(this.dbColumns.get("rating"), rating);
+
+        // Insert tasting note into database if it doesn't exist yet.
+        String table = this.dbHelper.getTableName();
+        this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+    }
+
+    private TastingNote getFromDatabase(final long id) {
+        // Query notes table for note with given id.
+        String table = this.dbHelper.getTableName();
+        String[] columns = this.getDatabaseTableColumns();
+        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
+        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
+
+        // Store and return tasting note.
+        cursor.moveToFirst();
+        TastingNote note = !cursor.isAfterLast() ? this.cursorToNote(cursor) : null;
+        cursor.close();
+        return note;
     }
 
     private TastingNote cursorToNote(Cursor cursor) {
