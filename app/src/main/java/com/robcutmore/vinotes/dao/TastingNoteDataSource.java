@@ -26,6 +26,18 @@ public class TastingNoteDataSource extends DataSource {
         this.wineDataSource = new WineDataSource(context);
     }
 
+    public TastingNote add(final long wineId, final Date tasted, final Integer rating) {
+        // Add new note to API.
+        TastingNote note = TastingNoteRequest.add(wineId, tasted, rating);
+
+        // If note was successfully added to API then add to local database as well.
+        if (note != null) {
+            this.addToDatabase(note);
+        }
+
+        return note;
+    }
+
     public void remove(final long id) {
         String table = this.dbHelper.getTableName();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
