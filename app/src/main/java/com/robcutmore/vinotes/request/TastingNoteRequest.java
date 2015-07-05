@@ -5,8 +5,16 @@ import com.robcutmore.vinotes.model.TastingNote;
 import com.robcutmore.vinotes.model.Wine;
 import com.robcutmore.vinotes.model.Winery;
 
+import java.util.Date;
+
 
 public class TastingNoteRequest {
+
+    public static TastingNote add(final long wineId, final Date tasted, final Integer rating) {
+        String response = sendPOST(wineId, tasted, rating);
+        TastingNote[] notes = parseResponse(response);
+        return (notes.length > 0) ? notes[0] : null;
+    }
 
     public static TastingNote get(final long id) {
         String response = sendGET(id);
@@ -27,6 +35,11 @@ public class TastingNoteRequest {
 
     private static String sendGET() {
         return sendGET(null);
+    }
+
+    private static String sendPOST(final long wineId, final Date tasted, final Integer rating) {
+        // Test stub, replace with request to API.
+        return "";
     }
 
     private static TastingNote[] parseResponse(final String response) {
