@@ -22,7 +22,7 @@ public class TastingNoteDatabaseHelper extends DatabaseHelper {
 
         // Store SQL command to create notes table.
         this.sqlCreateTable = String.format(
-            "CREATE TABLE %s(%s INTEGER PRIMARY KEY NOT NULL, %s INTEGER NOT NULL UNIQUE, " +
+            "CREATE TABLE IF NOT EXISTS %s(%s INTEGER PRIMARY KEY NOT NULL, %s INTEGER NOT NULL UNIQUE, " +
             "%s INTEGER, %s INTEGER);",
             this.tableName, this.columns.get("id"), this.columns.get("wine"),
             this.columns.get("tasted"), this.columns.get("rating")
