@@ -1,5 +1,6 @@
 package com.robcutmore.vinotes.database;
 
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -12,12 +13,15 @@ public abstract class DatabaseHelper extends SQLiteOpenHelper {
 
     protected static final String DATABASE_NAME = "vinotes.db";
     protected static final int DATABASE_VERSION = 1;
-    private String tableName = "";
-    private HashMap<String, String> columns = new HashMap<>();
-    private String sqlCreateTable = "";
+    protected String tableName;
+    protected HashMap<String, String> columns;
+    protected String sqlCreateTable;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.tableName = "";
+        this.columns = new HashMap<>();
+        this.sqlCreateTable = "";
     }
 
     @Override

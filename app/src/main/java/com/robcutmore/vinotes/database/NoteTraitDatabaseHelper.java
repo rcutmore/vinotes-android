@@ -1,5 +1,6 @@
 package com.robcutmore.vinotes.database;
 
+
 import android.content.Context;
 
 import java.util.HashMap;
@@ -7,14 +8,13 @@ import java.util.HashMap;
 
 public class NoteTraitDatabaseHelper extends DatabaseHelper {
 
-    private String tableName = "traits";
-    private HashMap<String, String> columns = new HashMap<>();
-    private String sqlCreateTable;
-
     public NoteTraitDatabaseHelper(Context context) {
         super(context);
 
+        this.tableName = "traits";
+
         // Store all columns in traits table.
+        this.columns = new HashMap<>();
         this.columns.put("id", "_id");
         this.columns.put("name", "name");
 
