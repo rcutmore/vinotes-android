@@ -89,8 +89,16 @@ public class TastingNoteDataSource extends DataSource {
         ContentValues values = new ContentValues();
         values.put(this.dbColumns.get("id"), note.getId());
         values.put(this.dbColumns.get("wine"), note.getWine().getId());
-        values.put(this.dbColumns.get("tasted"), DateUtils.convertDateToTimestamp(note.getTasted()));
-        values.put(this.dbColumns.get("rating"), note.getRating());
+        if (note.getTasted() != null) {
+            values.put(this.dbColumns.get("tasted"), DateUtils.convertDateToTimestamp(note.getTasted()));
+        } else {
+            values.putNull(this.dbColumns.get("tasted"));
+        }
+        if (note.getRating() != null) {
+            values.put(this.dbColumns.get("rating"), note.getRating());
+        } else {
+            values.putNull(this.dbColumns.get("rating"));
+        }
 
         // Insert tasting note into database if it doesn't exist yet.
         String table = this.dbHelper.getNoteTable();
