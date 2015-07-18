@@ -6,10 +6,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robcutmore.vinotes.database.DatabaseHelper;
 import com.robcutmore.vinotes.request.TastingNoteRequest;
 import com.robcutmore.vinotes.utils.DateUtils;
 import com.robcutmore.vinotes.model.TastingNote;
-import com.robcutmore.vinotes.database.TastingNoteDatabaseHelper;
 import com.robcutmore.vinotes.model.Wine;
 
 import java.util.Date;
@@ -21,8 +21,8 @@ public class TastingNoteDataSource extends DataSource {
     private WineDataSource wineDataSource;
 
     public TastingNoteDataSource(Context context) {
-        this.dbHelper = new TastingNoteDatabaseHelper(context);
-        this.dbColumns = this.dbHelper.getColumns();
+        this.dbHelper = DatabaseHelper.getInstance(context);
+        this.dbColumns = this.dbHelper.getNoteColumns();
         this.wineDataSource = new WineDataSource(context);
     }
 
@@ -39,7 +39,7 @@ public class TastingNoteDataSource extends DataSource {
     }
 
     public void remove(final long id) {
-        String table = this.dbHelper.getTableName();
+        String table = this.dbHelper.getNoteTable();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         this.database.delete(table, whereClause, null);
     }
@@ -93,13 +93,13 @@ public class TastingNoteDataSource extends DataSource {
         values.put(this.dbColumns.get("rating"), note.getRating());
 
         // Insert tasting note into database if it doesn't exist yet.
-        String table = this.dbHelper.getTableName();
+        String table = this.dbHelper.getNoteTable();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
     private TastingNote getFromDatabase(final long id) {
         // Query notes table for note with given id.
-        String table = this.dbHelper.getTableName();
+        String table = this.dbHelper.getNoteTable();
         String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);

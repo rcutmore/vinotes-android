@@ -6,8 +6,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robcutmore.vinotes.database.DatabaseHelper;
 import com.robcutmore.vinotes.model.NoteTrait;
-import com.robcutmore.vinotes.database.NoteTraitDatabaseHelper;
 import com.robcutmore.vinotes.request.NoteTraitRequest;
 
 import java.util.HashMap;
@@ -16,8 +16,8 @@ import java.util.HashMap;
 public class NoteTraitDataSource extends DataSource {
 
     public NoteTraitDataSource(Context context) {
-        this.dbHelper = new NoteTraitDatabaseHelper(context);
-        this.dbColumns = this.dbHelper.getColumns();
+        this.dbHelper = DatabaseHelper.getInstance(context);
+        this.dbColumns = this.dbHelper.getTraitColumns();
     }
 
     public NoteTrait add(final String name) {
@@ -33,7 +33,7 @@ public class NoteTraitDataSource extends DataSource {
     }
 
     public void remove(final long id) {
-        String table = this.dbHelper.getTableName();
+        String table = this.dbHelper.getTraitTable();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         this.database.delete(table, whereClause, null);
     }
@@ -83,13 +83,13 @@ public class NoteTraitDataSource extends DataSource {
         values.put(this.dbColumns.get("name"), trait.getName());
 
         // Insert trait into database if it doesn't exist yet.
-        String table = this.dbHelper.getTableName();
+        String table = this.dbHelper.getTraitTable();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
     private NoteTrait getFromDatabase(final long id) {
         // Query traits table for trait with given id.
-        String table = this.dbHelper.getTableName();
+        String table = this.dbHelper.getTraitTable();
         String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);

@@ -6,8 +6,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robcutmore.vinotes.database.DatabaseHelper;
 import com.robcutmore.vinotes.model.Wine;
-import com.robcutmore.vinotes.database.WineDatabaseHelper;
 import com.robcutmore.vinotes.model.Winery;
 import com.robcutmore.vinotes.request.WineRequest;
 
@@ -19,8 +19,8 @@ public class WineDataSource extends DataSource {
     private WineryDataSource wineryDataSource;
 
     public WineDataSource(Context context) {
-        this.dbHelper = new WineDatabaseHelper(context);
-        this.dbColumns = this.dbHelper.getColumns();
+        this.dbHelper = DatabaseHelper.getInstance(context);
+        this.dbColumns = this.dbHelper.getWineColumns();
         this.wineryDataSource = new WineryDataSource(context);
     }
 
@@ -37,7 +37,7 @@ public class WineDataSource extends DataSource {
     }
 
     public void remove(final long id) {
-        String table = this.dbHelper.getTableName();
+        String table = this.dbHelper.getWineTable();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         this.database.delete(table, whereClause, null);
     }
@@ -91,13 +91,13 @@ public class WineDataSource extends DataSource {
         values.put(this.dbColumns.get("vintage"), wine.getVintage());
 
         // Insert wine into database if it doesn't exist yet.
-        String table = this.dbHelper.getTableName();
+        String table = this.dbHelper.getWineTable();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
     private Wine getFromDatabase(final long id) {
         // Query wines table for wine with given id.
-        String table = this.dbHelper.getTableName();
+        String table = this.dbHelper.getWineTable();
         String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);

@@ -6,8 +6,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robcutmore.vinotes.database.DatabaseHelper;
 import com.robcutmore.vinotes.model.Winery;
-import com.robcutmore.vinotes.database.WineryDatabaseHelper;
 import com.robcutmore.vinotes.request.WineryRequest;
 
 import java.util.HashMap;
@@ -16,8 +16,8 @@ import java.util.HashMap;
 public class WineryDataSource extends DataSource {
 
     public WineryDataSource(Context context) {
-        this.dbHelper = new WineryDatabaseHelper(context);
-        this.dbColumns = this.dbHelper.getColumns();
+        this.dbHelper = DatabaseHelper.getInstance(context);
+        this.dbColumns = this.dbHelper.getWineryColumns();
     }
 
     public Winery add(final String name) {
@@ -34,7 +34,7 @@ public class WineryDataSource extends DataSource {
 
     public void remove(final long id) {
         // Only remove from database, wineries cannot be removed from API.
-        String table = this.dbHelper.getTableName();
+        String table = this.dbHelper.getWineryTable();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         this.database.delete(table, whereClause, null);
     }
@@ -84,13 +84,13 @@ public class WineryDataSource extends DataSource {
         values.put(this.dbColumns.get("name"), winery.getName());
 
         // Insert winery into database if it doesn't exist yet.
-        String table = this.dbHelper.getTableName();
+        String table = this.dbHelper.getWineryTable();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
     private Winery getFromDatabase(final long id) {
         // Query wineries table for winery with given id.
-        String table = this.dbHelper.getTableName();
+        String table = this.dbHelper.getWineryTable();
         String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
