@@ -69,6 +69,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         columns.put("wine", "wine_id");
         columns.put("tasted", "tasted");
         columns.put("rating", "rating");
+        return columns;
     }
     private static final String NOTE_SQL_CREATE = String.format(
         "CREATE TABLE IF NOT EXISTS %s(%s INTEGER PRIMARY KEY NOT NULL, " +
