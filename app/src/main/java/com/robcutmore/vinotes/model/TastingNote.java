@@ -86,7 +86,7 @@ public class TastingNote {
         this.finishTraits = finishTraits;
     }
 
-    public int getRating() {
+    public Integer getRating() {
         return this.rating;
     }
 
