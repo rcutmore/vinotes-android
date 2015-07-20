@@ -1,10 +1,12 @@
 package com.robcutmore.vinotes.ui;
 
+
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.robcutmore.vinotes.R;
@@ -13,13 +15,22 @@ import com.robcutmore.vinotes.R;
 public class AddNoteActivity extends ActionBarActivity {
 
     private TextView etTastingDate;
+    private TextView etWinery;
+    private TextView etWine;
+    private TextView etVintage;
+    private RatingBar rbRating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
 
-        etTastingDate = (TextView) findViewById(R.id.etTastingDate);
+        // Get references to user input.
+        this.etTastingDate = (TextView) findViewById(R.id.etTastingDate);
+        this.etWinery = (TextView) findViewById(R.id.etWinery);
+        this.etWine = (TextView) findViewById(R.id.etWine);
+        this.etVintage = (TextView) findViewById(R.id.etVintage);
+        this.rbRating = (RatingBar) findViewById(R.id.rbRating);
     }
 
     @Override
@@ -46,8 +57,9 @@ public class AddNoteActivity extends ActionBarActivity {
 
     public void onSaveNote(View view) {
         // Validate user input.
-
-        // Save new note.
+        if (isInputValid()) {
+            // Save new note.
+        }
     }
 
     public void showDatePickerDialog(View view) {
@@ -56,7 +68,29 @@ public class AddNoteActivity extends ActionBarActivity {
     }
 
     public void setTastingDate(final String newTastingDate) {
-        etTastingDate.setText(newTastingDate);
+        this.etTastingDate.setText(newTastingDate);
+    }
+
+    private boolean isInputValid() {
+        boolean isValid = true;
+
+        boolean isWineryEmpty = this.etWinery.getText().toString().trim().length() == 0;
+        if (isWineryEmpty) {
+            this.etWinery.setError("Winery must be entered.");
+            isValid = false;
+        }
+        boolean isWineEmpty = this.etWine.getText().toString().trim().length() == 0;
+        if (isWineEmpty) {
+            this.etWine.setError("Wine must be entered.");
+            isValid = false;
+        }
+        boolean isVintageEmpty = this.etVintage.getText().toString().trim().length() == 0;
+        if (isVintageEmpty) {
+            this.etVintage.setError("Vintage must be entered.");
+            isValid = false;
+        }
+
+        return isValid;
     }
 
 }
