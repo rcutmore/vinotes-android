@@ -1,6 +1,7 @@
 package com.robcutmore.vinotes.ui;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -101,10 +102,11 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void initializeDataSources() {
-        this.traitDataSource = new NoteTraitDataSource(this);
-        this.wineryDataSource = new WineryDataSource(this);
-        this.wineDataSource = new WineDataSource(this);
-        this.noteDataSource = new TastingNoteDataSource(this);
+        Context appContext = this.getApplicationContext();
+        this.traitDataSource = new NoteTraitDataSource(appContext);
+        this.wineryDataSource = new WineryDataSource(appContext);
+        this.wineDataSource = new WineDataSource(appContext);
+        this.noteDataSource = new TastingNoteDataSource(appContext);
         this.openDataSources();
     }
 
