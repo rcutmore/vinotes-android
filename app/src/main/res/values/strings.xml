@@ -3,9 +3,8 @@
     <string name="action_settings">Settings</string>
     <string name="button_add_note">Add Note</string>
     <string name="button_save_note">Save Note</string>
-    <string name="edit_text_add_note_tasting_date_hint">Enter Date (Optional)</string>
-    <string name="edit_text_add_note_vintage_hint">Enter Vintage</string>
-    <string name="edit_text_add_note_wine_hint">Enter Wine</string>
-    <string name="edit_text_add_note_winery_hint">Enter Winery</string>
+    <string name="edit_text_add_note_tasting_date_hint">Enter Tasting Date</string>
+    <string name="edit_text_add_note_wine_hint">Select Wine</string>
+    <string name="edit_text_add_note_winery_hint">Select Winery</string>
     <string name="title_activity_add_note">Add New Tasting Note</string>
 </resources>

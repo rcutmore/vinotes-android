@@ -16,31 +16,27 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:onClick="showDatePickerDialog"
-        android:padding="16dip" />
+        android:padding="@dimen/input_field_padding" />
 
     <EditText
         android:id="@+id/etWinery"
+        android:focusable="false"
         android:gravity="center"
         android:hint="@string/edit_text_add_note_winery_hint"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:padding="16dip" />
+        android:onClick="showWineryPicker"
+        android:padding="@dimen/input_field_padding" />
 
     <EditText
         android:id="@+id/etWine"
+        android:enabled="false"
+        android:focusable="false"
         android:gravity="center"
-        android:hint="@string/edit_text_add_note_wine_hint"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:padding="16dip" />
-
-    <EditText
-        android:id="@+id/etVintage"
-        android:gravity="center"
-        android:hint="@string/edit_text_add_note_vintage_hint"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:padding="16dip" />
+        android:onClick="showWinePicker"
+        android:padding="@dimen/input_field_padding" />
 
     <RatingBar
         android:id="@+id/rbRating"
@@ -53,8 +49,8 @@
         android:id="@+id/btnSave"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:onClick="onSaveNote"
-        android:padding="16dip"
+        android:onClick="saveNote"
+        android:padding="@dimen/input_field_padding"
         android:text="@string/button_save_note" />
 
 </LinearLayout>

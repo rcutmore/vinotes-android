@@ -6,18 +6,17 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RatingBar;
-import android.widget.TextView;
 
 import com.robcutmore.vinotes.R;
 
 
 public class AddNoteActivity extends ActionBarActivity {
 
-    private TextView etTastingDate;
-    private TextView etWinery;
-    private TextView etWine;
-    private TextView etVintage;
+    private EditText etTastingDate;
+    private EditText etWinery;
+    private EditText etWine;
     private RatingBar rbRating;
 
     @Override
@@ -26,22 +25,26 @@ public class AddNoteActivity extends ActionBarActivity {
         setContentView(R.layout.activity_add_note);
 
         // Get references to user input.
-        this.etTastingDate = (TextView) findViewById(R.id.etTastingDate);
-        this.etWinery = (TextView) findViewById(R.id.etWinery);
-        this.etWine = (TextView) findViewById(R.id.etWine);
-        this.etVintage = (TextView) findViewById(R.id.etVintage);
+        this.etTastingDate = (EditText) findViewById(R.id.etTastingDate);
+        this.etWinery = (EditText) findViewById(R.id.etWinery);
+        this.etWine = (EditText) findViewById(R.id.etWine);
         this.rbRating = (RatingBar) findViewById(R.id.rbRating);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_add_note, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -55,42 +58,51 @@ public class AddNoteActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onSaveNote(View view) {
+    public void saveNote(final View view) {
         // Validate user input.
-        if (isInputValid()) {
+        if (!this.isAnyInputInvalid()) {
             // Save new note.
         }
-    }
-
-    public void showDatePickerDialog(View view) {
-        DatePickerFragment newFragment = new DatePickerFragment();
-        newFragment.show(getFragmentManager(), "datePicker");
     }
 
     public void setTastingDate(final String newTastingDate) {
         this.etTastingDate.setText(newTastingDate);
     }
 
-    private boolean isInputValid() {
-        boolean isValid = true;
+    public void showDatePickerDialog(final View view) {
+        DatePickerFragment newFragment = new DatePickerFragment();
+        newFragment.show(getFragmentManager(), "datePicker");
+    }
 
-        boolean isWineryEmpty = this.etWinery.getText().toString().trim().length() == 0;
-        if (isWineryEmpty) {
-            this.etWinery.setError("Winery must be entered.");
-            isValid = false;
+    public void showWinePicker(final View view) {
+        // Test stub, to be replaced.
+        this.etWine.setText("Test Wine");
+    }
+
+    public void showWineryPicker(final View view) {
+        // Test stub, to be replaced.
+        this.etWinery.setText("Test Winery");
+        this.etWine.setEnabled(true);
+        this.etWine.setHint(R.string.edit_text_add_note_wine_hint);
+    }
+
+    private boolean isAnyInputInvalid() {
+        boolean isInvalid = false;
+
+        if (this.isInputEmpty(this.etWinery)) {
+            this.etWinery.setError("Winery must be selected.");
+            isInvalid = true;
         }
-        boolean isWineEmpty = this.etWine.getText().toString().trim().length() == 0;
-        if (isWineEmpty) {
-            this.etWine.setError("Wine must be entered.");
-            isValid = false;
-        }
-        boolean isVintageEmpty = this.etVintage.getText().toString().trim().length() == 0;
-        if (isVintageEmpty) {
-            this.etVintage.setError("Vintage must be entered.");
-            isValid = false;
+        if (this.isInputEmpty(this.etWine)) {
+            this.etWine.setError("Wine must be selected.");
+            isInvalid = true;
         }
 
-        return isValid;
+        return isInvalid;
+    }
+
+    private boolean isInputEmpty(final EditText userInput) {
+        return userInput.getText().toString().trim().length() == 0;
     }
 
 }
