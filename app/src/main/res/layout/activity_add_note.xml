@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -5,7 +6,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:padding="16dip"
+    android:padding="@dimen/default_padding"
     tools:context="com.robcutmore.vinotes.ui.AddNoteActivity">
 
     <EditText
@@ -16,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:onClick="showDatePickerDialog"
-        android:padding="@dimen/input_field_padding" />
+        android:padding="@dimen/default_padding" />
 
     <EditText
         android:id="@+id/etWinery"
@@ -26,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:onClick="showWineryPicker"
-        android:padding="@dimen/input_field_padding" />
+        android:padding="@dimen/default_padding" />
 
     <EditText
         android:id="@+id/etWine"
@@ -36,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:onClick="showWinePicker"
-        android:padding="@dimen/input_field_padding" />
+        android:padding="@dimen/default_padding" />
 
     <RatingBar
         android:id="@+id/rbRating"
@@ -50,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:onClick="saveNote"
-        android:padding="@dimen/input_field_padding"
+        android:padding="@dimen/default_padding"
         android:text="@string/button_save_note" />
 
 </LinearLayout>
