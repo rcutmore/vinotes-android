@@ -7,4 +7,5 @@
     <string name="edit_text_add_note_wine_hint">Select Wine</string>
     <string name="edit_text_add_note_winery_hint">Select Winery</string>
     <string name="title_activity_add_note">Add New Tasting Note</string>
+    <string name="title_activity_select_winery">Select Winery</string>
 </resources>

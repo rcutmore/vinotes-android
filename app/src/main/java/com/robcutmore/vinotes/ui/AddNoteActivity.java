@@ -1,6 +1,7 @@
 package com.robcutmore.vinotes.ui;
 
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,13 +15,15 @@ import com.robcutmore.vinotes.R;
 
 public class AddNoteActivity extends ActionBarActivity {
 
+    private final int WINERY_REQUEST_CODE = 1;
+
     private EditText etTastingDate;
     private EditText etWinery;
     private EditText etWine;
     private RatingBar rbRating;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
 
@@ -80,10 +83,8 @@ public class AddNoteActivity extends ActionBarActivity {
     }
 
     public void showWineryPicker(final View view) {
-        // Test stub, to be replaced.
-        this.etWinery.setText("Test Winery");
-        this.etWine.setEnabled(true);
-        this.etWine.setHint(R.string.edit_text_add_note_wine_hint);
+        Intent intent = new Intent(this, SelectWineryActivity.class);
+        startActivityForResult(intent, this.WINERY_REQUEST_CODE);
     }
 
     private boolean isAnyInputInvalid() {

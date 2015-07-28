@@ -1,28 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.robcutmore.vinotes" >
+<manifest
+    package="com.robcutmore.vinotes"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
+
         <activity
-            android:name=".ui.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:name=".ui.MainActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".ui.AddNoteActivity"
             android:label="@string/title_activity_add_note"
-            android:parentActivityName=".ui.MainActivity" >
+            android:name=".ui.AddNoteActivity"
+            android:parentActivityName=".ui.MainActivity">
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.MainActivity" />
         </activity>
-    </application>
 
+        <activity
+            android:label="@string/title_activity_select_winery"
+            android:name=".ui.SelectWineryActivity"
+            android:parentActivityName=".ui.AddNoteActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.AddNoteActivity" />
+        </activity>
+    </application>
 </manifest>
