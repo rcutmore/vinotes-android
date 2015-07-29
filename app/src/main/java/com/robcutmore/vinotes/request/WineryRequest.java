@@ -3,24 +3,26 @@ package com.robcutmore.vinotes.request;
 
 import com.robcutmore.vinotes.model.Winery;
 
+import java.util.ArrayList;
+
 
 public final class WineryRequest {
 
     public static Winery add(final String name) {
         String response = sendPOST(name);
-        Winery[] wineries = parseResponse(response);
-        return (wineries.length > 0) ? wineries[0] : null;
+        ArrayList<Winery> wineries = parseResponse(response);
+        return (wineries.size() > 0) ? wineries.get(0) : null;
     }
 
     public static Winery get(final long id) {
         String response = sendGET(id);
-        Winery[] wineries = parseResponse(response);
-        return (wineries.length > 0) ? wineries[0] : null;
+        ArrayList<Winery> wineries = parseResponse(response);
+        return (wineries.size() > 0) ? wineries.get(0) : null;
     }
 
-    public static Winery[] getAll() {
+    public static ArrayList<Winery> getAll() {
         String response = sendGET();
-        Winery[] wineries = parseResponse(response);
+        ArrayList<Winery> wineries = parseResponse(response);
         return wineries;
     }
 
@@ -37,12 +39,11 @@ public final class WineryRequest {
         return "";
     }
 
-    private static Winery[] parseResponse(final String response) {
+    private static ArrayList<Winery> parseResponse(final String response) {
         // Test stub, replace with code to parse JSON response.
-        Winery[] wineries = {
-            new Winery(1, "Test 1"),
-            new Winery(2, "Test 2")
-        };
+        ArrayList<Winery> wineries = new ArrayList<>();
+        wineries.add(new Winery(1, "Test 1"));
+        wineries.add(new Winery(2, "Test 2"));
         return wineries;
     }
 

@@ -10,7 +10,7 @@ import com.robcutmore.vinotes.database.DatabaseHelper;
 import com.robcutmore.vinotes.model.Winery;
 import com.robcutmore.vinotes.request.WineryRequest;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 
 public class WineryDataSource extends DataSource {
@@ -53,16 +53,16 @@ public class WineryDataSource extends DataSource {
         return winery;
     }
 
-    public HashMap<Long, Winery> getAll() {
-        // Request all wineries from external API.
-        Winery[] wineriesFromAPI =  WineryRequest.getAll();
+    public ArrayList<Winery> getAll(final boolean refreshFromAPI) {
+        ArrayList<Winery> wineries;
+        if (refreshFromAPI) {
+            wineries = WineryRequest.getAll();
 
-        // Add each winery to local database and HashMap to be returned.
-        HashMap<Long, Winery> wineries = new HashMap<>();
-        for (int i = 0; i < wineriesFromAPI.length; i++) {
-            Winery winery = wineriesFromAPI[i];
-            this.addToDatabase(winery);
-            wineries.put(winery.getId(), winery);
+            for (int i = 0; i < wineries.size(); i++) {
+                this.addToDatabase(wineries.get(i));
+            }
+        } else {
+            wineries = this.getAllFromDatabase();
         }
 
         return wineries;
@@ -86,6 +86,22 @@ public class WineryDataSource extends DataSource {
         // Insert winery into database if it doesn't exist yet.
         String table = this.dbHelper.getWineryTable();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+    }
+
+    private ArrayList<Winery> getAllFromDatabase() {
+        // Query wineries table for all wineries.
+        String table = this.dbHelper.getWineryTable();
+        String[] columns = this.getDatabaseTableColumns();
+        Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
+
+        // Store and return wineries.
+        cursor.moveToFirst();
+        ArrayList<Winery> wineries = new ArrayList<>();
+        while (!cursor.isAfterLast()) {
+            wineries.add(this.cursorToWinery(cursor));
+            cursor.moveToNext();
+        }
+        return wineries;
     }
 
     private Winery getFromDatabase(final long id) {
