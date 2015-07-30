@@ -12,8 +12,8 @@ import com.robcutmore.vinotes.utils.DateUtils;
 import com.robcutmore.vinotes.model.TastingNote;
 import com.robcutmore.vinotes.model.Wine;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 
 public class TastingNoteDataSource extends DataSource {
@@ -58,16 +58,16 @@ public class TastingNoteDataSource extends DataSource {
         return note;
     }
 
-    public HashMap<Long, TastingNote> getAll() {
-        // Request all notes from external API.
-        TastingNote[] notesFromAPI = TastingNoteRequest.getAll();
+    public ArrayList<TastingNote> getAll(final boolean refreshFromAPI) {
+        ArrayList<TastingNote> notes;
+        if (refreshFromAPI) {
+            notes = TastingNoteRequest.getAll();
 
-        // Add each note to local database and HashMap to be returned.
-        HashMap<Long, TastingNote> notes = new HashMap<>();
-        for (int i = 0; i < notesFromAPI.length; i++) {
-            TastingNote note = notesFromAPI[i];
-            this.addToDatabase(note);
-            notes.put(note.getId(), note);
+            for (TastingNote note : notes) {
+                this.addToDatabase(note);
+            }
+        } else {
+            notes = this.getAllFromDatabase();
         }
 
         return notes;
@@ -103,6 +103,22 @@ public class TastingNoteDataSource extends DataSource {
         // Insert tasting note into database if it doesn't exist yet.
         String table = this.dbHelper.getNoteTable();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+    }
+
+    private ArrayList<TastingNote> getAllFromDatabase() {
+        // Query notes table for all notes.
+        String table = this.dbHelper.getNoteTable();
+        String[] columns = this.getDatabaseTableColumns();
+        Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
+
+        // Store and return notes.
+        cursor.moveToFirst();
+        ArrayList<TastingNote> notes = new ArrayList<>();
+        while (!cursor.isAfterLast()) {
+            notes.add(this.cursorToNote(cursor));
+            cursor.moveToNext();
+        }
+        return notes;
     }
 
     private TastingNote getFromDatabase(final long id) {

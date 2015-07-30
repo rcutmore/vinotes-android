@@ -20,7 +20,6 @@ import com.robcutmore.vinotes.model.TastingNote;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -99,11 +98,11 @@ public class MainActivity extends ActionBarActivity {
         this.traitDataSource.getAll(true);
         this.wineryDataSource.getAll(true);
         this.wineDataSource.getAll(true);
-        HashMap<Long, TastingNote> notesFromAPI = this.noteDataSource.getAll();
+        ArrayList<TastingNote> notesFromAPI = this.noteDataSource.getAll(true);
 
         // Add notes to note list.
         this.notes.clear();
-        this.notes.addAll(notesFromAPI.values());
+        this.notes.addAll(notesFromAPI);
         this.notesAdapter.notifyDataSetChanged();
     }
 
