@@ -10,7 +10,7 @@ import com.robcutmore.vinotes.database.DatabaseHelper;
 import com.robcutmore.vinotes.model.NoteTrait;
 import com.robcutmore.vinotes.request.NoteTraitRequest;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 
 public class NoteTraitDataSource extends DataSource {
@@ -52,16 +52,16 @@ public class NoteTraitDataSource extends DataSource {
         return trait;
     }
 
-    public HashMap<Long, NoteTrait> getAll() {
-        // Request all wineries from external API.
-        NoteTrait[] traitsFromAPI =  NoteTraitRequest.getAll();
+    public ArrayList<NoteTrait> getAll(final boolean refreshFromAPI) {
+        ArrayList<NoteTrait> traits;
+        if (refreshFromAPI) {
+            traits = NoteTraitRequest.getAll();
 
-        // Add each winery to local database and HashMap to be returned.
-        HashMap<Long, NoteTrait> traits = new HashMap<>();
-        for (int i = 0; i < traitsFromAPI.length; i++) {
-            NoteTrait trait = traitsFromAPI[i];
-            this.addToDatabase(trait);
-            traits.put(trait.getId(), trait);
+            for (NoteTrait trait : traits) {
+                this.addToDatabase(trait);
+            }
+        } else {
+            traits = this.getAllFromDatabase();
         }
 
         return traits;
@@ -85,6 +85,22 @@ public class NoteTraitDataSource extends DataSource {
         // Insert trait into database if it doesn't exist yet.
         String table = this.dbHelper.getTraitTable();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+    }
+
+    private ArrayList<NoteTrait> getAllFromDatabase() {
+        // Query traits table for all traits.
+        String table = this.dbHelper.getTraitTable();
+        String[] columns = this.getDatabaseTableColumns();
+        Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
+
+        // Store and return traits.
+        cursor.moveToFirst();
+        ArrayList<NoteTrait> traits = new ArrayList<>();
+        while (!cursor.isAfterLast()) {
+            traits.add(this.cursorToTrait(cursor));
+            cursor.moveToNext();
+        }
+        return traits;
     }
 
     private NoteTrait getFromDatabase(final long id) {

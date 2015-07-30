@@ -3,22 +3,24 @@ package com.robcutmore.vinotes.request;
 
 import com.robcutmore.vinotes.model.NoteTrait;
 
+import java.util.ArrayList;
+
 
 public final class NoteTraitRequest {
 
     public static NoteTrait add(final String name) {
         String response = sendPOST(name);
-        NoteTrait[] traits = parseResponse(response);
-        return (traits.length > 0) ? traits[0] : null;
+        ArrayList<NoteTrait> traits = parseResponse(response);
+        return (traits.size() > 0) ? traits.get(0) : null;
     }
 
     public static NoteTrait get(final long id) {
         String response = sendGET(id);
-        NoteTrait[] traits = parseResponse(response);
-        return (traits.length > 0) ? traits[0] : null;
+        ArrayList<NoteTrait> traits = parseResponse(response);
+        return (traits.size() > 0) ? traits.get(0) : null;
     }
 
-    public static NoteTrait[] getAll() {
+    public static ArrayList<NoteTrait> getAll() {
         String response = sendGET();
         return parseResponse(response);
     }
@@ -37,12 +39,11 @@ public final class NoteTraitRequest {
         return "";
     }
 
-    private static NoteTrait[] parseResponse(final String response) {
+    private static ArrayList<NoteTrait> parseResponse(final String response) {
         // Test stub, replace with code to parse JSON response.
-        NoteTrait[] traits = {
-            new NoteTrait(1, "Trait 1"),
-            new NoteTrait(2, "Trait 2")
-        };
+        ArrayList<NoteTrait> traits = new ArrayList<>();
+        traits.add(new NoteTrait(1, "Trait 1"));
+        traits.add(new NoteTrait(2, "Trait 2"));
         return traits;
     }
 
