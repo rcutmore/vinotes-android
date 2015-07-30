@@ -98,7 +98,7 @@ public class MainActivity extends ActionBarActivity {
         // Refresh data from API.
         this.traitDataSource.getAll();
         this.wineryDataSource.getAll(true);
-        this.wineDataSource.getAll();
+        this.wineDataSource.getAll(true);
         HashMap<Long, TastingNote> notesFromAPI = this.noteDataSource.getAll();
 
         // Add notes to note list.

@@ -11,7 +11,7 @@ import com.robcutmore.vinotes.model.Wine;
 import com.robcutmore.vinotes.model.Winery;
 import com.robcutmore.vinotes.request.WineRequest;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 
 public class WineDataSource extends DataSource {
@@ -56,16 +56,16 @@ public class WineDataSource extends DataSource {
         return wine;
     }
 
-    public HashMap<Long, Wine> getAll() {
-        // Request all wines from external API.
-        Wine[] winesFromAPI = WineRequest.getAll();
+    public ArrayList<Wine> getAll(final boolean refreshFromAPI) {
+        ArrayList<Wine> wines;
+        if (refreshFromAPI) {
+            wines = WineRequest.getAll();
 
-        // Add each wine to local database and HashMap to be returned.
-        HashMap<Long, Wine> wines = new HashMap<>();
-        for (int i = 0; i < winesFromAPI.length; i++) {
-            Wine wine = winesFromAPI[i];
-            this.addToDatabase(wine);
-            wines.put(wine.getId(), wine);
+            for (Wine wine : wines) {
+                this.addToDatabase(wine);
+            }
+        } else {
+            wines = this.getAllFromDatabase();
         }
 
         return wines;
@@ -93,6 +93,22 @@ public class WineDataSource extends DataSource {
         // Insert wine into database if it doesn't exist yet.
         String table = this.dbHelper.getWineTable();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+    }
+
+    private ArrayList<Wine> getAllFromDatabase() {
+        // Query wines table for all wines.
+        String table = this.dbHelper.getWineTable();
+        String[] columns = this.getDatabaseTableColumns();
+        Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
+
+        // Store and return wines.
+        cursor.moveToFirst();
+        ArrayList<Wine> wines = new ArrayList<>();
+        while (!cursor.isAfterLast()) {
+            wines.add(this.cursorToWine(cursor));
+            cursor.moveToNext();
+        }
+        return wines;
     }
 
     private Wine getFromDatabase(final long id) {
