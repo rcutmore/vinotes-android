@@ -11,6 +11,10 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 
 import com.robcutmore.vinotes.R;
+import com.robcutmore.vinotes.dao.WineryDataSource;
+import com.robcutmore.vinotes.model.Winery;
+
+import java.sql.SQLException;
 
 
 public class AddNoteActivity extends ActionBarActivity {
@@ -22,16 +26,23 @@ public class AddNoteActivity extends ActionBarActivity {
     private EditText etWine;
     private RatingBar rbRating;
 
+    private WineryDataSource wineryDataSource;
+    private Winery winery;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
+
+        this.initializeDataSources();
 
         // Get references to user input.
         this.etTastingDate = (EditText) findViewById(R.id.etTastingDate);
         this.etWinery = (EditText) findViewById(R.id.etWinery);
         this.etWine = (EditText) findViewById(R.id.etWine);
         this.rbRating = (RatingBar) findViewById(R.id.rbRating);
+
+        this.winery = null;
     }
 
     @Override
@@ -44,6 +55,7 @@ public class AddNoteActivity extends ActionBarActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        this.wineryDataSource.close();
     }
 
     @Override
@@ -59,6 +71,28 @@ public class AddNoteActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if (requestCode == this.WINERY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                // Look up selected winery.
+                long wineryId = data.getLongExtra("id", 0);
+                this.winery = (wineryId > 0) ? this.wineryDataSource.get(wineryId) : null;
+
+                if (this.winery != null) {
+                    // Update winery and wine inputs if winery found.
+                    this.etWinery.setText(this.winery.getName());
+                    this.etWine.setEnabled(true);
+                } else {
+                    // Reset winery and wine inputs if winery not found.
+                    this.etWinery.setText("");
+                    this.etWine.setText("");
+                    this.etWine.setEnabled(false);
+                }
+            }
+        }
     }
 
     public void saveNote(final View view) {
@@ -83,8 +117,18 @@ public class AddNoteActivity extends ActionBarActivity {
     }
 
     public void showWineryPicker(final View view) {
+        // Open activity to allow user to select winery.
         Intent intent = new Intent(this, SelectWineryActivity.class);
         startActivityForResult(intent, this.WINERY_REQUEST_CODE);
+    }
+
+    private void initializeDataSources() {
+        this.wineryDataSource = new WineryDataSource(this.getApplicationContext());
+        try {
+            this.wineryDataSource.open();
+        } catch (SQLException e) {
+            // handle error
+        }
     }
 
     private boolean isAnyInputInvalid() {

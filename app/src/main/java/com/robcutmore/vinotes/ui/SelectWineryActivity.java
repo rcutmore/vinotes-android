@@ -1,12 +1,15 @@
 package com.robcutmore.vinotes.ui;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -43,6 +46,18 @@ public class SelectWineryActivity extends ActionBarActivity {
         }
     };
 
+    // This will return the selected winery id to the calling activity.
+    private final AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Winery winery = (Winery) parent.getAdapter().getItem(position);
+            Intent intent = new Intent(SelectWineryActivity.this, AddNoteActivity.class);
+            intent.putExtra("id", winery.getId());
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+    };
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +68,7 @@ public class SelectWineryActivity extends ActionBarActivity {
         this.etWinerySearch = (EditText) findViewById(R.id.etWinerySearch);
         this.etWinerySearch.addTextChangedListener(this.searchWatcher);
         this.lvWineries = (ListView) findViewById(R.id.lvWineries);
+        this.lvWineries.setOnItemClickListener(this.clickListener);
 
         this.wineries = this.wineryDataSource.getAll(false);
         this.wineriesAdapter = new ArrayAdapter<>(
