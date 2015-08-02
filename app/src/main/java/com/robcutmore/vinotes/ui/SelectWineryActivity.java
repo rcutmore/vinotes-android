@@ -90,6 +90,7 @@ public class SelectWineryActivity extends ActionBarActivity {
     public void onDestroy() {
         super.onDestroy();
         this.etWinerySearch.removeTextChangedListener(this.searchWatcher);
+        this.wineryDataSource.close();
     }
 
     @Override
