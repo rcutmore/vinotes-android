@@ -82,7 +82,7 @@ public class SelectWineryActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_note, menu);
+        getMenuInflater().inflate(R.menu.menu_select_winery, menu);
         return true;
     }
 
