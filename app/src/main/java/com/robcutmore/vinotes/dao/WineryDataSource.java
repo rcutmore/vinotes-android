@@ -5,19 +5,26 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.robcutmore.vinotes.database.DatabaseHelper;
 import com.robcutmore.vinotes.model.Winery;
 import com.robcutmore.vinotes.request.WineryRequest;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 
 public class WineryDataSource extends DataSource {
 
-    public WineryDataSource(Context context) {
+    public WineryDataSource(final Context context) {
         this.dbHelper = DatabaseHelper.getInstance(context);
         this.dbColumns = this.dbHelper.getWineryColumns();
+    }
+
+    protected WineryDataSource(final Context context, final boolean closeDatabaseWhenFinished) {
+        this(context);
+        this.closeDatabaseWhenFinished = closeDatabaseWhenFinished;
     }
 
     public Winery add(final String name) {
@@ -36,7 +43,9 @@ public class WineryDataSource extends DataSource {
         // Only remove from database, wineries cannot be removed from API.
         String table = this.dbHelper.getWineryTable();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
+        this.connectToDatabase();
         this.database.delete(table, whereClause, null);
+        this.close();
     }
 
     public Winery get(final long id) {
@@ -69,6 +78,15 @@ public class WineryDataSource extends DataSource {
     }
 
     @Override
+    protected void connectToDatabase() {
+        try {
+            this.open();
+        } catch (SQLException e) {
+            Log.w(WineryDataSource.class.getName(), "Error connecting to database.");
+        }
+    }
+
+    @Override
     protected String[] getDatabaseTableColumns() {
         String[] columns = {
             this.dbColumns.get("id"),
@@ -85,13 +103,16 @@ public class WineryDataSource extends DataSource {
 
         // Insert winery into database if it doesn't exist yet.
         String table = this.dbHelper.getWineryTable();
+        this.connectToDatabase();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        this.close();
     }
 
     private ArrayList<Winery> getAllFromDatabase() {
         // Query wineries table for all wineries.
         String table = this.dbHelper.getWineryTable();
         String[] columns = this.getDatabaseTableColumns();
+        this.connectToDatabase();
         Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
 
         // Store and return wineries.
@@ -101,6 +122,8 @@ public class WineryDataSource extends DataSource {
             wineries.add(this.cursorToWinery(cursor));
             cursor.moveToNext();
         }
+        cursor.close();
+        this.close();
         return wineries;
     }
 
@@ -109,12 +132,14 @@ public class WineryDataSource extends DataSource {
         String table = this.dbHelper.getWineryTable();
         String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
+        this.connectToDatabase();
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
 
         // Store and return winery.
         cursor.moveToFirst();
         Winery winery = !cursor.isAfterLast() ? this.cursorToWinery(cursor) : null;
         cursor.close();
+        this.close();
         return winery;
     }
 

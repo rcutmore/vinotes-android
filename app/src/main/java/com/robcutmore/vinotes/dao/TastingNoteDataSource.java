@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.robcutmore.vinotes.database.DatabaseHelper;
 import com.robcutmore.vinotes.request.TastingNoteRequest;
@@ -12,6 +13,7 @@ import com.robcutmore.vinotes.utils.DateUtils;
 import com.robcutmore.vinotes.model.TastingNote;
 import com.robcutmore.vinotes.model.Wine;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -20,10 +22,15 @@ public class TastingNoteDataSource extends DataSource {
 
     private WineDataSource wineDataSource;
 
-    public TastingNoteDataSource(Context context) {
+    public TastingNoteDataSource(final Context context) {
         this.dbHelper = DatabaseHelper.getInstance(context);
         this.dbColumns = this.dbHelper.getNoteColumns();
         this.wineDataSource = new WineDataSource(context);
+    }
+
+    protected TastingNoteDataSource(final Context context, final boolean closeDatabaseWhenFinished) {
+        this(context);
+        this.closeDatabaseWhenFinished = closeDatabaseWhenFinished;
     }
 
     public TastingNote add(final long wineId, final Date tasted, final Integer rating) {
@@ -41,7 +48,9 @@ public class TastingNoteDataSource extends DataSource {
     public void remove(final long id) {
         String table = this.dbHelper.getNoteTable();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
+        this.connectToDatabase();
         this.database.delete(table, whereClause, null);
+        this.close();
     }
 
     public TastingNote get(final long id) {
@@ -74,6 +83,15 @@ public class TastingNoteDataSource extends DataSource {
     }
 
     @Override
+    protected void connectToDatabase() {
+        try {
+            this.open();
+        } catch (SQLException e) {
+            Log.w(TastingNoteDataSource.class.getName(), "Error connecting to database.");
+        }
+    }
+
+    @Override
     protected String[] getDatabaseTableColumns() {
         String[] columns = {
             this.dbColumns.get("id"),
@@ -102,13 +120,16 @@ public class TastingNoteDataSource extends DataSource {
 
         // Insert tasting note into database if it doesn't exist yet.
         String table = this.dbHelper.getNoteTable();
+        this.connectToDatabase();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        this.close();
     }
 
     private ArrayList<TastingNote> getAllFromDatabase() {
         // Query notes table for all notes.
         String table = this.dbHelper.getNoteTable();
         String[] columns = this.getDatabaseTableColumns();
+        this.connectToDatabase();
         Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
 
         // Store and return notes.
@@ -118,6 +139,8 @@ public class TastingNoteDataSource extends DataSource {
             notes.add(this.cursorToNote(cursor));
             cursor.moveToNext();
         }
+        cursor.close();
+        this.close();
         return notes;
     }
 
@@ -126,12 +149,14 @@ public class TastingNoteDataSource extends DataSource {
         String table = this.dbHelper.getNoteTable();
         String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
+        this.connectToDatabase();
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
 
         // Store and return tasting note.
         cursor.moveToFirst();
         TastingNote note = !cursor.isAfterLast() ? this.cursorToNote(cursor) : null;
         cursor.close();
+        this.close();
         return note;
     }
 

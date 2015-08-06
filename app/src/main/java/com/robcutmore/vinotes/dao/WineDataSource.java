@@ -5,12 +5,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.robcutmore.vinotes.database.DatabaseHelper;
 import com.robcutmore.vinotes.model.Wine;
 import com.robcutmore.vinotes.model.Winery;
 import com.robcutmore.vinotes.request.WineRequest;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 
@@ -18,10 +20,15 @@ public class WineDataSource extends DataSource {
 
     private WineryDataSource wineryDataSource;
 
-    public WineDataSource(Context context) {
+    public WineDataSource(final Context context) {
         this.dbHelper = DatabaseHelper.getInstance(context);
         this.dbColumns = this.dbHelper.getWineColumns();
-        this.wineryDataSource = new WineryDataSource(context);
+        this.wineryDataSource = new WineryDataSource(context, false);
+    }
+
+    protected WineDataSource(final Context context, final boolean closeDatabaseWhenFinished) {
+        this(context);
+        this.closeDatabaseWhenFinished = closeDatabaseWhenFinished;
     }
 
     public Wine add(final long wineryId, final String name, final int vintage) {
@@ -39,7 +46,9 @@ public class WineDataSource extends DataSource {
     public void remove(final long id) {
         String table = this.dbHelper.getWineTable();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
+        this.connectToDatabase();
         this.database.delete(table, whereClause, null);
+        this.close();
     }
 
     public Wine get(final long id) {
@@ -72,6 +81,15 @@ public class WineDataSource extends DataSource {
     }
 
     @Override
+    protected void connectToDatabase() {
+        try {
+            this.open();
+        } catch (SQLException e) {
+            Log.w(WineDataSource.class.getName(), "Error connecting to database.");
+        }
+    }
+
+    @Override
     protected String[] getDatabaseTableColumns() {
         String[] columns = {
             this.dbColumns.get("id"),
@@ -92,13 +110,16 @@ public class WineDataSource extends DataSource {
 
         // Insert wine into database if it doesn't exist yet.
         String table = this.dbHelper.getWineTable();
+        this.connectToDatabase();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        this.close();
     }
 
     private ArrayList<Wine> getAllFromDatabase() {
         // Query wines table for all wines.
         String table = this.dbHelper.getWineTable();
         String[] columns = this.getDatabaseTableColumns();
+        this.connectToDatabase();
         Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
 
         // Store and return wines.
@@ -108,6 +129,8 @@ public class WineDataSource extends DataSource {
             wines.add(this.cursorToWine(cursor));
             cursor.moveToNext();
         }
+        cursor.close();
+        this.close();
         return wines;
     }
 
@@ -116,12 +139,14 @@ public class WineDataSource extends DataSource {
         String table = this.dbHelper.getWineTable();
         String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
+        this.connectToDatabase();
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
 
         // Store and return wine.
         cursor.moveToFirst();
         Wine wine = !cursor.isAfterLast() ? this.cursorToWine(cursor) : null;
         cursor.close();
+        this.close();
         return wine;
     }
 

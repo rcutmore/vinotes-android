@@ -14,14 +14,19 @@ public abstract class DataSource {
     protected SQLiteDatabase database;
     protected DatabaseHelper dbHelper;
     protected Map<String, String> dbColumns;
+    protected boolean closeDatabaseWhenFinished = true;
 
-    public void open() throws SQLException {
+    protected void open() throws SQLException {
         this.database = this.dbHelper.getWritableDatabase();
     }
 
-    public void close() {
-        this.dbHelper.close();
+    protected void close() {
+        if (this.closeDatabaseWhenFinished) {
+            this.dbHelper.close();
+        }
     }
+
+    abstract protected void connectToDatabase();
 
     abstract protected String[] getDatabaseTableColumns();
 

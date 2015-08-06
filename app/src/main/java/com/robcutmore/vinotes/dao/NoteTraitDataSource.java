@@ -5,19 +5,26 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.robcutmore.vinotes.database.DatabaseHelper;
 import com.robcutmore.vinotes.model.NoteTrait;
 import com.robcutmore.vinotes.request.NoteTraitRequest;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 
 public class NoteTraitDataSource extends DataSource {
 
-    public NoteTraitDataSource(Context context) {
+    public NoteTraitDataSource(final Context context) {
         this.dbHelper = DatabaseHelper.getInstance(context);
         this.dbColumns = this.dbHelper.getTraitColumns();
+    }
+
+    protected NoteTraitDataSource(final Context context, final boolean closeDatabaseWhenFinished) {
+        this(context);
+        this.closeDatabaseWhenFinished = closeDatabaseWhenFinished;
     }
 
     public NoteTrait add(final String name) {
@@ -35,7 +42,9 @@ public class NoteTraitDataSource extends DataSource {
     public void remove(final long id) {
         String table = this.dbHelper.getTraitTable();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
+        this.connectToDatabase();
         this.database.delete(table, whereClause, null);
+        this.close();
     }
 
     public NoteTrait get(final long id) {
@@ -68,6 +77,15 @@ public class NoteTraitDataSource extends DataSource {
     }
 
     @Override
+    protected void connectToDatabase() {
+        try {
+            this.open();
+        } catch (SQLException e) {
+            Log.w(NoteTraitDataSource.class.getName(), "Error connecting to database.");
+        }
+    }
+
+    @Override
     protected String[] getDatabaseTableColumns() {
         String[] columns = {
             this.dbColumns.get("id"),
@@ -84,13 +102,16 @@ public class NoteTraitDataSource extends DataSource {
 
         // Insert trait into database if it doesn't exist yet.
         String table = this.dbHelper.getTraitTable();
+        this.connectToDatabase();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        this.close();
     }
 
     private ArrayList<NoteTrait> getAllFromDatabase() {
         // Query traits table for all traits.
         String table = this.dbHelper.getTraitTable();
         String[] columns = this.getDatabaseTableColumns();
+        this.connectToDatabase();
         Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
 
         // Store and return traits.
@@ -100,6 +121,8 @@ public class NoteTraitDataSource extends DataSource {
             traits.add(this.cursorToTrait(cursor));
             cursor.moveToNext();
         }
+        cursor.close();
+        this.close();
         return traits;
     }
 
@@ -108,12 +131,14 @@ public class NoteTraitDataSource extends DataSource {
         String table = this.dbHelper.getTraitTable();
         String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
+        this.connectToDatabase();
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
 
         // Store and return note trait.
         cursor.moveToFirst();
         NoteTrait trait = !cursor.isAfterLast() ? this.cursorToTrait(cursor) : null;
         cursor.close();
+        this.close();
         return trait;
     }
 
