@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/default_padding">
+
+    <EditText
+        android:id="@+id/etWineSearch"
+        android:gravity="center"
+        android:hint="@string/edit_text_select_wine_search_hint"
+        android:inputType="text"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
+
+    <ListView
+        android:id="@+id/lvWines"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
+
+</LinearLayout>

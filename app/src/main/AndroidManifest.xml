@@ -38,5 +38,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.AddNoteActivity" />
         </activity>
+
+        <activity
+            android:label="@string/title_activity_select_wine"
+            android:name=".ui.SelectWineActivity"
+            android:parentActivityName=".ui.AddNoteActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.AddNoteActivity" />
+        </activity>
     </application>
 </manifest>

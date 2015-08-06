@@ -18,7 +18,6 @@ import com.robcutmore.vinotes.dao.WineDataSource;
 import com.robcutmore.vinotes.dao.WineryDataSource;
 import com.robcutmore.vinotes.model.TastingNote;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 
@@ -37,7 +36,12 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.initializeDataSources();
+        // Initialize data sources.
+        Context appContext = this.getApplicationContext();
+        this.traitDataSource = new NoteTraitDataSource(appContext);
+        this.wineryDataSource = new WineryDataSource(appContext);
+        this.wineDataSource = new WineDataSource(appContext);
+        this.noteDataSource = new TastingNoteDataSource(appContext);
 
         // Connect list view to note array list.
         this.notes = new ArrayList<>();
@@ -57,12 +61,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        this.closeDataSources();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will automatically handle clicks on
         // the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
@@ -74,18 +72,6 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onPause() {
-        this.closeDataSources();
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        this.openDataSources();
-        super.onResume();
     }
 
     public void onAddNote(View view) {
@@ -104,48 +90,6 @@ public class MainActivity extends ActionBarActivity {
         this.notes.clear();
         this.notes.addAll(notesFromAPI);
         this.notesAdapter.notifyDataSetChanged();
-    }
-
-    private void initializeDataSources() {
-        Context appContext = this.getApplicationContext();
-        this.traitDataSource = new NoteTraitDataSource(appContext);
-        this.wineryDataSource = new WineryDataSource(appContext);
-        this.wineDataSource = new WineDataSource(appContext);
-        this.noteDataSource = new TastingNoteDataSource(appContext);
-        this.openDataSources();
-    }
-
-    private void openDataSources() {
-        try {
-            this.traitDataSource.open();
-        } catch (SQLException e) {
-            // handle error
-        }
-
-        try {
-            this.wineryDataSource.open();
-        } catch (SQLException e) {
-            // handle error
-        }
-
-        try {
-            this.wineDataSource.open();
-        } catch (SQLException e) {
-            // handle error
-        }
-
-        try {
-            this.noteDataSource.open();
-        } catch (SQLException e) {
-            // handle error
-        }
-    }
-
-    private void closeDataSources() {
-        this.traitDataSource.close();
-        this.noteDataSource.close();
-        this.wineryDataSource.close();
-        this.wineDataSource.close();
     }
 
 }

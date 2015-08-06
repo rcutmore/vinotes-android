@@ -1,6 +1,7 @@
 package com.robcutmore.vinotes.ui;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -11,15 +12,16 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 
 import com.robcutmore.vinotes.R;
+import com.robcutmore.vinotes.dao.WineDataSource;
 import com.robcutmore.vinotes.dao.WineryDataSource;
+import com.robcutmore.vinotes.model.Wine;
 import com.robcutmore.vinotes.model.Winery;
-
-import java.sql.SQLException;
 
 
 public class AddNoteActivity extends ActionBarActivity {
 
     private final int WINERY_REQUEST_CODE = 1;
+    private final int WINE_REQUEST_CODE = 2;
 
     private EditText etTastingDate;
     private EditText etWinery;
@@ -28,13 +30,13 @@ public class AddNoteActivity extends ActionBarActivity {
 
     private WineryDataSource wineryDataSource;
     private Winery winery;
+    private WineDataSource wineDataSource;
+    private Wine wine;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
-
-        this.initializeDataSources();
 
         // Get references to user input.
         this.etTastingDate = (EditText) findViewById(R.id.etTastingDate);
@@ -42,7 +44,14 @@ public class AddNoteActivity extends ActionBarActivity {
         this.etWine = (EditText) findViewById(R.id.etWine);
         this.rbRating = (RatingBar) findViewById(R.id.rbRating);
 
+        // Initialize objects for note.
         this.winery = null;
+        this.wine = null;
+
+        // Initialize data source objects.
+        Context appContext = this.getApplicationContext();
+        this.wineryDataSource = new WineryDataSource(appContext);
+        this.wineDataSource = new WineDataSource(appContext);
     }
 
     @Override
@@ -53,19 +62,13 @@ public class AddNoteActivity extends ActionBarActivity {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        this.wineryDataSource.close();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -92,6 +95,20 @@ public class AddNoteActivity extends ActionBarActivity {
                     this.etWine.setEnabled(false);
                 }
             }
+        } else if (requestCode == this.WINE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                // Look up selected wine.
+                long wineId = data.getLongExtra("id", 0);
+                this.wine = (wineId > 0) ? this.wineDataSource.get(wineId) : null;
+
+                if (this.wine != null) {
+                    // Update wine input if wine found.
+                    this.etWine.setText(this.wine.getName());
+                } else {
+                    // Clear wine input if wine not found.
+                    this.etWine.setText("");
+                }
+            }
         }
     }
 
@@ -112,23 +129,15 @@ public class AddNoteActivity extends ActionBarActivity {
     }
 
     public void showWinePicker(final View view) {
-        // Test stub, to be replaced.
-        this.etWine.setText("Test Wine");
+        // Open activity to allow user to select wine.
+        Intent intent = new Intent(this, SelectWineActivity.class);
+        startActivityForResult(intent, this.WINE_REQUEST_CODE);
     }
 
     public void showWineryPicker(final View view) {
         // Open activity to allow user to select winery.
         Intent intent = new Intent(this, SelectWineryActivity.class);
         startActivityForResult(intent, this.WINERY_REQUEST_CODE);
-    }
-
-    private void initializeDataSources() {
-        this.wineryDataSource = new WineryDataSource(this.getApplicationContext());
-        try {
-            this.wineryDataSource.open();
-        } catch (SQLException e) {
-            // handle error
-        }
     }
 
     private boolean isAnyInputInvalid() {
