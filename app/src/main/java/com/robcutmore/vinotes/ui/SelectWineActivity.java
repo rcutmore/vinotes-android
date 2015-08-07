@@ -62,13 +62,20 @@ public class SelectWineActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_wine);
 
+        // Get references to user input.
         this.etWineSearch = (EditText) findViewById(R.id.etWineSearch);
         this.etWineSearch.addTextChangedListener(searchWatcher);
         this.lvWines = (ListView) findViewById(R.id.lvWines);
         this.lvWines.setOnItemClickListener(clickListener);
 
+        // Get ID of selected winery (sent from previous activity).
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        Long wineryId = (bundle != null) ? bundle.getLong("wineryId") : null;
+
+        // Set up wine list.
         this.wineDataSource = new WineDataSource(this.getApplicationContext());
-        this.wines = this.wineDataSource.getAll(false);
+        this.wines = this.wineDataSource.getAllForWinery(wineryId);
         this.winesAdapter = new ArrayAdapter<>(
             this,
             android.R.layout.simple_list_item_1,

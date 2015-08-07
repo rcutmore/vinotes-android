@@ -74,10 +74,14 @@ public class WineDataSource extends DataSource {
                 this.addToDatabase(wine);
             }
         } else {
-            wines = this.getAllFromDatabase();
+            wines = this.getAllFromDatabase(null);
         }
 
         return wines;
+    }
+
+    public ArrayList<Wine> getAllForWinery(final long wineryId) {
+        return this.getAllFromDatabase(wineryId);
     }
 
     @Override
@@ -115,12 +119,21 @@ public class WineDataSource extends DataSource {
         this.close();
     }
 
-    private ArrayList<Wine> getAllFromDatabase() {
-        // Query wines table for all wines.
+    private ArrayList<Wine> getAllFromDatabase(final Long wineryId) {
         String table = this.dbHelper.getWineTable();
         String[] columns = this.getDatabaseTableColumns();
+
+        // See if we need to filter for a given winery.
+        String whereClause;
+        if (wineryId == null) {
+            whereClause = null;
+        } else {
+            whereClause = String.format("%s = %d", this.dbColumns.get("winery"), wineryId);
+        }
+
+        // Query wines table for all wines.
         this.connectToDatabase();
-        Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
+        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
 
         // Store and return wines.
         cursor.moveToFirst();

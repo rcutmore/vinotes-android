@@ -131,6 +131,7 @@ public class AddNoteActivity extends ActionBarActivity {
     public void showWinePicker(final View view) {
         // Open activity to allow user to select wine.
         Intent intent = new Intent(this, SelectWineActivity.class);
+        intent.putExtra("wineryId", this.winery.getId());
         startActivityForResult(intent, this.WINE_REQUEST_CODE);
     }
 
