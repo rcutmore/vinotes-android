@@ -56,7 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     private static final String WINE_SQL_CREATE = String.format(
         "CREATE TABLE IF NOT EXISTS %s(%s INTEGER PRIMARY KEY NOT NULL, " +
-        "%s INTEGER NOT NULL UNIQUE, %s TEXT NOT NULL UNIQUE, %s INTEGER NOT NULL);",
+        "%s INTEGER NOT NULL, %s TEXT NOT NULL UNIQUE, %s INTEGER NOT NULL);",
         WINE_TABLE, WINE_COLUMNS.get("id"), WINE_COLUMNS.get("winery"),
         WINE_COLUMNS.get("name"), WINE_COLUMNS.get("vintage")
     );
@@ -73,7 +73,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     private static final String NOTE_SQL_CREATE = String.format(
         "CREATE TABLE IF NOT EXISTS %s(%s INTEGER PRIMARY KEY NOT NULL, " +
-        "%s INTEGER NOT NULL UNIQUE, %s INTEGER, %s INTEGER);",
+        "%s INTEGER NOT NULL, %s INTEGER, %s INTEGER);",
         NOTE_TABLE, NOTE_COLUMNS.get("id"), NOTE_COLUMNS.get("wine"),
         NOTE_COLUMNS.get("tasted"), NOTE_COLUMNS.get("rating")
     );
