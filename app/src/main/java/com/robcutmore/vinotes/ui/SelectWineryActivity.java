@@ -105,4 +105,10 @@ public class SelectWineryActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void addWinery(final View view) {
+        // Open activity to add new winery.
+        Intent intent = new Intent(this, AddWineryActivity.class);
+        startActivity(intent);
+    }
+
 }

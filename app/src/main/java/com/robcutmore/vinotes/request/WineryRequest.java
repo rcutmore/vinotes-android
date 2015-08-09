@@ -44,6 +44,17 @@ public final class WineryRequest {
         ArrayList<Winery> wineries = new ArrayList<>();
         wineries.add(new Winery(1, "Test 1"));
         wineries.add(new Winery(2, "Test 2"));
+        wineries.add(new Winery(3, "Test 3"));
+        wineries.add(new Winery(4, "Test 4"));
+        wineries.add(new Winery(5, "Test 5"));
+        wineries.add(new Winery(6, "Test 6"));
+        wineries.add(new Winery(7, "Test 7"));
+        wineries.add(new Winery(8, "Test 8"));
+        wineries.add(new Winery(9, "Test 9"));
+        wineries.add(new Winery(10, "Test 10"));
+        wineries.add(new Winery(11, "Test 11"));
+        wineries.add(new Winery(12, "Test 12"));
+        wineries.add(new Winery(13, "Test 13"));
         return wineries;
     }
 
