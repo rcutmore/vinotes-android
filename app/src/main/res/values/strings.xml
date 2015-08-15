@@ -7,6 +7,7 @@
     <string name="edit_text_add_note_tasting_date_hint">Enter Tasting Date</string>
     <string name="edit_text_add_note_wine_hint">Select Wine</string>
     <string name="edit_text_add_note_winery_hint">Select Winery</string>
+    <string name="edit_text_add_winery_hint">Enter Name Of Winery</string>
     <string name="edit_text_select_wine_search_hint">Search Wines</string>
     <string name="edit_text_select_winery_search_hint">Search Wineries</string>
     <string name="title_activity_add_note">Add New Tasting Note</string>

@@ -23,9 +23,10 @@ import java.util.ArrayList;
 
 public class SelectWineryActivity extends ActionBarActivity {
 
+    private final int ADD_WINERY_REQUEST_CODE = 1;
+
     private EditText etWinerySearch;
     private ListView lvWineries;
-
     private WineryDataSource wineryDataSource;
     private ArrayList<Winery> wineries;
     private ArrayAdapter<Winery> wineriesAdapter;
@@ -40,7 +41,6 @@ public class SelectWineryActivity extends ActionBarActivity {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // Filter list view.
             wineriesAdapter.getFilter().filter(s);
         }
     };
@@ -50,10 +50,7 @@ public class SelectWineryActivity extends ActionBarActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Winery winery = (Winery) parent.getAdapter().getItem(position);
-            Intent intent = new Intent(SelectWineryActivity.this, AddNoteActivity.class);
-            intent.putExtra("id", winery.getId());
-            setResult(RESULT_OK, intent);
-            finish();
+            returnSelectedWinery(winery.getId());
         }
     };
 
@@ -66,13 +63,19 @@ public class SelectWineryActivity extends ActionBarActivity {
         this.etWinerySearch.addTextChangedListener(this.searchWatcher);
         this.lvWineries = (ListView) findViewById(R.id.lvWineries);
         this.lvWineries.setOnItemClickListener(this.clickListener);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Display all wineries stored in database.
         this.wineryDataSource = new WineryDataSource(this.getApplicationContext());
         this.wineries = this.wineryDataSource.getAll(false);
         this.wineriesAdapter = new ArrayAdapter<>(
-            this,
-            android.R.layout.simple_list_item_1,
-            this.wineries
+                this,
+                android.R.layout.simple_list_item_1,
+                this.wineries
         );
         this.lvWineries.setAdapter(this.wineriesAdapter);
     }
@@ -97,7 +100,7 @@ public class SelectWineryActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -105,10 +108,24 @@ public class SelectWineryActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if (requestCode == this.ADD_WINERY_REQUEST_CODE && resultCode == RESULT_OK) {
+            this.returnSelectedWinery(data.getLongExtra("id", 0));
+        }
+    }
+
     public void addWinery(final View view) {
         // Open activity to add new winery.
         Intent intent = new Intent(this, AddWineryActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, this.ADD_WINERY_REQUEST_CODE);
+    }
+
+    protected void returnSelectedWinery(final long wineryId) {
+        Intent intent = new Intent(SelectWineryActivity.this, AddNoteActivity.class);
+        intent.putExtra("id", wineryId);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
 }

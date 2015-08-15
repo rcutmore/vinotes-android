@@ -1,20 +1,31 @@
 package com.robcutmore.vinotes.ui;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 import com.robcutmore.vinotes.R;
+import com.robcutmore.vinotes.dao.WineryDataSource;
+import com.robcutmore.vinotes.model.Winery;
 
 
 public class AddWineryActivity extends ActionBarActivity {
+
+    private EditText etWineryName;
+    private WineryDataSource wineryDataSource;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_winery);
+
+        this.etWineryName = (EditText) findViewById(R.id.etWineryName);
+        this.wineryDataSource = new WineryDataSource(this.getApplicationContext());
     }
 
     @Override
@@ -37,6 +48,18 @@ public class AddWineryActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void addWinery(final View view) {
+        // Add new winery to API and local database.
+        String wineryName = this.etWineryName.getText().toString();
+        Winery winery = this.wineryDataSource.add(wineryName);
+
+        // Return new winery's id.
+        Intent intent = new Intent(AddWineryActivity.this, AddNoteActivity.class);
+        intent.putExtra("id", winery.getId());
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
 }

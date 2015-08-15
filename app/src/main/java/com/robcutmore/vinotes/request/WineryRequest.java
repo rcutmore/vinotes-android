@@ -9,9 +9,12 @@ import java.util.ArrayList;
 public final class WineryRequest {
 
     public static Winery add(final String name) {
-        String response = sendPOST(name);
-        ArrayList<Winery> wineries = parseResponse(response);
-        return (wineries.size() > 0) ? wineries.get(0) : null;
+        //String response = sendPOST(name);
+        //ArrayList<Winery> wineries = parseResponse(response);
+        //return (wineries.size() > 0) ? wineries.get(0) : null;
+
+        // Test stub, remove this and uncomment code above.
+        return new Winery(14, name);
     }
 
     public static Winery get(final long id) {
