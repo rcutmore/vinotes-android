@@ -31,7 +31,7 @@ public class AddWineryActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_note, menu);
+        getMenuInflater().inflate(R.menu.menu_add_winery, menu);
         return true;
     }
 
@@ -56,7 +56,7 @@ public class AddWineryActivity extends ActionBarActivity {
         Winery winery = this.wineryDataSource.add(wineryName);
 
         // Return new winery's id.
-        Intent intent = new Intent(AddWineryActivity.this, AddNoteActivity.class);
+        Intent intent = new Intent(AddWineryActivity.this, SelectWineryActivity.class);
         intent.putExtra("id", winery.getId());
         setResult(RESULT_OK, intent);
         finish();

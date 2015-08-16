@@ -1,35 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:gravity="center"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:padding="@dimen/default_padding">
+    android:orientation="vertical">
 
     <EditText
-        android:id="@+id/etWineSearch"
+        android:id="@+id/etWineName"
         android:gravity="center"
-        android:hint="@string/edit_text_select_wine_search_hint"
+        android:hint="@string/edit_text_add_wine_name_hint"
         android:inputType="text"
-        android:layout_alignParentTop="true"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:maxLines="1"/>
+        android:maxLines="1" />
 
-    <ListView
-        android:id="@+id/lvWines"
-        android:layout_above="@+id/btnAddWine"
-        android:layout_below="@+id/etWineSearch"
+    <EditText
+        android:id="@+id/etVintage"
+        android:gravity="center"
+        android:hint="@string/edit_text_add_wine_vintage_hint"
+        android:inputType="number"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
+        android:layout_width="match_parent"
+        android:maxLines="1" />
 
     <Button
         android:id="@+id/btnAddWine"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:onClick="addWine"
         android:text="@string/button_add_wine" />
 
-</RelativeLayout>
+</LinearLayout>

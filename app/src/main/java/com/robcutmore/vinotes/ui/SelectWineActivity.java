@@ -23,9 +23,11 @@ import java.util.ArrayList;
 
 public class SelectWineActivity extends ActionBarActivity {
 
+    private final int ADD_WINE_REQUEST_CODE = 1;
+
+    private Long wineryId;
     private EditText etWineSearch;
     private ListView lvWines;
-
     private WineDataSource wineDataSource;
     private ArrayList<Wine> wines;
     private ArrayAdapter<Wine> winesAdapter;
@@ -50,10 +52,7 @@ public class SelectWineActivity extends ActionBarActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Wine wine = (Wine) parent.getAdapter().getItem(position);
-            Intent intent = new Intent(SelectWineActivity.this, AddNoteActivity.class);
-            intent.putExtra("id", wine.getId());
-            setResult(RESULT_OK, intent);
-            finish();
+            returnSelectedWine(wine.getId());
         }
     };
 
@@ -71,15 +70,20 @@ public class SelectWineActivity extends ActionBarActivity {
         // Get ID of selected winery (sent from previous activity).
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        Long wineryId = (bundle != null) ? bundle.getLong("wineryId") : null;
+        this.wineryId = (bundle != null) ? bundle.getLong("wineryId") : null;
+    }
 
-        // Set up wine list.
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Display all wines stored in database for given winery.
         this.wineDataSource = new WineDataSource(this.getApplicationContext());
         this.wines = this.wineDataSource.getAllForWinery(wineryId);
         this.winesAdapter = new ArrayAdapter<>(
-            this,
-            android.R.layout.simple_list_item_1,
-            this.wines
+                this,
+                android.R.layout.simple_list_item_1,
+                this.wines
         );
         this.lvWines.setAdapter(this.winesAdapter);
     }
@@ -110,6 +114,27 @@ public class SelectWineActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if (requestCode == this.ADD_WINE_REQUEST_CODE && resultCode == RESULT_OK) {
+            this.returnSelectedWine(data.getLongExtra("id", 0));
+        }
+    }
+
+    public void addWine(final View view) {
+        // Open activity to add new wine.
+        Intent intent = new Intent(SelectWineActivity.this, AddWineActivity.class);
+        intent.putExtra("wineryId", this.wineryId);
+        startActivityForResult(intent, this.ADD_WINE_REQUEST_CODE);
+    }
+
+    public void returnSelectedWine(final long wineId) {
+        Intent intent = new Intent(SelectWineActivity.this, AddNoteActivity.class);
+        intent.putExtra("id", wineId);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
 }
