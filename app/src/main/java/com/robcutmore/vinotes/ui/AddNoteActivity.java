@@ -78,37 +78,28 @@ public class AddNoteActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        if (requestCode == this.WINERY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                // Look up selected winery.
-                long wineryId = data.getLongExtra("id", 0);
-                this.winery = (wineryId > 0) ? this.wineryDataSource.get(wineryId) : null;
+        boolean handleWinery = requestCode == this.WINERY_REQUEST_CODE && resultCode == RESULT_OK;
+        boolean handleWine = requestCode == this.WINE_REQUEST_CODE && resultCode == RESULT_OK;
 
-                if (this.winery != null) {
-                    // Update winery and wine inputs if winery found.
-                    this.etWinery.setText(this.winery.getName());
-                    this.etWine.setEnabled(true);
-                } else {
-                    // Reset winery and wine inputs if winery not found.
-                    this.etWinery.setText("");
-                    this.etWine.setText("");
-                    this.etWine.setEnabled(false);
-                }
-            }
-        } else if (requestCode == this.WINE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                // Look up selected wine.
-                long wineId = data.getLongExtra("id", 0);
-                this.wine = (wineId > 0) ? this.wineDataSource.get(wineId) : null;
+        if (handleWinery) {
+            // Look up and display selected winery.
+            long wineryId = data.getLongExtra("id", 0);
+            this.winery = (wineryId > 0) ? this.wineryDataSource.get(wineryId) : null;
+            boolean wineryFound = this.winery != null;
+            String wineryName = wineryFound ? this.winery.getName() : "";
+            this.etWinery.setText(wineryName);
 
-                if (this.wine != null) {
-                    // Update wine input if wine found.
-                    this.etWine.setText(this.wine.getName());
-                } else {
-                    // Clear wine input if wine not found.
-                    this.etWine.setText("");
-                }
-            }
+            // Reset wine selection.
+            this.wine = null;
+            this.etWine.setText("");
+            this.etWine.setEnabled(wineryFound);
+
+        } else if (handleWine) {
+            // Look up and display selected wine.
+            long wineId = data.getLongExtra("id", 0);
+            this.wine = (wineId > 0) ? this.wineDataSource.get(wineId) : null;
+            String wineName = (this.wine != null) ? this.wine.getName() : "";
+            this.etWine.setText(wineName);
         }
     }
 
