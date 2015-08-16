@@ -31,7 +31,11 @@ public class AddWineActivity extends ActionBarActivity {
         Bundle bundle = intent.getExtras();
         this.wineryId = (bundle != null) ? bundle.getLong("wineryId") : null;
 
+        // Get search text from previous activity, if any.
+        String searchText = (bundle != null) ? bundle.getString("searchText", "") : "";
+
         this.etWineName = (EditText) findViewById(R.id.etWineName);
+        this.etWineName.setText(searchText);
         this.etVintage = (EditText) findViewById(R.id.etVintage);
         this.wineDataSource = new WineDataSource(this.getApplicationContext());
     }

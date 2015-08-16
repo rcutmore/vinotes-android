@@ -127,6 +127,8 @@ public class SelectWineActivity extends ActionBarActivity {
         // Open activity to add new wine.
         Intent intent = new Intent(SelectWineActivity.this, AddWineActivity.class);
         intent.putExtra("wineryId", this.wineryId);
+        String searchText = this.etWineSearch.getText().toString();
+        intent.putExtra("searchText", searchText);
         startActivityForResult(intent, this.ADD_WINE_REQUEST_CODE);
     }
 

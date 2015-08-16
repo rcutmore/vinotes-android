@@ -118,6 +118,8 @@ public class SelectWineryActivity extends ActionBarActivity {
     public void addWinery(final View view) {
         // Open activity to add new winery.
         Intent intent = new Intent(this, AddWineryActivity.class);
+        String searchText = this.etWinerySearch.getText().toString();
+        intent.putExtra("searchText", searchText);
         startActivityForResult(intent, this.ADD_WINERY_REQUEST_CODE);
     }
 

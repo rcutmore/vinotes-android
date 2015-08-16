@@ -24,7 +24,13 @@ public class AddWineryActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_winery);
 
+        // Get search text from previous activity, if any.
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        String searchText = (bundle != null) ? bundle.getString("searchText", "") : "";
+
         this.etWineryName = (EditText) findViewById(R.id.etWineryName);
+        this.etWineryName.setText(searchText);
         this.wineryDataSource = new WineryDataSource(this.getApplicationContext());
     }
 
