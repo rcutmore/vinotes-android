@@ -21,9 +21,8 @@ import com.robcutmore.vinotes.model.Winery;
 import java.util.ArrayList;
 
 
-public class SelectWineryActivity extends ActionBarActivity {
-
-    private final int ADD_WINERY_REQUEST_CODE = 1;
+public class SelectWineryActivity extends ActionBarActivity
+                                  implements AddWineryFragment.OnWineryAddedListener {
 
     private EditText etWinerySearch;
     private ListView lvWineries;
@@ -109,18 +108,19 @@ public class SelectWineryActivity extends ActionBarActivity {
     }
 
     @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        if (requestCode == this.ADD_WINERY_REQUEST_CODE && resultCode == RESULT_OK) {
-            this.returnSelectedWinery(data.getLongExtra("id", 0));
-        }
+    public void onWineryAdded(final long wineryId) {
+        this.returnSelectedWinery(wineryId);
     }
 
-    public void addWinery(final View view) {
-        // Open activity to add new winery.
-        Intent intent = new Intent(this, AddWineryActivity.class);
-        String searchText = this.etWinerySearch.getText().toString();
-        intent.putExtra("searchText", searchText);
-        startActivityForResult(intent, this.ADD_WINERY_REQUEST_CODE);
+    public void showAddWineryDialog(final View view) {
+        // Send any search text that's been entered.
+        Bundle bundle = new Bundle();
+        bundle.putString("searchText", this.etWinerySearch.getText().toString());
+
+        // Create and show fragment.
+        AddWineryFragment newFragment = new AddWineryFragment();
+        newFragment.setArguments(bundle);
+        newFragment.show(getFragmentManager(), "wineryAdder");
     }
 
     protected void returnSelectedWinery(final long wineryId) {

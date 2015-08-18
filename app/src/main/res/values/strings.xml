@@ -15,7 +15,6 @@
     <string name="edit_text_select_winery_search_hint">Search Wineries</string>
     <string name="title_activity_add_note">Add New Tasting Note</string>
     <string name="title_activity_add_wine">Add New Wine</string>
-    <string name="title_activity_add_winery">Add New Winery</string>
     <string name="title_activity_select_wine">Select Wine</string>
     <string name="title_activity_select_winery">Select Winery</string>
 </resources>
