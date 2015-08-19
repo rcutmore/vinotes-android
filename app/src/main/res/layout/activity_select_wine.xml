@@ -29,7 +29,7 @@
         android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:onClick="addWine"
+        android:onClick="showAddWineDialog"
         android:text="@string/button_add_wine" />
 
 </RelativeLayout>

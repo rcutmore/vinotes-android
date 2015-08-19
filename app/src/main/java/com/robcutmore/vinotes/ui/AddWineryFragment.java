@@ -38,7 +38,7 @@ public class AddWineryFragment extends DialogFragment {
             this.callbackListener = (OnWineryAddedListener) activity;
         } catch (ClassCastException e) {
             String errorMessage = String.format(
-                "%s must implement OnWineryPickedListener.", activity.toString());
+                "%s must implement OnWineryAddedListener.", activity.toString());
             Log.w(activity.getClass().getName(), errorMessage);
         }
     }

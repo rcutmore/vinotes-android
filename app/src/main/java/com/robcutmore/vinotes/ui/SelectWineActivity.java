@@ -21,9 +21,8 @@ import com.robcutmore.vinotes.model.Wine;
 import java.util.ArrayList;
 
 
-public class SelectWineActivity extends ActionBarActivity {
-
-    private final int ADD_WINE_REQUEST_CODE = 1;
+public class SelectWineActivity extends ActionBarActivity
+                                implements AddWineFragment.OnWineAddedListener {
 
     private Long wineryId;
     private EditText etWineSearch;
@@ -117,19 +116,20 @@ public class SelectWineActivity extends ActionBarActivity {
     }
 
     @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        if (requestCode == this.ADD_WINE_REQUEST_CODE && resultCode == RESULT_OK) {
-            this.returnSelectedWine(data.getLongExtra("id", 0));
-        }
+    public void onWineAdded(final long wineId) {
+        this.returnSelectedWine(wineId);
     }
 
-    public void addWine(final View view) {
-        // Open activity to add new wine.
-        Intent intent = new Intent(SelectWineActivity.this, AddWineActivity.class);
-        intent.putExtra("wineryId", this.wineryId);
-        String searchText = this.etWineSearch.getText().toString();
-        intent.putExtra("searchText", searchText);
-        startActivityForResult(intent, this.ADD_WINE_REQUEST_CODE);
+    public void showAddWineDialog(final View view) {
+        // Send any search text that's been entered, along with selected winery id.
+        Bundle args = new Bundle();
+        args.putString("searchText", this.etWineSearch.getText().toString());
+        args.putLong("wineryId", this.wineryId);
+
+        // Create and show fragment.
+        AddWineFragment newFragment = new AddWineFragment();
+        newFragment.setArguments(args);
+        newFragment.show(getFragmentManager(), "wineAdder");
     }
 
     public void returnSelectedWine(final long wineId) {
