@@ -67,8 +67,8 @@ public class WineryDataSource extends DataSource {
         if (refreshFromAPI) {
             wineries = WineryRequest.getAll();
 
-            for (int i = 0; i < wineries.size(); i++) {
-                this.addToDatabase(wineries.get(i));
+            for (Winery winery : wineries) {
+                this.addToDatabase(winery);
             }
         } else {
             wineries = this.getAllFromDatabase();
@@ -109,11 +109,15 @@ public class WineryDataSource extends DataSource {
     }
 
     private ArrayList<Winery> getAllFromDatabase() {
-        // Query wineries table for all wineries.
         String table = this.dbHelper.getWineryTable();
         String[] columns = this.getDatabaseTableColumns();
+
+        // Order results by winery name.
+        String orderBy = String.format("%s COLLATE NOCASE ASC", this.dbColumns.get("name"));
+
+        // Query wineries table for all wineries.
         this.connectToDatabase();
-        Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
+        Cursor cursor = this.database.query(table, columns, null, null, null, null, orderBy);
 
         // Store and return wineries.
         cursor.moveToFirst();

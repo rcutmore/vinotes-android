@@ -131,9 +131,13 @@ public class WineDataSource extends DataSource {
             whereClause = String.format("%s = %d", this.dbColumns.get("winery"), wineryId);
         }
 
+        // Order results by wine name and vintage.
+        String orderBy = String.format("%s COLLATE NOCASE ASC, %s DESC",
+                                       this.dbColumns.get("name"), this.dbColumns.get("vintage"));
+
         // Query wines table for all wines.
         this.connectToDatabase();
-        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
+        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, orderBy);
 
         // Store and return wines.
         cursor.moveToFirst();

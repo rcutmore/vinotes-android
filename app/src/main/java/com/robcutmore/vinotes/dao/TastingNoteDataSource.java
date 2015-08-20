@@ -126,11 +126,15 @@ public class TastingNoteDataSource extends DataSource {
     }
 
     private ArrayList<TastingNote> getAllFromDatabase() {
-        // Query notes table for all notes.
         String table = this.dbHelper.getNoteTable();
         String[] columns = this.getDatabaseTableColumns();
+
+        // Order results by tasted date.
+        String orderBy = String.format("%s DESC", this.dbColumns.get("tasted"));
+
+        // Query notes table for all notes.
         this.connectToDatabase();
-        Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
+        Cursor cursor = this.database.query(table, columns, null, null, null, null, orderBy);
 
         // Store and return notes.
         cursor.moveToFirst();

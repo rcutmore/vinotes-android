@@ -108,11 +108,15 @@ public class NoteTraitDataSource extends DataSource {
     }
 
     private ArrayList<NoteTrait> getAllFromDatabase() {
-        // Query traits table for all traits.
         String table = this.dbHelper.getTraitTable();
         String[] columns = this.getDatabaseTableColumns();
+
+        // Order results by trait name.
+        String orderBy = String.format("%s COLLATE NOCASE ASC", this.dbColumns.get("name"));
+
+        // Query traits table for all traits.
         this.connectToDatabase();
-        Cursor cursor = this.database.query(table, columns, null, null, null, null, null);
+        Cursor cursor = this.database.query(table, columns, null, null, null, null, orderBy);
 
         // Store and return traits.
         cursor.moveToFirst();
