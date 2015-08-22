@@ -21,6 +21,7 @@
 
         <activity
             android:label="@string/title_activity_add_note"
+            android:launchMode="singleTop"
             android:name=".ui.AddNoteActivity"
             android:parentActivityName=".ui.MainActivity">
 

@@ -135,11 +135,11 @@ public class AddNoteActivity extends ActionBarActivity {
     private boolean isAnyInputInvalid() {
         boolean isInvalid = false;
 
-        if (this.isInputEmpty(this.etWinery)) {
+        if (this.winery == null || this.isInputEmpty(this.etWinery)) {
             this.etWinery.setError("Winery must be selected.");
             isInvalid = true;
         }
-        if (this.isInputEmpty(this.etWine)) {
+        if (this.wine == null || this.isInputEmpty(this.etWine)) {
             this.etWine.setError("Wine must be selected.");
             isInvalid = true;
         }
