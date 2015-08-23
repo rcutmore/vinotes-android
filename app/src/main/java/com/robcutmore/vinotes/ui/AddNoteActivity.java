@@ -97,24 +97,16 @@ public class AddNoteActivity extends ActionBarActivity {
         boolean handleWine = requestCode == this.WINE_REQUEST_CODE && resultCode == RESULT_OK;
 
         if (handleWinery) {
-            // Look up and display selected winery.
+            // Look up and set selected winery.
             long wineryId = data.getLongExtra("id", 0);
-            this.winery = (wineryId > 0) ? this.wineryDataSource.get(wineryId) : null;
-            boolean wineryFound = this.winery != null;
-            String wineryName = wineryFound ? this.winery.getName() : "";
-            this.etWinery.setText(wineryName);
-
-            // Reset wine selection.
-            this.wine = null;
-            this.etWine.setText("");
-            this.etWine.setEnabled(wineryFound);
+            Winery winery = (wineryId > 0) ? this.wineryDataSource.get(wineryId) : null;
+            this.setWinery(winery);
 
         } else if (handleWine) {
-            // Look up and display selected wine.
+            // Look up and set selected wine.
             long wineId = data.getLongExtra("id", 0);
-            this.wine = (wineId > 0) ? this.wineDataSource.get(wineId) : null;
-            String wineName = (this.wine != null) ? this.wine.getName() : "";
-            this.etWine.setText(wineName);
+            Wine wine = (wineId > 0) ? this.wineDataSource.get(wineId) : null;
+            this.setWine(wine);
         }
     }
 
@@ -191,6 +183,11 @@ public class AddNoteActivity extends ActionBarActivity {
         this.dataFragment.setRating(this.rating);
     }
 
+    /**
+     * Sets tasting date for note being created and updates display.
+     *
+     * @param tastingDate  the new date to set
+     */
     private void setTastingDate(Date tastingDate) {
         this.tastingDate = tastingDate;
 
@@ -199,21 +196,43 @@ public class AddNoteActivity extends ActionBarActivity {
         this.etTastingDate.setText(dateText);
     }
 
+    /**
+     * Sets selected winery for note being created and updates display.
+     *
+     * @param winery  the new winery to set
+     */
     private void setWinery(Winery winery) {
-        this.winery = winery;
-
-        // Display selected winery.
-        String wineryText;
-        if (this.winery != null) {
-            wineryText = this.winery.getName();
-            this.etWine.setEnabled(true);
+        // Only process change if given winery is different than currently selected winery.
+        // Otherwise wine input will be reset.
+        boolean isNewWinery;
+        if (this.winery != null && winery != null) {
+            isNewWinery = this.winery.getId() != winery.getId();
         } else {
-            wineryText = "";
-            this.etWine.setEnabled(false);
+            isNewWinery = this.winery != winery;
         }
-        this.etWinery.setText(wineryText);
+        if (isNewWinery) {
+            // Set winery and reset selected wine.
+            this.winery = winery;
+            this.setWine(null);
+
+            // Display selected winery.
+            String wineryText;
+            if (this.winery != null) {
+                wineryText = this.winery.getName();
+                this.etWine.setEnabled(true);
+            } else {
+                wineryText = "";
+                this.etWine.setEnabled(false);
+            }
+            this.etWinery.setText(wineryText);
+        }
     }
 
+    /**
+     * Sets selected wine for note being created and updates display.
+     *
+     * @param wine  the new wine to set
+     */
     private void setWine(Wine wine) {
         this.wine = wine;
 
@@ -223,11 +242,15 @@ public class AddNoteActivity extends ActionBarActivity {
             wineText = String.format("%s %s", this.wine.getName(), this.wine.getVintage());
         } else {
             wineText = "";
-            this.etWine.setEnabled(false);
         }
         this.etWine.setText(wineText);
     }
 
+    /**
+     * Sets rating for note being created and updated display.
+     *
+     * @param rating  the new rating to set
+     */
     private void setRating(Integer rating) {
         this.rating = rating;
 
