@@ -17,11 +17,13 @@ import com.robcutmore.vinotes.dao.WineDataSource;
 import com.robcutmore.vinotes.dao.WineryDataSource;
 import com.robcutmore.vinotes.model.Wine;
 import com.robcutmore.vinotes.model.Winery;
+import com.robcutmore.vinotes.utils.DateUtils;
 
 import java.util.Date;
 
 
-public class AddNoteActivity extends ActionBarActivity {
+public class AddNoteActivity extends ActionBarActivity
+                             implements DatePickerFragment.OnDateSelectedListener {
 
     private final int WINERY_REQUEST_CODE = 1;
     private final int WINE_REQUEST_CODE = 2;
@@ -110,6 +112,15 @@ public class AddNoteActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Sets selected tasting date.
+     *
+     * @param tastingDate  selected tasting date
+     */
+    public void onDateSelected(final Date tastingDate) {
+        this.setTastingDate(tastingDate);
+    }
+
     public void saveNote(final View view) {
         // Validate user input.
         if (!this.isAnyInputInvalid()) {
@@ -117,10 +128,9 @@ public class AddNoteActivity extends ActionBarActivity {
         }
     }
 
-    public void setTastingDate(final String newTastingDate) {
-        this.etTastingDate.setText(newTastingDate);
-    }
-
+    /**
+     * Display fragment for selecting tasting date.
+     */
     public void showDatePickerDialog(final View view) {
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(), "datePicker");
@@ -130,7 +140,6 @@ public class AddNoteActivity extends ActionBarActivity {
      * Starts activity to select wine for note.
      */
     public void showWinePicker(final View view) {
-        // Open activity to allow user to select wine.
         Intent intent = new Intent(this, SelectWineActivity.class);
         intent.putExtra("wineryId", this.winery.getId());
         startActivityForResult(intent, this.WINE_REQUEST_CODE);
@@ -140,7 +149,6 @@ public class AddNoteActivity extends ActionBarActivity {
      * Starts activity to select winery for note.
      */
     public void showWineryPicker(final View view) {
-        // Open activity to allow user to select winery.
         Intent intent = new Intent(this, SelectWineryActivity.class);
         startActivityForResult(intent, this.WINERY_REQUEST_CODE);
     }
@@ -211,7 +219,7 @@ public class AddNoteActivity extends ActionBarActivity {
         this.tastingDate = tastingDate;
 
         // Display selected tasting date.
-        String dateText = (this.tastingDate != null) ? this.tastingDate.toString() : "";
+        String dateText = DateUtils.convertDateToString(tastingDate);
         this.etTastingDate.setText(dateText);
     }
 

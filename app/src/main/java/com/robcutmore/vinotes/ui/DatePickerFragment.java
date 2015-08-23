@@ -1,19 +1,46 @@
 package com.robcutmore.vinotes.ui;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.DatePicker;
 
+import com.robcutmore.vinotes.utils.DateUtils;
+
 import java.util.Calendar;
+import java.util.Date;
 
 
 public class DatePickerFragment extends DialogFragment
                                 implements DatePickerDialog.OnDateSetListener {
 
-    public DatePickerFragment() {
-        // Required empty public constructor.
+    /**
+     * Callback interface through which the fragment will return the selected date.
+     */
+    public interface OnDateSelectedListener {
+        void onDateSelected(Date tastingDate);
+    }
+
+    private OnDateSelectedListener callbackListener;
+
+    // Empty constructor required for DialogFragment.
+    public DatePickerFragment() {}
+
+    @Override
+    public void onAttach(final Activity activity) {
+        super.onAttach(activity);
+
+        // Make sure callback is set up to return date.
+        try {
+            this.callbackListener = (OnDateSelectedListener) activity;
+        } catch (ClassCastException e) {
+            String errorMessage = String.format(
+                "%s must implement OnDateSelectedListener.", activity.toString());
+            Log.w(activity.getClass().getName(), errorMessage);
+        }
     }
 
     @Override
@@ -28,10 +55,16 @@ public class DatePickerFragment extends DialogFragment
         return new DatePickerDialog(getActivity(), this, year, month, day);
     }
 
-    public void onDateSet(DatePicker view, int year, int month, int day) {
-        final String tastingDate = String.format("%d/%d/%d", month+1, day, year);
-        AddNoteActivity callingActivity = (AddNoteActivity) getActivity();
-        callingActivity.setTastingDate(tastingDate);
+    /**
+     * Sets tasting date in calling activity once selected in DatePicker.
+     */
+    public void onDateSet(final DatePicker view, final int year, final int month, final int day) {
+        // Get selected date.
+        String dateString = String.format("%d/%d/%d", year, month+1, day);
+        Date tastingDate = DateUtils.parseDateFromString(dateString);
+
+        // Return date to calling activity.
+        this.callbackListener.onDateSelected(tastingDate);
     }
 
 }
