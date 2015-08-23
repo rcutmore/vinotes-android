@@ -126,6 +126,9 @@ public class AddNoteActivity extends ActionBarActivity {
         newFragment.show(getFragmentManager(), "datePicker");
     }
 
+    /**
+     * Starts activity to select wine for note.
+     */
     public void showWinePicker(final View view) {
         // Open activity to allow user to select wine.
         Intent intent = new Intent(this, SelectWineActivity.class);
@@ -133,6 +136,9 @@ public class AddNoteActivity extends ActionBarActivity {
         startActivityForResult(intent, this.WINE_REQUEST_CODE);
     }
 
+    /**
+     * Starts activity to select winery for note.
+     */
     public void showWineryPicker(final View view) {
         // Open activity to allow user to select winery.
         Intent intent = new Intent(this, SelectWineryActivity.class);
@@ -154,10 +160,20 @@ public class AddNoteActivity extends ActionBarActivity {
         return isInvalid;
     }
 
+    /**
+     * Checks to see if given input is empty.
+     *
+     * @param userInput  EditText to check
+     * @return true or false whether input is empty
+     */
     private boolean isInputEmpty(final EditText userInput) {
         return userInput.getText().toString().trim().length() == 0;
     }
 
+    /**
+     * Restores persisted note data.
+     * Sets up fragment to persist data if it doesn't exist yet.
+     */
     private void restoreActivityState() {
         FragmentManager fm = getFragmentManager();
         this.dataFragment = (RetainedNoteFragment) fm.findFragmentByTag("noteData");
@@ -176,6 +192,9 @@ public class AddNoteActivity extends ActionBarActivity {
         this.setRating(this.dataFragment.getRating());
     }
 
+    /**
+     * Saves note data to be persisted if activity needs to be recreated.
+     */
     private void storeActivityState() {
         this.dataFragment.setTastingDate(this.tastingDate);
         this.dataFragment.setWinery(this.winery);
