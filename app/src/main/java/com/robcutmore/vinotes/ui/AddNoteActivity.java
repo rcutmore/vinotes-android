@@ -1,6 +1,7 @@
 package com.robcutmore.vinotes.ui;
 
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
@@ -17,21 +18,31 @@ import com.robcutmore.vinotes.dao.WineryDataSource;
 import com.robcutmore.vinotes.model.Wine;
 import com.robcutmore.vinotes.model.Winery;
 
+import java.util.Date;
+
 
 public class AddNoteActivity extends ActionBarActivity {
 
     private final int WINERY_REQUEST_CODE = 1;
     private final int WINE_REQUEST_CODE = 2;
 
+    private RetainedNoteFragment dataFragment;
+
+    // Note data
+    private Date tastingDate = null;
+    private Winery winery = null;
+    private Wine wine = null;
+    private Integer rating = null;
+
+    // User input
     private EditText etTastingDate;
     private EditText etWinery;
     private EditText etWine;
     private RatingBar rbRating;
 
+    // Data sources
     private WineryDataSource wineryDataSource;
-    private Winery winery;
     private WineDataSource wineDataSource;
-    private Wine wine;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -44,14 +55,18 @@ public class AddNoteActivity extends ActionBarActivity {
         this.etWine = (EditText) findViewById(R.id.etWine);
         this.rbRating = (RatingBar) findViewById(R.id.rbRating);
 
-        // Initialize objects for note.
-        this.winery = null;
-        this.wine = null;
-
         // Initialize data source objects.
         Context appContext = this.getApplicationContext();
         this.wineryDataSource = new WineryDataSource(appContext);
         this.wineDataSource = new WineDataSource(appContext);
+
+        this.restoreActivityState();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.storeActivityState();
     }
 
     @Override
@@ -149,6 +164,79 @@ public class AddNoteActivity extends ActionBarActivity {
 
     private boolean isInputEmpty(final EditText userInput) {
         return userInput.getText().toString().trim().length() == 0;
+    }
+
+    private void restoreActivityState() {
+        FragmentManager fm = getFragmentManager();
+        this.dataFragment = (RetainedNoteFragment) fm.findFragmentByTag("noteData");
+
+        // Create and store fragment to persist data if it hasn't been created yet.
+        if (this.dataFragment == null) {
+            this.dataFragment = new RetainedNoteFragment();
+            fm.beginTransaction().add(dataFragment, "noteData").commit();
+            this.storeActivityState();
+        }
+
+        // Restore previously saved data from fragment.
+        this.setTastingDate(this.dataFragment.getTastingDate());
+        this.setWinery(this.dataFragment.getWinery());
+        this.setWine(this.dataFragment.getWine());
+        this.setRating(this.dataFragment.getRating());
+    }
+
+    private void storeActivityState() {
+        this.dataFragment.setTastingDate(this.tastingDate);
+        this.dataFragment.setWinery(this.winery);
+        this.dataFragment.setWine(this.wine);
+        this.dataFragment.setRating(this.rating);
+    }
+
+    private void setTastingDate(Date tastingDate) {
+        this.tastingDate = tastingDate;
+
+        // Display selected tasting date.
+        String dateText = (this.tastingDate != null) ? this.tastingDate.toString() : "";
+        this.etTastingDate.setText(dateText);
+    }
+
+    private void setWinery(Winery winery) {
+        this.winery = winery;
+
+        // Display selected winery.
+        String wineryText;
+        if (this.winery != null) {
+            wineryText = this.winery.getName();
+            this.etWine.setEnabled(true);
+        } else {
+            wineryText = "";
+            this.etWine.setEnabled(false);
+        }
+        this.etWinery.setText(wineryText);
+    }
+
+    private void setWine(Wine wine) {
+        this.wine = wine;
+
+        // Display selected wine.
+        String wineText;
+        if (this.wine != null) {
+            wineText = String.format("%s %s", this.wine.getName(), this.wine.getVintage());
+        } else {
+            wineText = "";
+            this.etWine.setEnabled(false);
+        }
+        this.etWine.setText(wineText);
+    }
+
+    private void setRating(Integer rating) {
+        this.rating = rating;
+
+        // Display selected rating.
+        if (this.rating != null) {
+            this.rbRating.setRating((float) this.rating);
+        } else {
+            this.rbRating.setRating(0f);
+        }
     }
 
 }
