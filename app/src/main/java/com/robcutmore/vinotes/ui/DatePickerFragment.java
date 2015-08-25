@@ -14,6 +14,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 
+/**
+ * Displays DatePicker and returns selected date to calling activity.
+ */
 public class DatePickerFragment extends DialogFragment
                                 implements DatePickerDialog.OnDateSetListener {
 
@@ -61,10 +64,10 @@ public class DatePickerFragment extends DialogFragment
     public void onDateSet(final DatePicker view, final int year, final int month, final int day) {
         // Get selected date.
         String dateString = String.format("%d/%d/%d", year, month+1, day);
-        Date tastingDate = DateUtils.parseDateFromString(dateString);
+        Date date = DateUtils.parseDateFromString(dateString);
 
         // Return date to calling activity.
-        this.callbackListener.onDateSelected(tastingDate);
+        this.callbackListener.onDateSelected(date);
     }
 
 }
