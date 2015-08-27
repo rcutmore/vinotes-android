@@ -13,7 +13,9 @@
 
 # Android Studio files
 .gradle
-/.idea/workspace.xml
-/.idea/libraries
 /build
 /captures
+*.iml
+/.idea/
+!/.idea/vcs.xml
+!/.idea/runConfigurations.xml
