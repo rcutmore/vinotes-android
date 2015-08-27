@@ -16,6 +16,6 @@
 /build
 /captures
 *.iml
-/.idea/
+/.idea/*
 !/.idea/vcs.xml
 !/.idea/runConfigurations.xml
