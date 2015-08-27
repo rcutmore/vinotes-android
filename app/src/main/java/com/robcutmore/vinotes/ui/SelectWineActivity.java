@@ -21,17 +21,23 @@ import com.robcutmore.vinotes.model.Wine;
 import java.util.ArrayList;
 
 
+/**
+ * Activity for selecting a wine stored in local database.
+ */
 public class SelectWineActivity extends ActionBarActivity
                                 implements AddWineFragment.OnWineAddedListener {
 
-    private Long wineryId;
+    // User input
     private EditText etWineSearch;
     private ListView lvWines;
+
+    // Wine components
+    private Long wineryId;
     private WineDataSource wineDataSource;
     private ArrayList<Wine> wines;
     private ArrayAdapter<Wine> winesAdapter;
 
-    // This will watch for any typing in etWineSearch and filter lvWines.
+    // Filters lvWines as user types in etWineSearch.
     private final TextWatcher searchWatcher = new TextWatcher() {
         @Override
         public void afterTextChanged(Editable s) {}
@@ -46,7 +52,7 @@ public class SelectWineActivity extends ActionBarActivity
         }
     };
 
-    // This will return the selected wine id to the calling activity.
+    // Returns ID of selected wine to calling activity.
     private final AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -60,31 +66,30 @@ public class SelectWineActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_wine);
 
-        // Get references to user input.
+        // Set up user input.
         this.etWineSearch = (EditText) findViewById(R.id.etWineSearch);
-        this.etWineSearch.addTextChangedListener(searchWatcher);
+        this.etWineSearch.addTextChangedListener(this.searchWatcher);
         this.lvWines = (ListView) findViewById(R.id.lvWines);
-        this.lvWines.setOnItemClickListener(clickListener);
+        this.lvWines.setOnItemClickListener(this.clickListener);
 
         // Get ID of selected winery (sent from previous activity).
         Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        this.wineryId = (bundle != null) ? bundle.getLong("wineryId") : null;
+        Bundle args = intent.getExtras();
+        this.wineryId = (args != null) ? args.getLong("wineryId") : null;
+
+        this.setupActivity();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        this.setupActivity();
+    }
 
-        // Display all wines stored in database for given winery.
-        this.wineDataSource = new WineDataSource(this.getApplicationContext());
-        this.wines = this.wineDataSource.getAllForWinery(wineryId);
-        this.winesAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                this.wines
-        );
-        this.lvWines.setAdapter(this.winesAdapter);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.etWineSearch.removeTextChangedListener(this.searchWatcher);
     }
 
     @Override
@@ -92,12 +97,6 @@ public class SelectWineActivity extends ActionBarActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_select_wine, menu);
         return true;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        this.etWineSearch.removeTextChangedListener(this.searchWatcher);
     }
 
     @Override
@@ -120,8 +119,11 @@ public class SelectWineActivity extends ActionBarActivity
         this.returnSelectedWine(wineId);
     }
 
+    /**
+     * Displays dialog to add new wine.
+     */
     public void showAddWineDialog(final View view) {
-        // Send any search text that's been entered, along with selected winery id.
+        // Send any search text that's been entered, along with selected winery ID.
         Bundle args = new Bundle();
         args.putString("searchText", this.etWineSearch.getText().toString());
         args.putLong("wineryId", this.wineryId);
@@ -132,11 +134,40 @@ public class SelectWineActivity extends ActionBarActivity
         newFragment.show(getFragmentManager(), "wineAdder");
     }
 
+    /**
+     * Returns selected wine ID to calling activity.
+     * @param wineId  ID of selected wine
+     */
     public void returnSelectedWine(final long wineId) {
         Intent intent = new Intent(SelectWineActivity.this, AddNoteActivity.class);
         intent.putExtra("id", wineId);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    /**
+     * Sets up required wine components for activity if needed.
+     */
+    private void setupActivity() {
+        // Set up data source.
+        if (this.wineDataSource == null) {
+            this.wineDataSource = new WineDataSource(this.getApplicationContext());
+        }
+
+        // Set up wine list.
+        if (this.wines == null) {
+            this.wines = this.wineDataSource.getAllForWinery(this.wineryId);
+        }
+
+        // Set up wine adapter.
+        if (this.winesAdapter == null) {
+            this.winesAdapter = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    this.wines
+            );
+            this.lvWines.setAdapter(this.winesAdapter);
+        }
     }
 
 }
