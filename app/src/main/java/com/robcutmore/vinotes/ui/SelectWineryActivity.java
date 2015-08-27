@@ -21,16 +21,22 @@ import com.robcutmore.vinotes.model.Winery;
 import java.util.ArrayList;
 
 
+/**
+ * Activity for selecting a winery stored in local database.
+ */
 public class SelectWineryActivity extends ActionBarActivity
                                   implements AddWineryFragment.OnWineryAddedListener {
 
+    // User input
     private EditText etWinerySearch;
     private ListView lvWineries;
+
+    // Winery components
     private WineryDataSource wineryDataSource;
     private ArrayList<Winery> wineries;
     private ArrayAdapter<Winery> wineriesAdapter;
 
-    // This will watch for any typing in etWinerySearch and filter lvWineries.
+    // Filters lvWineries as user types in etWinerySearch.
     private final TextWatcher searchWatcher = new TextWatcher() {
         @Override
         public void afterTextChanged(Editable s) {}
@@ -44,7 +50,7 @@ public class SelectWineryActivity extends ActionBarActivity
         }
     };
 
-    // This will return the selected winery id to the calling activity.
+    // Returns ID of selected winery to calling activity.
     private final AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -58,25 +64,25 @@ public class SelectWineryActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_winery);
 
+        // Set up user input.
         this.etWinerySearch = (EditText) findViewById(R.id.etWinerySearch);
         this.etWinerySearch.addTextChangedListener(this.searchWatcher);
         this.lvWineries = (ListView) findViewById(R.id.lvWineries);
         this.lvWineries.setOnItemClickListener(this.clickListener);
+
+        this.setupActivity();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        this.setupActivity();
+    }
 
-        // Display all wineries stored in database.
-        this.wineryDataSource = new WineryDataSource(this.getApplicationContext());
-        this.wineries = this.wineryDataSource.getAll(false);
-        this.wineriesAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                this.wineries
-        );
-        this.lvWineries.setAdapter(this.wineriesAdapter);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.etWinerySearch.removeTextChangedListener(this.searchWatcher);
     }
 
     @Override
@@ -84,12 +90,6 @@ public class SelectWineryActivity extends ActionBarActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_select_winery, menu);
         return true;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        this.etWinerySearch.removeTextChangedListener(this.searchWatcher);
     }
 
     @Override
@@ -112,22 +112,54 @@ public class SelectWineryActivity extends ActionBarActivity
         this.returnSelectedWinery(wineryId);
     }
 
+    /**
+     * Displays dialog to add a new winery.
+     */
     public void showAddWineryDialog(final View view) {
         // Send any search text that's been entered.
-        Bundle bundle = new Bundle();
-        bundle.putString("searchText", this.etWinerySearch.getText().toString());
+        Bundle args = new Bundle();
+        args.putString("searchText", this.etWinerySearch.getText().toString());
 
         // Create and show fragment.
         AddWineryFragment newFragment = new AddWineryFragment();
-        newFragment.setArguments(bundle);
+        newFragment.setArguments(args);
         newFragment.show(getFragmentManager(), "wineryAdder");
     }
 
-    protected void returnSelectedWinery(final long wineryId) {
+    /**
+     * Returns selected winery ID to calling activity.
+     * @param wineryId  ID of selected winery
+     */
+    private void returnSelectedWinery(final long wineryId) {
         Intent intent = new Intent(SelectWineryActivity.this, AddNoteActivity.class);
         intent.putExtra("id", wineryId);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    /**
+     * Sets up required winery components for activity if needed.
+     */
+    private void setupActivity() {
+        // Set up data source.
+        if (this.wineryDataSource == null) {
+            this.wineryDataSource = new WineryDataSource(this.getApplicationContext());
+        }
+
+        // Set up winery list.
+        if (this.wineries == null) {
+            this.wineries = this.wineryDataSource.getAll(false);
+        }
+
+        // Set up winery adapter.
+        if (this.wineriesAdapter == null) {
+            this.wineriesAdapter = new ArrayAdapter<Winery>(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    this.wineries
+            );
+        }
+        this.lvWineries.setAdapter(this.wineriesAdapter);
     }
 
 }
