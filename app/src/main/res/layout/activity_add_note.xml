@@ -1,57 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:gravity="center"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:padding="@dimen/default_padding"
-    tools:context="com.robcutmore.vinotes.ui.AddNoteActivity">
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent">
 
-    <EditText
-        android:editable="false"
-        android:id="@+id/etTastingDate"
+    <LinearLayout
         android:gravity="center"
-        android:hint="@string/edit_text_add_note_tasting_date_hint"
-        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:onClick="showDatePickerDialog"
-        android:padding="@dimen/default_padding" />
-
-    <EditText
-        android:id="@+id/etWinery"
-        android:focusable="false"
-        android:gravity="center"
-        android:hint="@string/edit_text_add_note_winery_hint"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:onClick="showWineryPicker"
-        android:padding="@dimen/default_padding" />
-
-    <EditText
-        android:id="@+id/etWine"
-        android:enabled="false"
-        android:focusable="false"
-        android:gravity="center"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:onClick="showWinePicker"
-        android:padding="@dimen/default_padding" />
-
-    <RatingBar
-        android:id="@+id/rbRating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:numStars="5"
-        android:stepSize="1.0" />
-
-    <Button
-        android:id="@+id/btnSave"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:onClick="saveNote"
+        android:orientation="vertical"
         android:padding="@dimen/default_padding"
-        android:text="@string/button_save_note" />
+        tools:context="com.robcutmore.vinotes.ui.AddNoteActivity">
 
-</LinearLayout>
+        <EditText
+            android:editable="false"
+            android:id="@+id/etTastingDate"
+            android:gravity="center"
+            android:hint="@string/edit_text_add_note_tasting_date_hint"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:onClick="showDatePickerDialog"
+            android:padding="@dimen/default_padding" />
+
+        <EditText
+            android:id="@+id/etWinery"
+            android:focusable="false"
+            android:gravity="center"
+            android:hint="@string/edit_text_add_note_winery_hint"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:onClick="showWineryPicker"
+            android:padding="@dimen/default_padding" />
+
+        <EditText
+            android:id="@+id/etWine"
+            android:enabled="false"
+            android:focusable="false"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:onClick="showWinePicker"
+            android:padding="@dimen/default_padding" />
+
+        <RatingBar
+            android:id="@+id/rbRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="1.0" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:onClick="saveNote"
+            android:padding="@dimen/default_padding"
+            android:text="@string/button_save_note" />
+
+    </LinearLayout>
+
+</ScrollView>
