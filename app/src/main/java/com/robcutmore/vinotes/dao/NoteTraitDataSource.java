@@ -15,18 +15,36 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
+/**
+ * NoteTraitDataSource manages adding, retrieving, and deleting trait-related data.
+ * Interacts with API and local database.
+ */
 public class NoteTraitDataSource extends DataSource {
 
+    /**
+     * Constructor.
+     */
     public NoteTraitDataSource(final Context context) {
         this.dbHelper = DatabaseHelper.getInstance(context);
         this.dbColumns = this.dbHelper.getTraitColumns();
     }
 
+    /**
+     * Constructor.
+     *
+     * @param closeDatabaseWhenFinished  true or false for closing connection after operations
+     */
     protected NoteTraitDataSource(final Context context, final boolean closeDatabaseWhenFinished) {
         this(context);
         this.closeDatabaseWhenFinished = closeDatabaseWhenFinished;
     }
 
+    /**
+     * Adds new trait.
+     *
+     * @param name  name of new trait
+     * @return NoteTrait object
+     */
     public NoteTrait add(final String name) {
         // Add new note trait to API.
         NoteTrait trait = NoteTraitRequest.add(name);
@@ -39,6 +57,11 @@ public class NoteTraitDataSource extends DataSource {
         return trait;
     }
 
+    /**
+     * Deletes trait with given id.
+     *
+     * @param id  id of trait to delete
+     */
     public void remove(final long id) {
         String table = this.dbHelper.getTraitTable();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
@@ -47,6 +70,12 @@ public class NoteTraitDataSource extends DataSource {
         this.close();
     }
 
+    /**
+     * Fetches trait with given id.
+     *
+     * @param id  id of trait to retrieve
+     * @return NoteTrait object
+     */
     public NoteTrait get(final long id) {
         // Fetch winery from local database. If missing then request from API.
         NoteTrait trait = this.getFromDatabase(id);
@@ -61,21 +90,32 @@ public class NoteTraitDataSource extends DataSource {
         return trait;
     }
 
+    /**
+     * Fetches and returns all traits, either from API or database.
+     * Repopulates database when fetching traits from API.
+     *
+     * @param refreshFromAPI  true or false to refresh with data from API
+     * @return an ArrayList containing NoteTrait objects
+     */
     public ArrayList<NoteTrait> getAll(final boolean refreshFromAPI) {
         ArrayList<NoteTrait> traits;
         if (refreshFromAPI) {
+            // Repopulate traits in database with data from API.
+            this.removeAllFromDatabase();
             traits = NoteTraitRequest.getAll();
-
             for (NoteTrait trait : traits) {
                 this.addToDatabase(trait);
             }
         } else {
+            // Retrieve all traits from database.
             traits = this.getAllFromDatabase();
         }
-
         return traits;
     }
 
+    /**
+     * Connects to database.
+     */
     @Override
     protected void connectToDatabase() {
         try {
@@ -85,6 +125,11 @@ public class NoteTraitDataSource extends DataSource {
         }
     }
 
+    /**
+     * Fetches database column names for traits table.
+     *
+     * @return an array containing column names
+     */
     @Override
     protected String[] getDatabaseTableColumns() {
         String[] columns = {
@@ -94,6 +139,11 @@ public class NoteTraitDataSource extends DataSource {
         return columns;
     }
 
+    /**
+     * Adds given trait to database.
+     *
+     * @param trait  trait to add to database
+     */
     private void addToDatabase(final NoteTrait trait) {
         // Prepare trait values to be inserted into database.
         ContentValues values = new ContentValues();
@@ -107,6 +157,11 @@ public class NoteTraitDataSource extends DataSource {
         this.close();
     }
 
+    /**
+     * Fetches all traits from database.
+     *
+     * @return an ArrayList containing NoteTrait objects
+     */
     private ArrayList<NoteTrait> getAllFromDatabase() {
         String table = this.dbHelper.getTraitTable();
         String[] columns = this.getDatabaseTableColumns();
@@ -130,6 +185,12 @@ public class NoteTraitDataSource extends DataSource {
         return traits;
     }
 
+    /**
+     * Fetches trait with given id from database.
+     *
+     * @param id  id of trait to retrieve
+     * @return NoteTrait object
+     */
     private NoteTrait getFromDatabase(final long id) {
         // Query traits table for trait with given id.
         String table = this.dbHelper.getTraitTable();
@@ -146,6 +207,21 @@ public class NoteTraitDataSource extends DataSource {
         return trait;
     }
 
+    /**
+     * Deletes all traits from database.
+     */
+    private void removeAllFromDatabase() {
+        this.connectToDatabase();
+        this.database.delete(this.dbHelper.getTraitTable(), null, null);
+        this.close();
+    }
+
+    /**
+     * Creates trait using data at current position of cursor.
+     *
+     * @param cursor  cursor containing trait data
+     * @return NoteTrait object
+     */
     private NoteTrait cursorToTrait(final Cursor cursor) {
         // Get information for cursor's current position.
         long id = cursor.getLong(0);
