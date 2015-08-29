@@ -16,21 +16,41 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
+/**
+ * WineDataSource manages adding, retrieving, and deleting wine-related data.
+ * Interacts with API and local database.
+ */
 public class WineDataSource extends DataSource {
 
     private WineryDataSource wineryDataSource;
 
+    /**
+     * Constructor.
+     */
     public WineDataSource(final Context context) {
         this.dbHelper = DatabaseHelper.getInstance(context);
         this.dbColumns = this.dbHelper.getWineColumns();
         this.wineryDataSource = new WineryDataSource(context, false);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param closeDatabaseWhenFinished  true or false for closing connection after operations
+     */
     protected WineDataSource(final Context context, final boolean closeDatabaseWhenFinished) {
         this(context);
         this.closeDatabaseWhenFinished = closeDatabaseWhenFinished;
     }
 
+    /**
+     * Adds new wine.
+     *
+     * @param wineryId  id of winery for new wine
+     * @param name  name of new wine
+     * @param vintage  vintage (year) of new wine
+     * @return Wine object
+     */
     public Wine add(final long wineryId, final String name, final int vintage) {
         // Add new wine to API.
         Wine wine = WineRequest.add(wineryId, name, vintage);
@@ -43,6 +63,11 @@ public class WineDataSource extends DataSource {
         return wine;
     }
 
+    /**
+     * Deletes wine with given id.
+     *
+     * @param id  id of wine to delete
+     */
     public void remove(final long id) {
         String table = this.dbHelper.getWineTable();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
@@ -51,6 +76,12 @@ public class WineDataSource extends DataSource {
         this.close();
     }
 
+    /**
+     * Fetches wine with given id.
+     *
+     * @param id  id of wine to retrieve
+     * @return Wine object
+     */
     public Wine get(final long id) {
         // Fetch winery from local database. If missing then request from API.
         Wine wine = this.getFromDatabase(id);
@@ -65,25 +96,42 @@ public class WineDataSource extends DataSource {
         return wine;
     }
 
+    /**
+     * Fetches and returns all wines, either from API or database.
+     * When fetching wines from API database is repopulated.
+     *
+     * @param refreshFromAPI  whether or not to refresh with data from API
+     * @return an ArrayList containing Winery objects
+     */
     public ArrayList<Wine> getAll(final boolean refreshFromAPI) {
         ArrayList<Wine> wines;
         if (refreshFromAPI) {
+            // Repopulate wines in database with data from API.
+            this.removeAllFromDatabase();
             wines = WineRequest.getAll();
-
             for (Wine wine : wines) {
                 this.addToDatabase(wine);
             }
         } else {
+            // Retrieve all wines from database.
             wines = this.getAllFromDatabase(null);
         }
-
         return wines;
     }
 
+    /**
+     * Fetch all wines from database for given winery.
+     *
+     * @param wineryId  id of winery to get wines for
+     * @return an ArrayList containing Wine objects
+     */
     public ArrayList<Wine> getAllForWinery(final long wineryId) {
         return this.getAllFromDatabase(wineryId);
     }
 
+    /**
+     * Connects to database.
+     */
     @Override
     protected void connectToDatabase() {
         try {
@@ -93,6 +141,11 @@ public class WineDataSource extends DataSource {
         }
     }
 
+    /**
+     * Fetches database column names.
+     *
+     * @return an array containing column names for wines table
+     */
     @Override
     protected String[] getDatabaseTableColumns() {
         String[] columns = {
@@ -104,6 +157,11 @@ public class WineDataSource extends DataSource {
         return columns;
     }
 
+    /**
+     * Adds given wine to database.
+     *
+     * @param wine  Wine object to add to database
+     */
     private void addToDatabase(final Wine wine) {
         // Prepare wine values to be inserted into database.
         ContentValues values = new ContentValues();
@@ -119,6 +177,12 @@ public class WineDataSource extends DataSource {
         this.close();
     }
 
+    /**
+     * Fetches all wines from database.
+     *
+     * @param wineryId  id of winery to get wines for
+     * @return an ArrayList containing Wine objects
+     */
     private ArrayList<Wine> getAllFromDatabase(final Long wineryId) {
         String table = this.dbHelper.getWineTable();
         String[] columns = this.getDatabaseTableColumns();
@@ -151,6 +215,12 @@ public class WineDataSource extends DataSource {
         return wines;
     }
 
+    /**
+     * Fetches wine with given id from database.
+     *
+     * @param id  id of wine to retrieve
+     * @return Wine object
+     */
     private Wine getFromDatabase(final long id) {
         // Query wines table for wine with given id.
         String table = this.dbHelper.getWineTable();
@@ -167,6 +237,21 @@ public class WineDataSource extends DataSource {
         return wine;
     }
 
+    /**
+     * Deletes all wines from database.
+     */
+    private void removeAllFromDatabase() {
+        this.connectToDatabase();
+        this.database.delete(this.dbHelper.getWineTable(), null, null);
+        this.close();
+    }
+
+    /**
+     * Use data at current position of cursor to create Wine object.
+     *
+     * @param cursor  cursor containing wine data
+     * @return Wine object
+     */
     private Wine cursorToWine(final Cursor cursor) {
         // Get information for cursor's current position.
         long id = cursor.getLong(0);
