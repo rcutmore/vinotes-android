@@ -1,17 +1,17 @@
 package com.robcutmore.vinotes.model;
 
 
-public class NoteTrait {
+public class Trait {
 
     private Long id;
     private String name;
 
-    public NoteTrait(final String name) {
+    public Trait(final String name) {
         this.name = name;
         this.id = null;
     }
 
-    public NoteTrait(final long id, final String name) {
+    public Trait(final long id, final String name) {
         this(name);
         this.id = id;
     }

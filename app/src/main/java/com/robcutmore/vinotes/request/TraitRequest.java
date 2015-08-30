@@ -1,26 +1,26 @@
 package com.robcutmore.vinotes.request;
 
 
-import com.robcutmore.vinotes.model.NoteTrait;
+import com.robcutmore.vinotes.model.Trait;
 
 import java.util.ArrayList;
 
 
-public final class NoteTraitRequest {
+public final class TraitRequest {
 
-    public static NoteTrait add(final String name) {
+    public static Trait add(final String name) {
         String response = sendPOST(name);
-        ArrayList<NoteTrait> traits = parseResponse(response);
+        ArrayList<Trait> traits = parseResponse(response);
         return (traits.size() > 0) ? traits.get(0) : null;
     }
 
-    public static NoteTrait get(final long id) {
+    public static Trait get(final long id) {
         String response = sendGET(id);
-        ArrayList<NoteTrait> traits = parseResponse(response);
+        ArrayList<Trait> traits = parseResponse(response);
         return (traits.size() > 0) ? traits.get(0) : null;
     }
 
-    public static ArrayList<NoteTrait> getAll() {
+    public static ArrayList<Trait> getAll() {
         String response = sendGET();
         return parseResponse(response);
     }
@@ -39,11 +39,11 @@ public final class NoteTraitRequest {
         return "";
     }
 
-    private static ArrayList<NoteTrait> parseResponse(final String response) {
+    private static ArrayList<Trait> parseResponse(final String response) {
         // Test stub, replace with code to parse JSON response.
-        ArrayList<NoteTrait> traits = new ArrayList<>();
-        traits.add(new NoteTrait(1, "Trait 1"));
-        traits.add(new NoteTrait(2, "Trait 2"));
+        ArrayList<Trait> traits = new ArrayList<>();
+        traits.add(new Trait(1, "Trait 1"));
+        traits.add(new Trait(2, "Trait 2"));
         return traits;
     }
 

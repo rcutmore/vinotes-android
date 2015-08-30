@@ -10,10 +10,10 @@ public class Note {
     private Long id;
     private Wine wine;
     private Date tasted;
-    private HashMap<Long, NoteTrait> colorTraits = new HashMap<>();
-    private HashMap<Long, NoteTrait> noseTraits = new HashMap<>();
-    private HashMap<Long, NoteTrait> tasteTraits = new HashMap<>();
-    private HashMap<Long, NoteTrait> finishTraits = new HashMap<>();
+    private HashMap<Long, Trait> colorTraits = new HashMap<>();
+    private HashMap<Long, Trait> noseTraits = new HashMap<>();
+    private HashMap<Long, Trait> tasteTraits = new HashMap<>();
+    private HashMap<Long, Trait> finishTraits = new HashMap<>();
     private Integer rating;
 
     public Note(final Wine wine) {
@@ -55,35 +55,35 @@ public class Note {
         this.tasted = tasted;
     }
 
-    public HashMap<Long, NoteTrait> getColorTraits() {
+    public HashMap<Long, Trait> getColorTraits() {
         return this.colorTraits;
     }
 
-    public void setColorTraits(final HashMap<Long, NoteTrait> colorTraits) {
+    public void setColorTraits(final HashMap<Long, Trait> colorTraits) {
         this.colorTraits = colorTraits;
     }
 
-    public HashMap<Long, NoteTrait> getNoseTraits() {
+    public HashMap<Long, Trait> getNoseTraits() {
         return this.noseTraits;
     }
 
-    public void setNoseTraits(final HashMap<Long, NoteTrait> noseTraits) {
+    public void setNoseTraits(final HashMap<Long, Trait> noseTraits) {
         this.noseTraits = noseTraits;
     }
 
-    public HashMap<Long, NoteTrait> getTasteTraits() {
+    public HashMap<Long, Trait> getTasteTraits() {
         return this.tasteTraits;
     }
 
-    public void setTasteTraits(final HashMap<Long, NoteTrait> tasteTraits) {
+    public void setTasteTraits(final HashMap<Long, Trait> tasteTraits) {
         this.tasteTraits = tasteTraits;
     }
 
-    public HashMap<Long, NoteTrait> getFinishTraits() {
+    public HashMap<Long, Trait> getFinishTraits() {
         return this.finishTraits;
     }
 
-    public void setFinishTraits(final HashMap<Long, NoteTrait> finishTraits) {
+    public void setFinishTraits(final HashMap<Long, Trait> finishTraits) {
         this.finishTraits = finishTraits;
     }
 

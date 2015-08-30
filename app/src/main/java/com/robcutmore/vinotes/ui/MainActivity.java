@@ -13,7 +13,7 @@ import android.widget.ListView;
 
 import com.robcutmore.vinotes.R;
 import com.robcutmore.vinotes.dao.NoteDataSource;
-import com.robcutmore.vinotes.dao.NoteTraitDataSource;
+import com.robcutmore.vinotes.dao.TraitDataSource;
 import com.robcutmore.vinotes.dao.WineDataSource;
 import com.robcutmore.vinotes.dao.WineryDataSource;
 import com.robcutmore.vinotes.model.Note;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity {
 
-    private NoteTraitDataSource traitDataSource;
+    private TraitDataSource traitDataSource;
     private NoteDataSource noteDataSource;
     private WineDataSource wineDataSource;
     private WineryDataSource wineryDataSource;
@@ -38,7 +38,7 @@ public class MainActivity extends ActionBarActivity {
 
         // Initialize data sources.
         Context appContext = this.getApplicationContext();
-        this.traitDataSource = new NoteTraitDataSource(appContext);
+        this.traitDataSource = new TraitDataSource(appContext);
         this.wineryDataSource = new WineryDataSource(appContext);
         this.wineDataSource = new WineDataSource(appContext);
         this.noteDataSource = new NoteDataSource(appContext);
