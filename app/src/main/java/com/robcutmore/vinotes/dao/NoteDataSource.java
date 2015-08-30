@@ -8,9 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.robcutmore.vinotes.database.DatabaseHelper;
-import com.robcutmore.vinotes.request.TastingNoteRequest;
+import com.robcutmore.vinotes.model.Note;
+import com.robcutmore.vinotes.request.NoteRequest;
 import com.robcutmore.vinotes.utils.DateUtils;
-import com.robcutmore.vinotes.model.TastingNote;
 import com.robcutmore.vinotes.model.Wine;
 
 import java.sql.SQLException;
@@ -19,17 +19,17 @@ import java.util.Date;
 
 
 /**
- * TastingNoteDataSource manages adding, retrieving, and deleting note-related data.
+ * NoteDataSource manages adding, retrieving, and deleting note-related data.
  * Interacts with API and local database.
  */
-public class TastingNoteDataSource extends DataSource {
+public class NoteDataSource extends DataSource {
 
     private WineDataSource wineDataSource;
 
     /**
      * Constructor.
      */
-    public TastingNoteDataSource(final Context context) {
+    public NoteDataSource(final Context context) {
         this.dbHelper = DatabaseHelper.getInstance(context);
         this.dbColumns = this.dbHelper.getNoteColumns();
         this.wineDataSource = new WineDataSource(context);
@@ -40,7 +40,7 @@ public class TastingNoteDataSource extends DataSource {
      *
      * @param closeDatabaseWhenFinished  true or false for closing connection after operations
      */
-    protected TastingNoteDataSource(final Context context, final boolean closeDatabaseWhenFinished) {
+    protected NoteDataSource(final Context context, final boolean closeDatabaseWhenFinished) {
         this(context);
         this.closeDatabaseWhenFinished = closeDatabaseWhenFinished;
     }
@@ -51,11 +51,11 @@ public class TastingNoteDataSource extends DataSource {
      * @param wineId  id of wine for new note
      * @param tasted  tasting date for new note
      * @param rating  rating for new note
-     * @return TastingNote object
+     * @return Note object
      */
-    public TastingNote add(final long wineId, final Date tasted, final Integer rating) {
+    public Note add(final long wineId, final Date tasted, final Integer rating) {
         // Add new note to API.
-        TastingNote note = TastingNoteRequest.add(wineId, tasted, rating);
+        Note note = NoteRequest.add(wineId, tasted, rating);
 
         // If note was successfully added to API then add to local database as well.
         if (note != null) {
@@ -82,13 +82,13 @@ public class TastingNoteDataSource extends DataSource {
      * Fetches note with given id.
      *
      * @param id  id of note to retrieve
-     * @return TastingNote object
+     * @return Note object
      */
-    public TastingNote get(final long id) {
+    public Note get(final long id) {
         // Fetch note from local database. If missing then request from API.
-        TastingNote note = this.getFromDatabase(id);
+        Note note = this.getFromDatabase(id);
         if (note == null) {
-            note = TastingNoteRequest.get(id);
+            note = NoteRequest.get(id);
 
             // If note was found then add to database since it was missing.
             if (note != null) {
@@ -103,15 +103,15 @@ public class TastingNoteDataSource extends DataSource {
      * Repopulates database when fetching notes from API.
      *
      * @param refreshFromAPI  true or false to refresh with data from API
-     * @return an ArrayList containing TastingNote objects
+     * @return an ArrayList containing Note objects
      */
-    public ArrayList<TastingNote> getAll(final boolean refreshFromAPI) {
-        ArrayList<TastingNote> notes;
+    public ArrayList<Note> getAll(final boolean refreshFromAPI) {
+        ArrayList<Note> notes;
         if (refreshFromAPI) {
             // Repopulate notes in database with data from API.
             this.removeAllFromDatabase();
-            notes = TastingNoteRequest.getAll();
-            for (TastingNote note : notes) {
+            notes = NoteRequest.getAll();
+            for (Note note : notes) {
                 this.addToDatabase(note);
             }
         } else {
@@ -129,7 +129,7 @@ public class TastingNoteDataSource extends DataSource {
         try {
             this.open();
         } catch (SQLException e) {
-            Log.w(TastingNoteDataSource.class.getName(), "Error connecting to database.");
+            Log.w(NoteDataSource.class.getName(), "Error connecting to database.");
         }
     }
 
@@ -154,7 +154,7 @@ public class TastingNoteDataSource extends DataSource {
      *
      * @param note  note to add to database
      */
-    private void addToDatabase(final TastingNote note) {
+    private void addToDatabase(final Note note) {
         // Prepare tasting note values to be inserted into database.
         ContentValues values = new ContentValues();
         values.put(this.dbColumns.get("id"), note.getId());
@@ -180,9 +180,9 @@ public class TastingNoteDataSource extends DataSource {
     /**
      * Fetches all notes from database.
      *
-     * @return an ArrayList containing TastingNote objects
+     * @return an ArrayList containing Note objects
      */
-    private ArrayList<TastingNote> getAllFromDatabase() {
+    private ArrayList<Note> getAllFromDatabase() {
         String table = this.dbHelper.getNoteTable();
         String[] columns = this.getDatabaseTableColumns();
 
@@ -195,7 +195,7 @@ public class TastingNoteDataSource extends DataSource {
 
         // Store and return notes.
         cursor.moveToFirst();
-        ArrayList<TastingNote> notes = new ArrayList<>();
+        ArrayList<Note> notes = new ArrayList<>();
         while (!cursor.isAfterLast()) {
             notes.add(this.cursorToNote(cursor));
             cursor.moveToNext();
@@ -209,9 +209,9 @@ public class TastingNoteDataSource extends DataSource {
      * Fetches note with given id from database.
      *
      * @param id  id of note to retrieve
-     * @return TastingNote object
+     * @return Note object
      */
-    private TastingNote getFromDatabase(final long id) {
+    private Note getFromDatabase(final long id) {
         // Query notes table for note with given id.
         String table = this.dbHelper.getNoteTable();
         String[] columns = this.getDatabaseTableColumns();
@@ -221,7 +221,7 @@ public class TastingNoteDataSource extends DataSource {
 
         // Store and return tasting note.
         cursor.moveToFirst();
-        TastingNote note = !cursor.isAfterLast() ? this.cursorToNote(cursor) : null;
+        Note note = !cursor.isAfterLast() ? this.cursorToNote(cursor) : null;
         cursor.close();
         this.close();
         return note;
@@ -240,9 +240,9 @@ public class TastingNoteDataSource extends DataSource {
      * Creates note using data at current position of given cursor.
      *
      * @param cursor  cursor containing note data
-     * @return TastingNote object
+     * @return Note object
      */
-    private TastingNote cursorToNote(Cursor cursor) {
+    private Note cursorToNote(Cursor cursor) {
         // Get information for cursor's current position.
         long id = cursor.getLong(0);
         long wineId = cursor.getLong(1);
@@ -251,7 +251,7 @@ public class TastingNoteDataSource extends DataSource {
 
         // Create tasting note object with information from cursor.
         final Wine wine = this.wineDataSource.get(wineId);
-        return new TastingNote(id, wine, tasted, rating);
+        return new Note(id, wine, tasted, rating);
     }
 
 }

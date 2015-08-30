@@ -12,11 +12,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.robcutmore.vinotes.R;
+import com.robcutmore.vinotes.dao.NoteDataSource;
 import com.robcutmore.vinotes.dao.NoteTraitDataSource;
-import com.robcutmore.vinotes.dao.TastingNoteDataSource;
 import com.robcutmore.vinotes.dao.WineDataSource;
 import com.robcutmore.vinotes.dao.WineryDataSource;
-import com.robcutmore.vinotes.model.TastingNote;
+import com.robcutmore.vinotes.model.Note;
 
 import java.util.ArrayList;
 
@@ -24,11 +24,11 @@ import java.util.ArrayList;
 public class MainActivity extends ActionBarActivity {
 
     private NoteTraitDataSource traitDataSource;
-    private TastingNoteDataSource noteDataSource;
+    private NoteDataSource noteDataSource;
     private WineDataSource wineDataSource;
     private WineryDataSource wineryDataSource;
-    private ArrayList<TastingNote> notes;
-    private ArrayAdapter<TastingNote> notesAdapter;
+    private ArrayList<Note> notes;
+    private ArrayAdapter<Note> notesAdapter;
     private ListView lvNotes;
 
     @Override
@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
         this.traitDataSource = new NoteTraitDataSource(appContext);
         this.wineryDataSource = new WineryDataSource(appContext);
         this.wineDataSource = new WineDataSource(appContext);
-        this.noteDataSource = new TastingNoteDataSource(appContext);
+        this.noteDataSource = new NoteDataSource(appContext);
 
         // Connect list view to note array list.
         this.notes = new ArrayList<>();
@@ -84,7 +84,7 @@ public class MainActivity extends ActionBarActivity {
         this.traitDataSource.getAll(true);
         this.wineryDataSource.getAll(true);
         this.wineDataSource.getAll(true);
-        ArrayList<TastingNote> notesFromAPI = this.noteDataSource.getAll(true);
+        ArrayList<Note> notesFromAPI = this.noteDataSource.getAll(true);
 
         // Add notes to note list.
         this.notes.clear();

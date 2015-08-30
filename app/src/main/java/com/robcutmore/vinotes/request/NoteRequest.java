@@ -1,7 +1,7 @@
 package com.robcutmore.vinotes.request;
 
 
-import com.robcutmore.vinotes.model.TastingNote;
+import com.robcutmore.vinotes.model.Note;
 import com.robcutmore.vinotes.model.Wine;
 import com.robcutmore.vinotes.model.Winery;
 
@@ -9,23 +9,23 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
-public class TastingNoteRequest {
+public class NoteRequest {
 
-    public static TastingNote add(final long wineId, final Date tasted, final Integer rating) {
+    public static Note add(final long wineId, final Date tasted, final Integer rating) {
         String response = sendPOST(wineId, tasted, rating);
-        ArrayList<TastingNote> notes = parseResponse(response);
+        ArrayList<Note> notes = parseResponse(response);
         return (notes.size() > 0) ? notes.get(0) : null;
     }
 
-    public static TastingNote get(final long id) {
+    public static Note get(final long id) {
         String response = sendGET(id);
-        ArrayList<TastingNote> notes = parseResponse(response);
+        ArrayList<Note> notes = parseResponse(response);
         return (notes.size() > 0) ? notes.get(0) : null;
     }
 
-    public static ArrayList<TastingNote> getAll() {
+    public static ArrayList<Note> getAll() {
         String response = sendGET();
-        ArrayList<TastingNote> notes = parseResponse(response);
+        ArrayList<Note> notes = parseResponse(response);
         return notes;
     }
 
@@ -43,14 +43,14 @@ public class TastingNoteRequest {
         return "";
     }
 
-    private static ArrayList<TastingNote> parseResponse(final String response) {
+    private static ArrayList<Note> parseResponse(final String response) {
         // Test stub, replace with code to parse JSON request.
         Winery winery = new Winery(1, "Test Winery");
         Wine firstWine = new Wine(1, winery, "Test 1", 2012);
         Wine secondWine = new Wine(2, winery, "Test 2", 2013);
-        ArrayList<TastingNote> notes = new ArrayList<>();
-        notes.add(new TastingNote(1, firstWine));
-        notes.add(new TastingNote(2, secondWine));
+        ArrayList<Note> notes = new ArrayList<>();
+        notes.add(new Note(1, firstWine));
+        notes.add(new Note(2, secondWine));
         return notes;
     }
 

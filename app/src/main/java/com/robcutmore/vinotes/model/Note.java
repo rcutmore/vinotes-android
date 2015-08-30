@@ -1,10 +1,11 @@
 package com.robcutmore.vinotes.model;
 
+
 import java.util.Date;
 import java.util.HashMap;
 
 
-public class TastingNote {
+public class Note {
 
     private Long id;
     private Wine wine;
@@ -15,19 +16,19 @@ public class TastingNote {
     private HashMap<Long, NoteTrait> finishTraits = new HashMap<>();
     private Integer rating;
 
-    public TastingNote(final Wine wine) {
+    public Note(final Wine wine) {
         this.wine = wine;
         this.id = null;
         this.tasted = null;
         this.rating = null;
     }
 
-    public TastingNote(final long id, final Wine wine) {
+    public Note(final long id, final Wine wine) {
         this(wine);
         this.id = id;
     }
 
-    public TastingNote(final long id, final Wine wine, final Date tasted, final Integer rating) {
+    public Note(final long id, final Wine wine, final Date tasted, final Integer rating) {
         this(id, wine);
         this.tasted = tasted;
         this.rating = rating;
