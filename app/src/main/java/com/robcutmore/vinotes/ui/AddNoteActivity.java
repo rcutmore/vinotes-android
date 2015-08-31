@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
 
@@ -22,6 +23,10 @@ import com.robcutmore.vinotes.utils.DateUtils;
 import java.util.Date;
 
 
+/**
+ * AddNoteActivity is used to create a new tasting note.
+ * Provides input for various note data and saves note.
+ */
 public class AddNoteActivity extends ActionBarActivity
                              implements DatePickerFragment.OnDateSelectedListener {
 
@@ -41,11 +46,16 @@ public class AddNoteActivity extends ActionBarActivity
     private EditText etWinery;
     private EditText etWine;
     private RatingBar rbRating;
+    private Button btnSave;
 
     // Data sources
     private WineryDataSource wineryDataSource;
     private WineDataSource wineDataSource;
 
+    /**
+     * Sets up activity and private variables.
+     * Restores activity state if necessary.
+     */
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +66,15 @@ public class AddNoteActivity extends ActionBarActivity
         this.etWinery = (EditText) findViewById(R.id.etWinery);
         this.etWine = (EditText) findViewById(R.id.etWine);
         this.rbRating = (RatingBar) findViewById(R.id.rbRating);
+        this.btnSave = (Button) findViewById(R.id.btnSave);
+
+        // Set change listener for rating bar.
+        this.rbRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                setRating((int) rating);
+            }
+        });
 
         // Initialize data source objects.
         Context appContext = this.getApplicationContext();
@@ -65,12 +84,18 @@ public class AddNoteActivity extends ActionBarActivity
         this.restoreActivityState();
     }
 
+    /**
+     * Saves activity state before destroying.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         this.storeActivityState();
     }
 
+    /**
+     * Sets up options menu.
+     */
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -78,6 +103,9 @@ public class AddNoteActivity extends ActionBarActivity
         return true;
     }
 
+    /**
+     * Sets up option items.
+     */
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -93,6 +121,13 @@ public class AddNoteActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Handles result from winery and wine selections.
+     *
+     * @param requestCode  code to distinguish requests
+     * @param resultCode  code for result status
+     * @param data  contains returned data
+     */
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         boolean handleWinery = requestCode == this.WINERY_REQUEST_CODE && resultCode == RESULT_OK;
@@ -122,14 +157,11 @@ public class AddNoteActivity extends ActionBarActivity
     }
 
     public void saveNote(final View view) {
-        // Validate user input.
-        if (!this.isAnyInputInvalid()) {
-            // Save new note.
-        }
+        // Save new note.
     }
 
     /**
-     * Display fragment for selecting tasting date.
+     * Displays fragment for selecting tasting date.
      */
     public void showDatePickerDialog(final View view) {
         DatePickerFragment newFragment = new DatePickerFragment();
@@ -153,26 +185,11 @@ public class AddNoteActivity extends ActionBarActivity
         startActivityForResult(intent, this.WINERY_REQUEST_CODE);
     }
 
-    private boolean isAnyInputInvalid() {
-        boolean isInvalid = false;
-
-        if (this.winery == null || this.isInputEmpty(this.etWinery)) {
-            this.etWinery.setError("Winery must be selected.");
-            isInvalid = true;
-        }
-        if (this.wine == null || this.isInputEmpty(this.etWine)) {
-            this.etWine.setError("Wine must be selected.");
-            isInvalid = true;
-        }
-
-        return isInvalid;
-    }
-
     /**
      * Checks to see if given input is empty.
      *
      * @param userInput  EditText to check
-     * @return true or false whether input is empty
+     * @return true if input is empty otherwise false
      */
     private boolean isInputEmpty(final EditText userInput) {
         return userInput.getText().toString().trim().length() == 0;
@@ -189,7 +206,7 @@ public class AddNoteActivity extends ActionBarActivity
         // Create and store fragment to persist data if it hasn't been created yet.
         if (this.dataFragment == null) {
             this.dataFragment = new RetainedNoteFragment();
-            fm.beginTransaction().add(dataFragment, "noteData").commit();
+            fm.beginTransaction().add(this.dataFragment, "noteData").commit();
             this.storeActivityState();
         }
 
@@ -211,6 +228,24 @@ public class AddNoteActivity extends ActionBarActivity
     }
 
     /**
+     * Sets rating for note being created and updated display.
+     *
+     * @param rating  the new rating to set
+     */
+    private void setRating(Integer rating) {
+        this.rating = rating;
+
+        // Display selected rating.
+        if (this.rating != null) {
+            this.rbRating.setRating((float) this.rating);
+        } else {
+            this.rbRating.setRating(0f);
+        }
+
+        this.validateInput();
+    }
+
+    /**
      * Sets tasting date for note being created and updates display.
      *
      * @param tastingDate  the new date to set
@@ -221,6 +256,8 @@ public class AddNoteActivity extends ActionBarActivity
         // Display selected tasting date.
         String dateText = DateUtils.convertDateToString(tastingDate);
         this.etTastingDate.setText(dateText);
+
+        this.validateInput();
     }
 
     /**
@@ -253,6 +290,8 @@ public class AddNoteActivity extends ActionBarActivity
             }
             this.etWinery.setText(wineryText);
         }
+
+        this.validateInput();
     }
 
     /**
@@ -271,22 +310,39 @@ public class AddNoteActivity extends ActionBarActivity
             wineText = "";
         }
         this.etWine.setText(wineText);
+
+        this.validateInput();
     }
 
     /**
-     * Sets rating for note being created and updated display.
-     *
-     * @param rating  the new rating to set
+     * Validates user input.
+     * Enables button to save note if all input has been entered.
      */
-    private void setRating(Integer rating) {
-        this.rating = rating;
+    private void validateInput() {
+        boolean isValid = true;
 
-        // Display selected rating.
-        if (this.rating != null) {
-            this.rbRating.setRating((float) this.rating);
-        } else {
-            this.rbRating.setRating(0f);
+        // Check tasting date.
+        if (this.tastingDate == null || this.isInputEmpty(this.etTastingDate)) {
+            isValid = false;
         }
+
+        // Check winery.
+        if (this.winery == null || this.isInputEmpty(this.etWinery)) {
+            isValid = false;
+        }
+
+        // Check wine.
+        if (this.wine == null || this.isInputEmpty(this.etWine)) {
+            isValid = false;
+        }
+
+        // Check rating.
+        if (this.rating == null || this.rating == 0) {
+            isValid = false;
+        }
+
+        // Enable or disable save button based on user input.
+        this.btnSave.setEnabled(isValid);
     }
 
 }
