@@ -4,6 +4,7 @@ package com.robcutmore.vinotes.request;
 import com.robcutmore.vinotes.model.Note;
 import com.robcutmore.vinotes.model.Wine;
 import com.robcutmore.vinotes.model.Winery;
+import com.robcutmore.vinotes.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,11 +57,9 @@ public class NoteRequest {
         Wine secondWine = new Wine(2, firstWinery, "Merlot", 2012);
         Wine thirdWine = new Wine(3, secondWinery, "Baco Noir", 2014);
         ArrayList<Note> notes = new ArrayList<>();
-        Note firstNote = new Note(1, firstWine);
-        firstNote.setRating(5);
-        notes.add(firstNote);
-        notes.add(new Note(2, secondWine));
-        notes.add(new Note(3, thirdWine));
+        notes.add(new Note(3, thirdWine, DateUtils.parseDateFromString("2012/3/5"), 2));
+        notes.add(new Note(2, secondWine, DateUtils.parseDateFromString("2011/10/1"), 3));
+        notes.add(new Note(1, firstWine, DateUtils.parseDateFromString("2010/5/13"), 5));
         return notes;
     }
 
