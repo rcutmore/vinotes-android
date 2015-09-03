@@ -21,16 +21,28 @@ import com.robcutmore.vinotes.model.Note;
 import java.util.ArrayList;
 
 
+/**
+ * MainActivity lists all stored tasting notes.
+ */
 public class MainActivity extends ActionBarActivity {
 
+    private final int NOTE_REQUEST_CODE = 1;
+
+    // Data sources
     private TraitDataSource traitDataSource;
     private NoteDataSource noteDataSource;
     private WineDataSource wineDataSource;
     private WineryDataSource wineryDataSource;
+
+    // Note list
     private ArrayList<Note> notes;
     private ArrayAdapter<Note> notesAdapter;
     private ListView lvNotes;
 
+    /**
+     * Sets up activity and private variables.
+     * Refreshes data from API and displays note list.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,10 +61,12 @@ public class MainActivity extends ActionBarActivity {
         this.lvNotes = (ListView) findViewById(R.id.lvNotes);
         this.lvNotes.setAdapter(notesAdapter);
 
-        // Display any existing tasting notes.
-        this.populateNoteList();
+        this.refreshNoteList(true);
     }
 
+    /**
+     * Sets up options menu.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -60,6 +74,9 @@ public class MainActivity extends ActionBarActivity {
         return true;
     }
 
+    /**
+     * Sets up option items.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will automatically handle clicks on
@@ -74,17 +91,42 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onAddNote(View view) {
-        Intent intent = new Intent(this, AddNoteActivity.class);
-        startActivity(intent);
+    /**
+     * Handles result from adding a new note.
+     *
+     * @param requestCode  code to differentiate requests
+     * @param resultCode  code for result status
+     * @param data  contains returned data
+     */
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        boolean handleNote = requestCode == this.NOTE_REQUEST_CODE && resultCode == RESULT_OK;
+        if (handleNote) {
+            this.refreshNoteList(false);
+        }
     }
 
-    private void populateNoteList() {
-        // Refresh data from API.
-        this.traitDataSource.getAll(true);
-        this.wineryDataSource.getAll(true);
-        this.wineDataSource.getAll(true);
-        ArrayList<Note> notesFromAPI = this.noteDataSource.getAll(true);
+    /**
+     * Opens activity to add new note.
+     */
+    public void onAddNote(View view) {
+        Intent intent = new Intent(this, AddNoteActivity.class);
+        startActivityForResult(intent, this.NOTE_REQUEST_CODE);
+    }
+
+    /**
+     * Refreshes app data and displays updated note list.
+     *
+     * @param refreshFromAPI  true or false for refreshing data from API
+     */
+    private void refreshNoteList(final boolean refreshFromAPI) {
+        // See if data should be refreshed from API.
+        if (refreshFromAPI) {
+            this.traitDataSource.getAll(true);
+            this.wineryDataSource.getAll(true);
+            this.wineDataSource.getAll(true);
+        }
+        ArrayList<Note> notesFromAPI = this.noteDataSource.getAll(refreshFromAPI);
 
         // Add notes to note list.
         this.notes.clear();

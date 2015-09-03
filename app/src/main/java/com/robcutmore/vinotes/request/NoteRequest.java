@@ -12,9 +12,14 @@ import java.util.Date;
 public class NoteRequest {
 
     public static Note add(final long wineId, final Date tasted, final Integer rating) {
-        String response = sendPOST(wineId, tasted, rating);
-        ArrayList<Note> notes = parseResponse(response);
-        return (notes.size() > 0) ? notes.get(0) : null;
+        //String response = sendPOST(wineId, tasted, rating);
+        //ArrayList<Note> notes = parseResponse(response);
+        //return (notes.size() > 0) ? notes.get(0) : null;
+
+        // Test stub, remove this and uncomment code above.
+        Winery winery = new Winery(2, "Test");
+        Wine wine = new Wine(wineId, winery, "Test", 2014);
+        return new Note(4, wine, tasted, rating);
     }
 
     public static Note get(final long id) {
@@ -45,12 +50,17 @@ public class NoteRequest {
 
     private static ArrayList<Note> parseResponse(final String response) {
         // Test stub, replace with code to parse JSON request.
-        Winery winery = new Winery(1, "Test Winery");
-        Wine firstWine = new Wine(1, winery, "Test 1", 2012);
-        Wine secondWine = new Wine(2, winery, "Test 2", 2013);
+        Winery firstWinery = new Winery(1, "Test 1");
+        Winery secondWinery = new Winery(2, "Test 2");
+        Wine firstWine = new Wine(1, firstWinery, "Reisling", 2011);
+        Wine secondWine = new Wine(2, firstWinery, "Merlot", 2012);
+        Wine thirdWine = new Wine(3, secondWinery, "Baco Noir", 2014);
         ArrayList<Note> notes = new ArrayList<>();
-        notes.add(new Note(1, firstWine));
+        Note firstNote = new Note(1, firstWine);
+        firstNote.setRating(5);
+        notes.add(firstNote);
         notes.add(new Note(2, secondWine));
+        notes.add(new Note(3, thirdWine));
         return notes;
     }
 

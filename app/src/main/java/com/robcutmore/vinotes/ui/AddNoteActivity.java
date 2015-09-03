@@ -14,8 +14,10 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 
 import com.robcutmore.vinotes.R;
+import com.robcutmore.vinotes.dao.NoteDataSource;
 import com.robcutmore.vinotes.dao.WineDataSource;
 import com.robcutmore.vinotes.dao.WineryDataSource;
+import com.robcutmore.vinotes.model.Note;
 import com.robcutmore.vinotes.model.Wine;
 import com.robcutmore.vinotes.model.Winery;
 import com.robcutmore.vinotes.utils.DateUtils;
@@ -51,6 +53,7 @@ public class AddNoteActivity extends ActionBarActivity
     // Data sources
     private WineryDataSource wineryDataSource;
     private WineDataSource wineDataSource;
+    private NoteDataSource noteDataSource;
 
     /**
      * Sets up activity and private variables.
@@ -80,6 +83,7 @@ public class AddNoteActivity extends ActionBarActivity
         Context appContext = this.getApplicationContext();
         this.wineryDataSource = new WineryDataSource(appContext);
         this.wineDataSource = new WineDataSource(appContext);
+        this.noteDataSource = new NoteDataSource(appContext);
 
         this.restoreActivityState();
     }
@@ -156,8 +160,16 @@ public class AddNoteActivity extends ActionBarActivity
         this.setTastingDate(tastingDate);
     }
 
+    /**
+     * Saves new note.
+     */
     public void saveNote(final View view) {
-        // Save new note.
+        Note note = this.noteDataSource.add(this.wine.getId(), this.tastingDate, this.rating);
+        if (note != null) {
+            Intent intent = new Intent(AddNoteActivity.this, MainActivity.class);
+            setResult(RESULT_OK, intent);
+            finish();
+        }
     }
 
     /**
