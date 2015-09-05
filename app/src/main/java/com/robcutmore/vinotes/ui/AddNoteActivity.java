@@ -32,10 +32,15 @@ import java.util.Date;
 public class AddNoteActivity extends ActionBarActivity
                              implements DatePickerFragment.OnDateSelectedListener {
 
+    private RetainedNoteFragment dataFragment;
+
+    // Request codes.
     private final int WINERY_REQUEST_CODE = 1;
     private final int WINE_REQUEST_CODE = 2;
-
-    private RetainedNoteFragment dataFragment;
+    private final int COLOR_TRAIT_REQUEST_CODE = 3;
+    private final int NOSE_TRAIT_REQUEST_CODE = 4;
+    private final int TASTE_TRAIT_REQUEST_CODE = 5;
+    private final int FINISH_TRAIT_REQUEST_CODE = 6;
 
     // Note data
     private Date tastingDate = null;
@@ -47,6 +52,10 @@ public class AddNoteActivity extends ActionBarActivity
     private EditText etTastingDate;
     private EditText etWinery;
     private EditText etWine;
+    private EditText etColorTraits;
+    private EditText etNoseTraits;
+    private EditText etTasteTraits;
+    private EditText etFinishTraits;
     private RatingBar rbRating;
     private Button btnSave;
 
@@ -68,6 +77,10 @@ public class AddNoteActivity extends ActionBarActivity
         this.etTastingDate = (EditText) findViewById(R.id.etTastingDate);
         this.etWinery = (EditText) findViewById(R.id.etWinery);
         this.etWine = (EditText) findViewById(R.id.etWine);
+        this.etColorTraits = (EditText) findViewById(R.id.etColorTraits);
+        this.etNoseTraits = (EditText) findViewById(R.id.etNoseTraits);
+        this.etTasteTraits = (EditText) findViewById(R.id.etTasteTraits);
+        this.etFinishTraits = (EditText) findViewById(R.id.etFinishTraits);
         this.rbRating = (RatingBar) findViewById(R.id.rbRating);
         this.btnSave = (Button) findViewById(R.id.btnSave);
 
@@ -162,6 +175,8 @@ public class AddNoteActivity extends ActionBarActivity
 
     /**
      * Saves new note.
+     *
+     * @param view  Button that was clicked
      */
     public void saveNote(final View view) {
         Note note = this.noteDataSource.add(this.wine.getId(), this.tastingDate, this.rating);
@@ -174,6 +189,8 @@ public class AddNoteActivity extends ActionBarActivity
 
     /**
      * Displays fragment for selecting tasting date.
+     *
+     * @param view  EditText that was clicked
      */
     public void showDatePickerDialog(final View view) {
         DatePickerFragment newFragment = new DatePickerFragment();
@@ -181,7 +198,38 @@ public class AddNoteActivity extends ActionBarActivity
     }
 
     /**
+     * Displays fragment for selecting wine traits.
+     *
+     * @param view  EditText that was clicked
+     */
+    public void showTraitPicker(final View view) {
+        // Determine which trait type to open activity for.
+        String traitType = "";
+        int requestCode = 0;
+        if (view == this.etColorTraits) {
+            traitType = "color";
+            requestCode = this.COLOR_TRAIT_REQUEST_CODE;
+        } else if (view == this.etNoseTraits) {
+            traitType = "nose";
+            requestCode = this.NOSE_TRAIT_REQUEST_CODE;
+        } else if (view == this.etTasteTraits) {
+            traitType = "taste";
+            requestCode = this.TASTE_TRAIT_REQUEST_CODE;
+        } else if (view == this.etFinishTraits) {
+            traitType = "finish";
+            requestCode = this.FINISH_TRAIT_REQUEST_CODE;
+        }
+
+        // Start activity.
+        Intent intent = new Intent(this, SelectTraitsActivity.class);
+        intent.putExtra("traitType", traitType);
+        startActivityForResult(intent, requestCode);
+    }
+
+    /**
      * Starts activity to select wine for note.
+     *
+     * @param view  EditText that was clicked
      */
     public void showWinePicker(final View view) {
         Intent intent = new Intent(this, SelectWineActivity.class);
@@ -191,6 +239,8 @@ public class AddNoteActivity extends ActionBarActivity
 
     /**
      * Starts activity to select winery for note.
+     *
+     * @param view  EditText that was clicked
      */
     public void showWineryPicker(final View view) {
         Intent intent = new Intent(this, SelectWineryActivity.class);

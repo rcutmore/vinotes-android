@@ -50,5 +50,15 @@
                 android:value=".ui.AddNoteActivity" />
         </activity>
 
+        <activity
+            android:label=""
+            android:name=".ui.SelectTraitsActivity"
+            android:parentActivityName=".ui.AddNoteActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.AddNoteActivity" />
+        </activity>
+
     </application>
 </manifest>

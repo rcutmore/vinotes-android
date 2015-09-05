@@ -5,15 +5,26 @@
     <string name="button_add_wine">Add Wine</string>
     <string name="button_add_winery">Add Winery</string>
     <string name="button_save_note">Save Note</string>
+    <string name="button_select_traits">Done</string>
+    <string name="edit_text_add_note_color_traits_hint">Select Color Traits</string>
+    <string name="edit_text_add_note_finish_traits_hint">Select Finish Traits</string>
+    <string name="edit_text_add_note_nose_traits_hint">Select Nose Traits</string>
+    <string name="edit_text_add_note_taste_traits_hint">Select Taste Traits</string>
     <string name="edit_text_add_note_tasting_date_hint">Enter Tasting Date</string>
     <string name="edit_text_add_note_wine_hint">Select Wine</string>
     <string name="edit_text_add_note_winery_hint">Select Winery</string>
     <string name="edit_text_add_wine_name_hint">Enter Name Of Wine</string>
     <string name="edit_text_add_wine_vintage_hint">Enter Vintage Of Wine</string>
     <string name="edit_text_add_winery_hint">Enter Name Of Winery</string>
+    <string name="edit_text_select_traits_search_hint">Search Traits</string>
     <string name="edit_text_select_wine_search_hint">Search Wines</string>
     <string name="edit_text_select_winery_search_hint">Search Wineries</string>
     <string name="title_activity_add_note">Add New Tasting Note</string>
+    <string name="title_activity_select_traits_color">Select Color Traits</string>
+    <string name="title_activity_select_traits_default">Select Unknown Traits</string>
+    <string name="title_activity_select_traits_finish">Select Finish Traits</string>
+    <string name="title_activity_select_traits_nose">Select Nose Traits</string>
+    <string name="title_activity_select_traits_taste">Select Taste Traits</string>
     <string name="title_activity_select_wine">Select Wine</string>
     <string name="title_activity_select_winery">Select Winery</string>
 </resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:padding="@dimen/default_padding">
+
+    <EditText
+        android:id="@+id/etSearch"
+        android:gravity="center"
+        android:hint="@string/edit_text_select_traits_search_hint"
+        android:inputType="text"
+        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:maxLines="1" />
+
+    <ListView
+        android:id="@+id/lvTraits"
+        android:layout_above="@+id/btnDone"
+        android:layout_below="@id/etSearch"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
+
+    <Button
+        android:id="@+id/btnDone"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:onClick="finishSelection"
+        android:text="@string/button_select_traits" />
+
+</RelativeLayout>
