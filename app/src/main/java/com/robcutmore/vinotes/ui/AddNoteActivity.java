@@ -18,10 +18,12 @@ import com.robcutmore.vinotes.dao.NoteDataSource;
 import com.robcutmore.vinotes.dao.WineDataSource;
 import com.robcutmore.vinotes.dao.WineryDataSource;
 import com.robcutmore.vinotes.model.Note;
+import com.robcutmore.vinotes.model.Trait;
 import com.robcutmore.vinotes.model.Wine;
 import com.robcutmore.vinotes.model.Winery;
 import com.robcutmore.vinotes.utils.DateUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -47,6 +49,10 @@ public class AddNoteActivity extends ActionBarActivity
     private Winery winery = null;
     private Wine wine = null;
     private Integer rating = null;
+    private ArrayList<Trait> colorTraits = null;
+    private ArrayList<Trait> noseTraits = null;
+    private ArrayList<Trait> tasteTraits = null;
+    private ArrayList<Trait> finishTraits = null;
 
     // User input
     private EditText etTastingDate;
@@ -147,8 +153,14 @@ public class AddNoteActivity extends ActionBarActivity
      */
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        boolean handleWinery = requestCode == this.WINERY_REQUEST_CODE && resultCode == RESULT_OK;
-        boolean handleWine = requestCode == this.WINE_REQUEST_CODE && resultCode == RESULT_OK;
+        // Determine which activity is returning.
+        boolean isOK = resultCode == RESULT_OK;
+        boolean handleWinery = requestCode == this.WINERY_REQUEST_CODE && isOK;
+        boolean handleWine = requestCode == this.WINE_REQUEST_CODE && isOK;
+        boolean handleColorTraits = requestCode == this.COLOR_TRAIT_REQUEST_CODE && isOK;
+        boolean handleNoseTraits = requestCode == this.NOSE_TRAIT_REQUEST_CODE && isOK;
+        boolean handleTasteTraits = requestCode == this.TASTE_TRAIT_REQUEST_CODE && isOK;
+        boolean handleFinishTraits = requestCode == this.FINISH_TRAIT_REQUEST_CODE && isOK;
 
         if (handleWinery) {
             // Look up and set selected winery.
@@ -161,6 +173,23 @@ public class AddNoteActivity extends ActionBarActivity
             long wineId = data.getLongExtra("id", 0);
             Wine wine = (wineId > 0) ? this.wineDataSource.get(wineId) : null;
             this.setWine(wine);
+        } else if (handleColorTraits || handleNoseTraits || handleTasteTraits || handleFinishTraits) {
+            // Get list of selected traits.
+            Bundle args = data.getExtras();
+            ArrayList<Trait> traits = args.getParcelableArrayList("traits");
+
+            // Determine trait type and set traits.
+            String traitType;
+            if (handleColorTraits) {
+                traitType = "color";
+            } else if (handleNoseTraits) {
+                traitType = "nose";
+            } else if (handleTasteTraits) {
+                traitType = "taste";
+            } else {
+                traitType = "finish";
+            }
+            this.setTraits(traitType, traits);
         }
     }
 
@@ -290,7 +319,44 @@ public class AddNoteActivity extends ActionBarActivity
     }
 
     /**
-     * Sets rating for note being created and updated display.
+     * Sets color traits for note being created and updates display.
+     *
+     * @param traits  the new color traits to set
+     */
+    private void setTraits(final String traitType, final ArrayList<Trait> traits) {
+        // Get text for all selected traits.
+        String traitDisplay = "";
+        for (Trait trait : traits) {
+            if (traitDisplay != "") {
+                traitDisplay = String.format("%s, %s", traitDisplay, trait.getName());
+            } else {
+                traitDisplay = trait.getName();
+            }
+        }
+
+        // Set and display traits.
+        switch (traitType) {
+            case "color":
+                this.colorTraits = traits;
+                this.etColorTraits.setText(traitDisplay);
+                break;
+            case "nose":
+                this.noseTraits = traits;
+                this.etNoseTraits.setText(traitDisplay);
+                break;
+            case "taste":
+                this.tasteTraits = traits;
+                this.etTasteTraits.setText(traitDisplay);
+                break;
+            case "finish":
+                this.finishTraits = traits;
+                this.etFinishTraits.setText(traitDisplay);
+                break;
+        }
+    }
+
+    /**
+     * Sets rating for note being created and updates display.
      *
      * @param rating  the new rating to set
      */

@@ -42,8 +42,16 @@ public final class TraitRequest {
     private static ArrayList<Trait> parseResponse(final String response) {
         // Test stub, replace with code to parse JSON response.
         ArrayList<Trait> traits = new ArrayList<>();
-        traits.add(new Trait(1, "Trait 1"));
-        traits.add(new Trait(2, "Trait 2"));
+        traits.add(new Trait(1, "Oaky"));
+        traits.add(new Trait(2, "Fruity"));
+        traits.add(new Trait(3, "Petrol"));
+        traits.add(new Trait(4, "Plum"));
+        traits.add(new Trait(5, "Cherry"));
+        traits.add(new Trait(6, "Peach"));
+        traits.add(new Trait(7, "Pineapple"));
+        traits.add(new Trait(8, "Garnet"));
+        traits.add(new Trait(9, "Ruby"));
+        traits.add(new Trait(10, "Pale"));
         return traits;
     }
 
