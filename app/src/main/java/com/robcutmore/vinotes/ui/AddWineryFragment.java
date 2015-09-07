@@ -16,19 +16,33 @@ import com.robcutmore.vinotes.dao.WineryDataSource;
 import com.robcutmore.vinotes.model.Winery;
 
 
+/**
+ * AddWineryFragment allows user to add a new winery and returns it to the calling activity.
+ */
 public class AddWineryFragment extends DialogFragment {
 
+    /**
+     * Interface to be implemented by calling activity for returning newly added winery.
+     */
     public interface OnWineryAddedListener {
-        void onWineryAdded(long wineryId);
+        void onWineryAdded(Winery winery);
     }
 
     private OnWineryAddedListener callbackListener;
     private EditText etWineryName;
     private WineryDataSource wineryDataSource;
 
-    // Empty constructor required for DialogFragment.
+    /**
+     * Constructor.
+     * Empty constructor required for dialog fragment.
+     */
     public AddWineryFragment() {}
 
+    /**
+     * Sets up callback listener for returning added winery.
+     *
+     * @param activity  calling activity
+     */
     @Override
     public void onAttach(final Activity activity) {
         super.onAttach(activity);
@@ -43,6 +57,9 @@ public class AddWineryFragment extends DialogFragment {
         }
     }
 
+    /**
+     * Sets up fragment and private variables.
+     */
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
@@ -69,13 +86,16 @@ public class AddWineryFragment extends DialogFragment {
         return view;
     }
 
+    /**
+     * Adds and returns new winery to calling activity.
+     */
     private void addWinery() {
         // Add new winery to API and local database.
         String wineryName = this.etWineryName.getText().toString();
         Winery winery = this.wineryDataSource.add(wineryName);
 
-        // Return new winery's id.
-        this.callbackListener.onWineryAdded(winery.getId());
+        // Return new winery.
+        this.callbackListener.onWineryAdded(winery);
     }
 
 }

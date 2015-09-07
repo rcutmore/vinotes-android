@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 
 /**
- * Activity for selecting a winery stored in local database.
+ * SelectWineryActivity allows user to select an existing winery or add and select a new winery.
  */
 public class SelectWineryActivity extends ActionBarActivity
                                   implements AddWineryFragment.OnWineryAddedListener {
@@ -36,7 +36,6 @@ public class SelectWineryActivity extends ActionBarActivity
     private ArrayList<Winery> wineries;
     private ArrayAdapter<Winery> wineriesAdapter;
 
-    // Filters lvWineries as user types in etWinerySearch.
     private final TextWatcher searchWatcher = new TextWatcher() {
         @Override
         public void afterTextChanged(Editable s) {}
@@ -44,21 +43,29 @@ public class SelectWineryActivity extends ActionBarActivity
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
+        /**
+         * Filters wineries list view as user types.
+         */
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             wineriesAdapter.getFilter().filter(s);
         }
     };
 
-    // Returns ID of selected winery to calling activity.
     private final AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            // Return clicked winery to calling activity.
             Winery winery = (Winery) parent.getAdapter().getItem(position);
-            returnSelectedWinery(winery.getId());
+            returnSelectedWinery(winery);
         }
     };
 
+    /**
+     * Sets up activity and private variables.
+     *
+     * @param savedInstanceState  bundle containing any previously saved activity data
+     */
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,21 +77,30 @@ public class SelectWineryActivity extends ActionBarActivity
         this.lvWineries = (ListView) findViewById(R.id.lvWineries);
         this.lvWineries.setOnItemClickListener(this.clickListener);
 
-        this.setupActivity();
+        this.setupWineryComponents();
     }
 
+    /**
+     * Sets up winery components when activity is resumed.
+     */
     @Override
     protected void onResume() {
         super.onResume();
-        this.setupActivity();
+        this.setupWineryComponents();
     }
 
+    /**
+     * Removes listener for search box before destroying activity.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         this.etWinerySearch.removeTextChangedListener(this.searchWatcher);
     }
 
+    /**
+     * Sets up option menu.
+     */
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -92,6 +108,9 @@ public class SelectWineryActivity extends ActionBarActivity
         return true;
     }
 
+    /**
+     * Sets up option items.
+     */
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -107,13 +126,20 @@ public class SelectWineryActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Returns newly added winery.
+     *
+     * @param winery  new winery
+     */
     @Override
-    public void onWineryAdded(final long wineryId) {
-        this.returnSelectedWinery(wineryId);
+    public void onWineryAdded(final Winery winery) {
+        this.returnSelectedWinery(winery);
     }
 
     /**
      * Displays dialog to add a new winery.
+     *
+     * @param view  button that was clicked
      */
     public void showAddWineryDialog(final View view) {
         // Send any search text that's been entered.
@@ -127,12 +153,15 @@ public class SelectWineryActivity extends ActionBarActivity
     }
 
     /**
-     * Returns selected winery ID to calling activity.
-     * @param wineryId  ID of selected winery
+     * Returns selected winery to calling activity.
+     *
+     * @param winery  selected winery
      */
-    private void returnSelectedWinery(final long wineryId) {
-        Intent intent = new Intent(SelectWineryActivity.this, AddNoteActivity.class);
-        intent.putExtra("id", wineryId);
+    private void returnSelectedWinery(final Winery winery) {
+        Bundle args = new Bundle();
+        args.putParcelable("winery", winery);
+        Intent intent = getIntent();
+        intent.putExtras(args);
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -140,7 +169,7 @@ public class SelectWineryActivity extends ActionBarActivity
     /**
      * Sets up required winery components for activity if needed.
      */
-    private void setupActivity() {
+    private void setupWineryComponents() {
         // Set up data source.
         if (this.wineryDataSource == null) {
             this.wineryDataSource = new WineryDataSource(this.getApplicationContext());

@@ -145,7 +145,7 @@ public class AddNoteActivity extends ActionBarActivity
     }
 
     /**
-     * Handles result from winery and wine selections.
+     * Handles results from other activities.
      *
      * @param requestCode  code to distinguish requests
      * @param resultCode  code for result status
@@ -163,9 +163,9 @@ public class AddNoteActivity extends ActionBarActivity
         boolean handleFinishTraits = requestCode == this.FINISH_TRAIT_REQUEST_CODE && isOK;
 
         if (handleWinery) {
-            // Look up and set selected winery.
-            long wineryId = data.getLongExtra("id", 0);
-            Winery winery = (wineryId > 0) ? this.wineryDataSource.get(wineryId) : null;
+            // Set selected winery.
+            Bundle args = data.getExtras();
+            Winery winery = args.getParcelable("winery");
             this.setWinery(winery);
 
         } else if (handleWine) {
@@ -173,6 +173,7 @@ public class AddNoteActivity extends ActionBarActivity
             long wineId = data.getLongExtra("id", 0);
             Wine wine = (wineId > 0) ? this.wineDataSource.get(wineId) : null;
             this.setWine(wine);
+
         } else if (handleColorTraits || handleNoseTraits || handleTasteTraits || handleFinishTraits) {
             // Get list of selected traits.
             Bundle args = data.getExtras();
