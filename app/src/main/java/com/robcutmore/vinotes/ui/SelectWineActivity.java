@@ -45,6 +45,9 @@ public class SelectWineActivity extends ActionBarActivity
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
+        /**
+         * Filters wines list as user types.
+         */
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             // Filter list view.
@@ -52,15 +55,20 @@ public class SelectWineActivity extends ActionBarActivity
         }
     };
 
-    // Returns ID of selected wine to calling activity.
     private final AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            // Return clicked wine to calling activity.
             Wine wine = (Wine) parent.getAdapter().getItem(position);
-            returnSelectedWine(wine.getId());
+            returnSelectedWine(wine);
         }
     };
 
+    /**
+     * Sets up activity and private variables.
+     *
+     * @param savedInstanceState  bundle containing any previously saved activity data
+     */
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,21 +85,30 @@ public class SelectWineActivity extends ActionBarActivity
         Bundle args = intent.getExtras();
         this.wineryId = (args != null) ? args.getLong("wineryId") : null;
 
-        this.setupActivity();
+        this.setupWineComponents();
     }
 
+    /**
+     * Sets up wine components when activity is resumed.
+     */
     @Override
     protected void onResume() {
         super.onResume();
-        this.setupActivity();
+        this.setupWineComponents();
     }
 
+    /**
+     * Removes listener for search box before destroying activity.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         this.etWineSearch.removeTextChangedListener(this.searchWatcher);
     }
 
+    /**
+     * Sets up option menu.
+     */
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -99,6 +116,9 @@ public class SelectWineActivity extends ActionBarActivity
         return true;
     }
 
+    /**
+     * Sets up option items.
+     */
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -114,13 +134,20 @@ public class SelectWineActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Returns newly added wine.
+     *
+     * @param wine  new wine
+     */
     @Override
-    public void onWineAdded(final long wineId) {
-        this.returnSelectedWine(wineId);
+    public void onWineAdded(final Wine wine) {
+        this.returnSelectedWine(wine);
     }
 
     /**
-     * Displays dialog to add new wine.
+     * Displays dialog to add a new wine.
+     *
+     * @param view  button that was clicked
      */
     public void showAddWineDialog(final View view) {
         // Send any search text that's been entered, along with selected winery ID.
@@ -135,12 +162,15 @@ public class SelectWineActivity extends ActionBarActivity
     }
 
     /**
-     * Returns selected wine ID to calling activity.
-     * @param wineId  ID of selected wine
+     * Returns selected wine to calling activity.
+     *
+     * @param wine  selected wine
      */
-    public void returnSelectedWine(final long wineId) {
-        Intent intent = new Intent(SelectWineActivity.this, AddNoteActivity.class);
-        intent.putExtra("id", wineId);
+    public void returnSelectedWine(final Wine wine) {
+        Bundle args =  new Bundle();
+        args.putParcelable("wine", wine);
+        Intent intent = getIntent();
+        intent.putExtras(args);
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -148,7 +178,7 @@ public class SelectWineActivity extends ActionBarActivity
     /**
      * Sets up required wine components for activity if needed.
      */
-    private void setupActivity() {
+    private void setupWineComponents() {
         // Set up data source.
         if (this.wineDataSource == null) {
             this.wineDataSource = new WineDataSource(this.getApplicationContext());

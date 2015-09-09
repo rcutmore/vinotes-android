@@ -16,10 +16,16 @@ import com.robcutmore.vinotes.dao.WineDataSource;
 import com.robcutmore.vinotes.model.Wine;
 
 
+/**
+ * AddWineFragment allows user to add a new wine and returns it to the calling activity.
+ */
 public class AddWineFragment extends DialogFragment {
 
+    /**
+     * Interface to be implemented by calling activity for returning newly added wine.
+     */
     public interface OnWineAddedListener {
-        void onWineAdded(long wineId);
+        void onWineAdded(Wine wine);
     }
 
     private OnWineAddedListener callbackListener;
@@ -28,9 +34,17 @@ public class AddWineFragment extends DialogFragment {
     private EditText etVintage;
     private WineDataSource wineDataSource;
 
-    // Empty constructor required for DialogFragment.
+    /**
+     * Constructor.
+     * Empty constructor required for dialog fragment.
+     */
     public AddWineFragment() {}
 
+    /**
+     * Sets up callback listener for returning added wine.
+     *
+     * @param activity  calling activity
+     */
     @Override
     public void onAttach(final Activity activity) {
         super.onAttach(activity);
@@ -45,6 +59,9 @@ public class AddWineFragment extends DialogFragment {
         }
     }
 
+    /**
+     * Sets up fragment and private variables.
+     */
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                                 final Bundle savedInstanceState) {
@@ -80,6 +97,9 @@ public class AddWineFragment extends DialogFragment {
         return view;
     }
 
+    /**
+     * Adds and returns new wine to calling activity.
+     */
     public void addWine() {
         // Add new wine to API and local database.
         String wineName = this.etWineName.getText().toString();
@@ -87,7 +107,7 @@ public class AddWineFragment extends DialogFragment {
         Wine wine = this.wineDataSource.add(this.wineryId, wineName, vintage);
 
         // Return new wine's id.
-        this.callbackListener.onWineAdded(wine.getId());
+        this.callbackListener.onWineAdded(wine);
     }
 
 }

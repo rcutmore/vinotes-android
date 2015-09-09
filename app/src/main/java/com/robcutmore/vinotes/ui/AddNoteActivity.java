@@ -162,24 +162,23 @@ public class AddNoteActivity extends ActionBarActivity
         boolean handleTasteTraits = requestCode == this.TASTE_TRAIT_REQUEST_CODE && isOK;
         boolean handleFinishTraits = requestCode == this.FINISH_TRAIT_REQUEST_CODE && isOK;
 
+        Bundle args = data.getExtras();
         if (handleWinery) {
             // Set selected winery.
-            Bundle args = data.getExtras();
             Winery winery = args.getParcelable("winery");
             this.setWinery(winery);
 
         } else if (handleWine) {
             // Look up and set selected wine.
-            long wineId = data.getLongExtra("id", 0);
-            Wine wine = (wineId > 0) ? this.wineDataSource.get(wineId) : null;
+            //long wineId = data.getLongExtra("id", 0);
+            //Wine wine = (wineId > 0) ? this.wineDataSource.get(wineId) : null;
+            //this.setWine(wine);
+            Wine wine = args.getParcelable("wine");
             this.setWine(wine);
 
         } else if (handleColorTraits || handleNoseTraits || handleTasteTraits || handleFinishTraits) {
-            // Get list of selected traits.
-            Bundle args = data.getExtras();
-            ArrayList<Trait> traits = args.getParcelableArrayList("traits");
-
             // Determine trait type and set traits.
+            ArrayList<Trait> traits = args.getParcelableArrayList("traits");
             String traitType;
             if (handleColorTraits) {
                 traitType = "color";
