@@ -2,7 +2,6 @@ package com.robcutmore.vinotes.ui;
 
 
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -15,8 +14,6 @@ import android.widget.RatingBar;
 
 import com.robcutmore.vinotes.R;
 import com.robcutmore.vinotes.dao.NoteDataSource;
-import com.robcutmore.vinotes.dao.WineDataSource;
-import com.robcutmore.vinotes.dao.WineryDataSource;
 import com.robcutmore.vinotes.model.Note;
 import com.robcutmore.vinotes.model.Trait;
 import com.robcutmore.vinotes.model.Wine;
@@ -49,10 +46,10 @@ public class AddNoteActivity extends ActionBarActivity
     private Winery winery = null;
     private Wine wine = null;
     private Integer rating = null;
-    private ArrayList<Trait> colorTraits = null;
-    private ArrayList<Trait> noseTraits = null;
-    private ArrayList<Trait> tasteTraits = null;
-    private ArrayList<Trait> finishTraits = null;
+    private ArrayList<Trait> colorTraits = new ArrayList<>();
+    private ArrayList<Trait> noseTraits = new ArrayList<>();
+    private ArrayList<Trait> tasteTraits = new ArrayList<>();
+    private ArrayList<Trait> finishTraits = new ArrayList<>();
 
     // User input
     private EditText etTastingDate;
@@ -66,8 +63,6 @@ public class AddNoteActivity extends ActionBarActivity
     private Button btnSave;
 
     // Data sources
-    private WineryDataSource wineryDataSource;
-    private WineDataSource wineDataSource;
     private NoteDataSource noteDataSource;
 
     /**
@@ -98,11 +93,8 @@ public class AddNoteActivity extends ActionBarActivity
             }
         });
 
-        // Initialize data source objects.
-        Context appContext = this.getApplicationContext();
-        this.wineryDataSource = new WineryDataSource(appContext);
-        this.wineDataSource = new WineDataSource(appContext);
-        this.noteDataSource = new NoteDataSource(appContext);
+        // Initialize data source.
+        this.noteDataSource = new NoteDataSource(this.getApplicationContext());
 
         this.restoreActivityState();
     }
@@ -162,23 +154,26 @@ public class AddNoteActivity extends ActionBarActivity
         boolean handleTasteTraits = requestCode == this.TASTE_TRAIT_REQUEST_CODE && isOK;
         boolean handleFinishTraits = requestCode == this.FINISH_TRAIT_REQUEST_CODE && isOK;
 
-        Bundle args = data.getExtras();
+        Bundle args = (data != null) ? data.getExtras() : null;
+
         if (handleWinery) {
             // Set selected winery.
-            Winery winery = args.getParcelable("winery");
+            Winery winery = null;
+            if (args != null) {
+                winery = args.getParcelable("winery");
+            }
             this.setWinery(winery);
 
         } else if (handleWine) {
             // Look up and set selected wine.
-            //long wineId = data.getLongExtra("id", 0);
-            //Wine wine = (wineId > 0) ? this.wineDataSource.get(wineId) : null;
-            //this.setWine(wine);
-            Wine wine = args.getParcelable("wine");
+            Wine wine = null;
+            if (args != null) {
+                wine = args.getParcelable("wine");
+            }
             this.setWine(wine);
 
         } else if (handleColorTraits || handleNoseTraits || handleTasteTraits || handleFinishTraits) {
-            // Determine trait type and set traits.
-            ArrayList<Trait> traits = args.getParcelableArrayList("traits");
+            // Determine trait type.
             String traitType;
             if (handleColorTraits) {
                 traitType = "color";
@@ -188,6 +183,12 @@ public class AddNoteActivity extends ActionBarActivity
                 traitType = "taste";
             } else {
                 traitType = "finish";
+            }
+
+            // Set traits.
+            ArrayList<Trait> traits = new ArrayList<>();
+            if (args != null) {
+                traits = args.getParcelableArrayList("traits");
             }
             this.setTraits(traitType, traits);
         }
@@ -234,24 +235,32 @@ public class AddNoteActivity extends ActionBarActivity
     public void showTraitPicker(final View view) {
         // Determine which trait type to open activity for.
         String traitType = "";
+        ArrayList<Trait> traits = new ArrayList<>();
         int requestCode = 0;
         if (view == this.etColorTraits) {
+            traits = this.colorTraits;
             traitType = "color";
             requestCode = this.COLOR_TRAIT_REQUEST_CODE;
         } else if (view == this.etNoseTraits) {
+            traits = this.noseTraits;
             traitType = "nose";
             requestCode = this.NOSE_TRAIT_REQUEST_CODE;
         } else if (view == this.etTasteTraits) {
+            traits = this.tasteTraits;
             traitType = "taste";
             requestCode = this.TASTE_TRAIT_REQUEST_CODE;
         } else if (view == this.etFinishTraits) {
+            traits = this.finishTraits;
             traitType = "finish";
             requestCode = this.FINISH_TRAIT_REQUEST_CODE;
         }
 
         // Start activity.
+        Bundle args = new Bundle();
+        args.putParcelableArrayList("traits", traits);
+        args.putString("traitType", traitType);
         Intent intent = new Intent(this, SelectTraitsActivity.class);
-        intent.putExtra("traitType", traitType);
+        intent.putExtras(args);
         startActivityForResult(intent, requestCode);
     }
 

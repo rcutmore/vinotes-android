@@ -40,14 +40,21 @@ public class SelectTraitsActivity extends ActionBarActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_traits);
-        this.setTraitTitle();
+
+        // Set activity title.
+        Bundle args = getIntent().getExtras();
+        String traitType = (args != null) ? args.getString("traitType", "") : "";
+        this.setTraitTitle(traitType);
 
         // Get references to user input.
         this.etSearch = (EditText) findViewById(R.id.etSearch);
         this.lvTraits = (ListView) findViewById(R.id.lvTraits);
         this.lvTraits.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 
+        // Display traits and select any previously selected traits.
         this.setupTraitComponents();
+        ArrayList<Trait> traits = args.getParcelableArrayList("traits");
+        this.setPreviouslySelectedTraits(traits);
     }
 
     /**
@@ -85,14 +92,28 @@ public class SelectTraitsActivity extends ActionBarActivity {
     }
 
     /**
-     * Sets title of activity based on trait type specified by calling activity.
+     * Selects any previously selected traits.
+     *
+     * @param selectedTraits  list of previously selected traits
      */
-    private void setTraitTitle() {
-        // Determine type of trait.
-        Intent intent = getIntent();
-        Bundle args = intent.getExtras();
-        String traitType = (args != null) ? args.getString("traitType", "") : "";
+    private void setPreviouslySelectedTraits(final ArrayList<Trait> selectedTraits) {
+        for (Trait selectedTrait : selectedTraits) {
+            for (int i = 0; i < this.traitsAdapter.getCount(); i++) {
+                Trait trait = this.traitsAdapter.getItem(i);
+                if (trait.getId() == selectedTrait.getId()) {
+                    this.lvTraits.setItemChecked(i, true);
+                    break;
+                }
+            }
+        }
+    }
 
+    /**
+     * Sets title of activity based on trait type specified by calling activity.
+     *
+     * @param traitType  type of trait to set title for
+     */
+    private void setTraitTitle(final String traitType) {
         // Set title based on type of trait.
         switch (traitType) {
             case "color":
