@@ -4,6 +4,7 @@
     <string name="button_add_note">Add Note</string>
     <string name="button_add_wine">Add Wine</string>
     <string name="button_add_winery">Add Winery</string>
+    <string name="button_clear_selected_traits">Clear</string>
     <string name="button_save_note">Save Note</string>
     <string name="button_select_traits">Done</string>
     <string name="edit_text_add_note_color_traits_hint">Select Color Traits</string>

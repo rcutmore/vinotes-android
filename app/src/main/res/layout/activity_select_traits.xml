@@ -18,18 +18,36 @@
 
     <ListView
         android:id="@+id/lvTraits"
-        android:layout_above="@+id/btnDone"
+        android:layout_above="@+id/buttonLayout"
         android:layout_below="@id/etSearch"
         android:layout_height="wrap_content"
         android:layout_width="match_parent" />
 
-    <Button
-        android:id="@+id/btnDone"
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:gravity="center"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:onClick="returnSelectedTraits"
-        android:text="@string/button_select_traits" />
+        android:layout_width="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnClear"
+            android:layout_above="@+id/btnDone"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:onClick="clearSelectedTraits"
+            android:text="@string/button_clear_selected_traits" />
+
+        <Button
+            android:id="@+id/btnDone"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:onClick="returnSelectedTraits"
+            android:text="@string/button_select_traits" />
+
+    </LinearLayout>
 
 </RelativeLayout>

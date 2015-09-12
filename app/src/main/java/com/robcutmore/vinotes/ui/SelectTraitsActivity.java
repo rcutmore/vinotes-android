@@ -58,6 +58,16 @@ public class SelectTraitsActivity extends ActionBarActivity {
     }
 
     /**
+     * De-selects any selected traits in list view.
+     *
+     * @param view  button that was clicked
+     */
+    public void clearSelectedTraits(final View view) {
+        this.lvTraits.clearChoices();
+        this.lvTraits.requestLayout();
+    }
+
+    /**
      * Returns selected traits to calling activity.
      *
      * @param view  button that was clicked
