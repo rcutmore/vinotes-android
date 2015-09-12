@@ -16,13 +16,16 @@ import com.robcutmore.vinotes.dao.TraitDataSource;
 import com.robcutmore.vinotes.model.Trait;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 /**
  * SelectTraitsActivity allows user to select traits for tasting note.
  * The type of trait is determined by calling activity (color, nose, taste, or finish).
  */
-public class SelectTraitsActivity extends ActionBarActivity {
+public class SelectTraitsActivity extends ActionBarActivity
+                                  implements AddTraitFragment.OnTraitAddedListener {
 
     // User input
     private EditText etSearch;
@@ -53,8 +56,10 @@ public class SelectTraitsActivity extends ActionBarActivity {
 
         // Display traits and select any previously selected traits.
         this.setupTraitComponents();
-        ArrayList<Trait> traits = args.getParcelableArrayList("traits");
-        this.setPreviouslySelectedTraits(traits);
+        if (args != null) {
+            ArrayList<Trait> traitsToSelect = args.getParcelableArrayList("traits");
+            this.selectTraits(traitsToSelect);
+        }
     }
 
     /**
@@ -65,6 +70,36 @@ public class SelectTraitsActivity extends ActionBarActivity {
     public void clearSelectedTraits(final View view) {
         this.lvTraits.clearChoices();
         this.lvTraits.requestLayout();
+    }
+
+    /**
+     * Adds and selects new trait in traits list.
+     *
+     * @param trait  new trait to select
+     */
+    @Override
+    public void onTraitAdded(final Trait trait) {
+        // Add to trait list and sort by trait name.
+        this.traits.add(trait);
+        Collections.sort(this.traits, new Comparator<Trait>() {
+            /**
+             * Sorts traits alphabetically.
+             *
+             * @param t1  first trait
+             * @param t2  second trait
+             * @return result of name comparison
+             */
+            @Override
+            public int compare(Trait t1, Trait t2) {
+                return t1.getName().compareToIgnoreCase(t2.getName());
+            }
+        });
+        this.traitsAdapter.notifyDataSetChanged();
+
+        // Select new trait.
+        ArrayList<Trait> traitsToSelect = new ArrayList<>();
+        traitsToSelect.add(trait);
+        this.selectTraits(traitsToSelect);
     }
 
     /**
@@ -79,6 +114,22 @@ public class SelectTraitsActivity extends ActionBarActivity {
         intent.putExtras(args);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    /**
+     * Displays dialog to add new trait.
+     *
+     * @param view  button that was clicked
+     */
+    public void showAddTraitDialog(final View view) {
+        // Send any search text that's been entered.
+        Bundle args = new Bundle();
+        args.putString("searchText", this.etSearch.getText().toString());
+
+        // Create and show fragment.
+        AddTraitFragment newFragment = new AddTraitFragment();
+        newFragment.setArguments(args);
+        newFragment.show(getFragmentManager(), "traitAdder");
     }
 
     /**
@@ -102,12 +153,12 @@ public class SelectTraitsActivity extends ActionBarActivity {
     }
 
     /**
-     * Selects any previously selected traits.
+     * Selects all given traits if they are found in trait list.
      *
-     * @param selectedTraits  list of previously selected traits
+     * @param traitsToSelect  list of traits to select
      */
-    private void setPreviouslySelectedTraits(final ArrayList<Trait> selectedTraits) {
-        for (Trait selectedTrait : selectedTraits) {
+    private void selectTraits(final ArrayList<Trait> traitsToSelect) {
+        for (Trait selectedTrait : traitsToSelect) {
             for (int i = 0; i < this.traitsAdapter.getCount(); i++) {
                 Trait trait = this.traitsAdapter.getItem(i);
                 if (trait.getId() == selectedTrait.getId()) {

@@ -32,8 +32,15 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/btnAdd"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:onClick="showAddTraitDialog"
+            android:text="@string/button_add_trait" />
+
+        <Button
             android:id="@+id/btnClear"
-            android:layout_above="@+id/btnDone"
             android:layout_centerHorizontal="true"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
