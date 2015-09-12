@@ -14,6 +14,7 @@ import android.widget.EditText;
 import com.robcutmore.vinotes.R;
 import com.robcutmore.vinotes.dao.WineDataSource;
 import com.robcutmore.vinotes.model.Wine;
+import com.robcutmore.vinotes.utils.InputUtils;
 
 
 /**
@@ -71,8 +72,8 @@ public class AddWineFragment extends DialogFragment {
         // Get search text, if any, and ID of selected winery from previous activity.
         Bundle args = getArguments();
         String searchText;
-        if (getArguments() != null) {
-            searchText = getArguments().getString("searchText", "");
+        if (args != null) {
+            searchText = args.getString("searchText", "");
             this.wineryId = args.getLong("wineryId");
         } else {
             searchText = "";
@@ -88,6 +89,9 @@ public class AddWineFragment extends DialogFragment {
         // Add onClick handler for button.
         Button addWineButton = (Button) view.findViewById(R.id.btnAddWine);
         addWineButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Adds new wine.
+             */
             @Override
             public void onClick(View v) {
                 addWine();
@@ -100,14 +104,19 @@ public class AddWineFragment extends DialogFragment {
     /**
      * Adds and returns new wine to calling activity.
      */
-    public void addWine() {
-        // Add new wine to API and local database.
-        String wineName = this.etWineName.getText().toString();
-        int vintage = Integer.parseInt(this.etVintage.getText().toString());
-        Wine wine = this.wineDataSource.add(this.wineryId, wineName, vintage);
+    private void addWine() {
+        boolean hasWineInput = !InputUtils.isEditTextEmpty(this.etWineName);
+        boolean hasVintageInput = !InputUtils.isEditTextEmpty(this.etVintage);
 
-        // Return new wine's id.
-        this.callbackListener.onWineAdded(wine);
+        if (hasWineInput && hasVintageInput) {
+            // Add new wine to API and local database.
+            String wineName = this.etWineName.getText().toString();
+            int vintage = Integer.parseInt(this.etVintage.getText().toString());
+            Wine newWine = this.wineDataSource.add(this.wineryId, wineName, vintage);
+
+            // Return new wine.
+            this.callbackListener.onWineAdded(newWine);
+        }
     }
 
 }

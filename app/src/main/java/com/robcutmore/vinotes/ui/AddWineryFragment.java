@@ -14,6 +14,7 @@ import android.widget.EditText;
 import com.robcutmore.vinotes.R;
 import com.robcutmore.vinotes.dao.WineryDataSource;
 import com.robcutmore.vinotes.model.Winery;
+import com.robcutmore.vinotes.utils.InputUtils;
 
 
 /**
@@ -77,6 +78,9 @@ public class AddWineryFragment extends DialogFragment {
         // Add onClick handler for button.
         Button addWineryButton = (Button) view.findViewById(R.id.btnAddWinery);
         addWineryButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Adds new winery.
+             */
             @Override
             public void onClick(View v) {
                 addWinery();
@@ -90,12 +94,16 @@ public class AddWineryFragment extends DialogFragment {
      * Adds and returns new winery to calling activity.
      */
     private void addWinery() {
-        // Add new winery to API and local database.
-        String wineryName = this.etWineryName.getText().toString();
-        Winery winery = this.wineryDataSource.add(wineryName);
+        boolean hasNameInput = !InputUtils.isEditTextEmpty(this.etWineryName);
 
-        // Return new winery.
-        this.callbackListener.onWineryAdded(winery);
+        if (hasNameInput) {
+            // Add new winery to API and local database.
+            String wineryName = this.etWineryName.getText().toString();
+            Winery newWinery = this.wineryDataSource.add(wineryName);
+
+            // Return new winery.
+            this.callbackListener.onWineryAdded(newWinery);
+        }
     }
 
 }
