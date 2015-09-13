@@ -96,7 +96,7 @@ public class Wine implements Parcelable {
      */
     @Override
     public String toString() {
-        return String.format("%s %s %d", this.winery.toString(), this.name, this.vintage);
+        return String.format("%s %s (%d)", this.winery.toString(), this.name, this.vintage);
     }
 
     // Parcelable methods
