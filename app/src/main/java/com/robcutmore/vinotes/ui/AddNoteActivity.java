@@ -204,14 +204,17 @@ public class AddNoteActivity extends ActionBarActivity
     }
 
     /**
-     * Saves new note.
+     * Saves and returns new note.
      *
-     * @param view  Button that was clicked
+     * @param view  button that was clicked
      */
     public void saveNote(final View view) {
         Note note = this.noteDataSource.add(this.wine.getId(), this.tastingDate, this.rating);
         if (note != null) {
-            Intent intent = new Intent(AddNoteActivity.this, MainActivity.class);
+            Bundle args = new Bundle();
+            args.putParcelable("note", note);
+            Intent intent = getIntent();
+            intent.putExtras(args);
             setResult(RESULT_OK, intent);
             finish();
         }

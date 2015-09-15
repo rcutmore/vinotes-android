@@ -19,6 +19,8 @@ import com.robcutmore.vinotes.dao.WineryDataSource;
 import com.robcutmore.vinotes.model.Note;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 /**
@@ -102,7 +104,11 @@ public class MainActivity extends ActionBarActivity {
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         boolean handleNote = requestCode == this.NOTE_REQUEST_CODE && resultCode == RESULT_OK;
         if (handleNote) {
-            this.refreshNoteList(false);
+            Bundle args = (data != null) ? data.getExtras() : null;
+            if (args != null) {
+                Note note = args.getParcelable("note");
+                this.addNote(note);
+            }
         }
     }
 
@@ -112,6 +118,29 @@ public class MainActivity extends ActionBarActivity {
     public void onAddNote(View view) {
         Intent intent = new Intent(this, AddNoteActivity.class);
         startActivityForResult(intent, this.NOTE_REQUEST_CODE);
+    }
+
+    /**
+     * Adds note to note list.
+     *
+     * @param note  new note to add
+     */
+    private void addNote(final Note note) {
+        this.notes.add(note);
+        Collections.sort(this.notes, new Comparator<Note>() {
+            /**
+             * Sorts notes by tasting date.
+             *
+             * @param n1  first note
+             * @param n2  second note
+             * @return result of date comparison
+             */
+            @Override
+            public int compare(Note n1, Note n2) {
+                return n2.getTasted().compareTo(n1.getTasted());
+            }
+        });
+        this.notesAdapter.notifyDataSetChanged();
     }
 
     /**

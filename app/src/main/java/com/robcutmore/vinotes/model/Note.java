@@ -1,6 +1,9 @@
 package com.robcutmore.vinotes.model;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.robcutmore.vinotes.utils.DateUtils;
 
 import java.util.ArrayList;
@@ -10,7 +13,7 @@ import java.util.Date;
 /**
  * Represents a wine tasting note.
  */
-public class Note {
+public class Note implements Parcelable {
 
     private Long id;
     private Wine wine;
@@ -215,5 +218,70 @@ public class Note {
         String tastedDate = DateUtils.convertDateToString(this.tasted);
         return String.format("%s\n%d stars on %s", this.wine.toString(), this.rating, tastedDate);
     }
+
+    // Parcelable methods
+
+    /**
+     * Parcelable constructor.
+     *
+     * @param in  parcel containing note data
+     */
+    private Note(final Parcel in) {
+        this.id = in.readLong();
+        this.wine = in.readParcelable(Wine.class.getClassLoader());
+        this.tasted = DateUtils.convertTimestampToDate(in.readLong());
+        this.colorTraits = in.readArrayList(Trait.class.getClassLoader());
+        this.noseTraits = in.readArrayList(Trait.class.getClassLoader());
+        this.tasteTraits = in.readArrayList(Trait.class.getClassLoader());
+        this.finishTraits = in.readArrayList(Trait.class.getClassLoader());
+        this.rating = in.readInt();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Writes note data to parcel.
+     *
+     * @param out  parcel to write note data to
+     * @param flags  additional flags about how object should be written
+     */
+    @Override
+    public void writeToParcel(final Parcel out, final int flags) {
+        out.writeLong(this.id);
+        out.writeParcelable(this.wine, flags);
+        out.writeLong(DateUtils.convertDateToTimestamp(this.tasted));
+        out.writeList(this.colorTraits);
+        out.writeList(this.noseTraits);
+        out.writeList(this.tasteTraits);
+        out.writeList(this.finishTraits);
+        out.writeInt(this.rating);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Creator() {
+        /**
+         * Creates note using parcel.
+         *
+         * @param source  parcel containing note data
+         * @return note
+         */
+        @Override
+        public Note createFromParcel(Parcel source) {
+            return new Note(source);
+        }
+
+        /**
+         * Creates array of notes.
+         *
+         * @param size  size of array
+         * @return array of notes
+         */
+        @Override
+        public Note[] newArray(int size) {
+            return new Note[size];
+        }
+    };
 
 }
