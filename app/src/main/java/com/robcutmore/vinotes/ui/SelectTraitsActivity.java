@@ -42,9 +42,7 @@ public class SelectTraitsActivity extends ActionBarActivity
 
     private final TextWatcher searchWatcher = new TextWatcher() {
         @Override
-        public void afterTextChanged(Editable s) {
-
-        }
+        public void afterTextChanged(Editable s) {}
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -185,12 +183,9 @@ public class SelectTraitsActivity extends ActionBarActivity
      */
     private void selectTraits(final ArrayList<Trait> traitsToSelect) {
         for (Trait traitToSelect : traitsToSelect) {
-            for (int i = 0; i < this.lvTraits.getCount(); i++) {
-                boolean traitsMatch = traitToSelect.equals(this.lvTraits.getItemAtPosition(i));
-                if (traitsMatch) {
-                    this.lvTraits.setItemChecked(i, true);
-                    break;
-                }
+            int position = this.traitsAdapter.getPosition(traitToSelect);
+            if (position > -1) {
+                this.lvTraits.setItemChecked(position, true);
             }
         }
     }
