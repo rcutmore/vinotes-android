@@ -74,6 +74,24 @@ public class Trait implements Parcelable {
         return this.name;
     }
 
+    /**
+     * Compares trait with other object to see if they are the same.
+     *
+     * @param other  other object to compare to
+     * @return true if the same otherwise false
+     */
+    @Override
+    public boolean equals(Object other) {
+        // Return false if other object isn't a Trait object.
+        if (!(other instanceof Trait)) {
+            return false;
+        }
+
+        // Compare trait IDs.
+        Trait otherTrait = (Trait) other;
+        return this.id.equals(otherTrait.id);
+    }
+
     // Parcelable methods
 
     /**

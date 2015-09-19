@@ -4,11 +4,14 @@ package com.robcutmore.vinotes.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.SparseBooleanArray;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.ListView;
 
 import com.robcutmore.vinotes.R;
@@ -35,6 +38,36 @@ public class SelectTraitsActivity extends ActionBarActivity
     private TraitDataSource traitDataSource;
     private ArrayList<Trait> traits;
     private ArrayAdapter<Trait> traitsAdapter;
+    private ArrayList<Trait> selectedTraits = new ArrayList<>();
+
+    private final TextWatcher searchWatcher = new TextWatcher() {
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        /**
+         * Filters traits list view as user types.
+         */
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            lvTraits.clearChoices();
+            traitsAdapter.getFilter().filter(s, new Filter.FilterListener() {
+                /**
+                 * Checks any selected traits currently viewable in list view.
+                 *
+                 * @param count  number of values computed by filter
+                 */
+                @Override
+                public void onFilterComplete(int count) {
+                    selectTraits(selectedTraits);
+                }
+            });
+        }
+    };
 
     /**
      * Sets up activity and private variables.
@@ -51,15 +84,26 @@ public class SelectTraitsActivity extends ActionBarActivity
 
         // Get references to user input.
         this.etSearch = (EditText) findViewById(R.id.etSearch);
+        this.etSearch.addTextChangedListener(this.searchWatcher);
         this.lvTraits = (ListView) findViewById(R.id.lvTraits);
         this.lvTraits.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 
         // Display traits and select any previously selected traits.
         this.setupTraitComponents();
         if (args != null) {
-            ArrayList<Trait> traitsToSelect = args.getParcelableArrayList("traits");
-            this.selectTraits(traitsToSelect);
+            ArrayList<Trait> previousSelection = args.getParcelableArrayList("traits");
+            this.selectTraits(previousSelection);
+            this.selectedTraits = previousSelection;
         }
+    }
+
+    /**
+     * Removes listener for search box before destroying activity.
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.etSearch.removeTextChangedListener(this.searchWatcher);
     }
 
     /**
@@ -70,6 +114,7 @@ public class SelectTraitsActivity extends ActionBarActivity
     public void clearSelectedTraits(final View view) {
         this.lvTraits.clearChoices();
         this.lvTraits.requestLayout();
+        this.selectedTraits.clear();
     }
 
     /**
@@ -100,6 +145,7 @@ public class SelectTraitsActivity extends ActionBarActivity
         ArrayList<Trait> traitsToSelect = new ArrayList<>();
         traitsToSelect.add(trait);
         this.selectTraits(traitsToSelect);
+        this.selectedTraits.add(trait);
     }
 
     /**
@@ -109,7 +155,7 @@ public class SelectTraitsActivity extends ActionBarActivity
      */
     public void returnSelectedTraits(final View view) {
         Bundle args = new Bundle();
-        args.putParcelableArrayList("traits", getSelectedTraits());
+        args.putParcelableArrayList("traits", this.selectedTraits);
         Intent intent = getIntent();
         intent.putExtras(args);
         setResult(RESULT_OK, intent);
@@ -133,35 +179,15 @@ public class SelectTraitsActivity extends ActionBarActivity
     }
 
     /**
-     * Fetches all selected traits.
-     *
-     * @return ArrayList contained all selected traits
-     */
-    private ArrayList<Trait> getSelectedTraits() {
-        // Determine positions of checked traits.
-        SparseBooleanArray checked = this.lvTraits.getCheckedItemPositions();
-
-        // Collect and return all checked traits.
-        ArrayList<Trait> selectedTraits = new ArrayList<>();
-        for (int i = 0; i < checked.size(); i++) {
-            if (checked.valueAt(i)) {
-                int position = checked.keyAt(i);
-                selectedTraits.add(this.traitsAdapter.getItem(position));
-            }
-        }
-        return selectedTraits;
-    }
-
-    /**
      * Selects all given traits if they are found in trait list.
      *
      * @param traitsToSelect  list of traits to select
      */
     private void selectTraits(final ArrayList<Trait> traitsToSelect) {
-        for (Trait selectedTrait : traitsToSelect) {
-            for (int i = 0; i < this.traitsAdapter.getCount(); i++) {
-                Trait trait = this.traitsAdapter.getItem(i);
-                if (trait.getId() == selectedTrait.getId()) {
+        for (Trait traitToSelect : traitsToSelect) {
+            for (int i = 0; i < this.lvTraits.getCount(); i++) {
+                boolean traitsMatch = traitToSelect.equals(this.lvTraits.getItemAtPosition(i));
+                if (traitsMatch) {
                     this.lvTraits.setItemChecked(i, true);
                     break;
                 }
@@ -218,7 +244,33 @@ public class SelectTraitsActivity extends ActionBarActivity
                     this.traits
             );
         }
+
+        // Set up list view.
         this.lvTraits.setAdapter(this.traitsAdapter);
+        this.lvTraits.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /**
+             * Toggles selection for trait at given position.
+             */
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                updateTraitSelection(position);
+            }
+        });
+    }
+
+    /**
+     * Adds or removes clicked trait to/from selected traits.
+     *
+     * @param position  position of clicked trait in trait list view
+     */
+    private void updateTraitSelection(final int position) {
+        Trait clickedTrait = (Trait) this.lvTraits.getItemAtPosition(position);
+        boolean isChecked = this.lvTraits.isItemChecked(position);
+        if (isChecked) {
+            this.selectedTraits.add(clickedTrait);
+        } else {
+            this.selectedTraits.remove(clickedTrait);
+        }
     }
 
 }
