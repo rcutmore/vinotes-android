@@ -10,20 +10,29 @@ import android.widget.EditText;
 public final class InputUtils {
 
     /**
-     * Returns whether or not edit text is empty.
-     * Sets error in edit text if empty.
+     * Sets error for editText if empty.
      *
-     * @param editText  edit text to check
-     * @return true if edit text is empty otherwise false
+     * @param editText  EditText to check
+     * @return true if editText contains input otherwise false
      */
-    public static boolean isEditTextEmpty(EditText editText) {
-        boolean isEmpty = editText.getText().toString().trim().length() == 0;
-        if (isEmpty) {
+    public static boolean checkEditText(EditText editText) {
+        boolean hasInput = !isEditTextEmpty(editText);
+        if (!hasInput) {
             editText.setError("Input must be entered");
         } else {
             editText.setError(null);
         }
-        return isEmpty;
+        return hasInput;
+    }
+
+    /**
+     * Determines whether or not editText is empty.
+     *
+     * @param editText  EditText to check
+     * @return true if editText is empty otherwise false
+     */
+    public static boolean isEditTextEmpty(EditText editText) {
+        return editText.getText().toString().trim().length() == 0;
     }
 
 }

@@ -105,8 +105,8 @@ public class AddWineFragment extends DialogFragment {
      * Adds and returns new wine to calling activity.
      */
     private void addWine() {
-        boolean hasWineInput = !InputUtils.isEditTextEmpty(this.etWineName);
-        boolean hasVintageInput = !InputUtils.isEditTextEmpty(this.etVintage);
+        boolean hasWineInput = InputUtils.checkEditText(this.etWineName);
+        boolean hasVintageInput = InputUtils.checkEditText(this.etVintage);
 
         if (hasWineInput && hasVintageInput) {
             // Add new wine to API and local database.

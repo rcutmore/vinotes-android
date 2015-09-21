@@ -95,7 +95,7 @@ public class AddTraitFragment extends DialogFragment {
      * Adds and returns new trait to calling activity.
      */
     private void addTrait() {
-        boolean hasNameInput = !InputUtils.isEditTextEmpty(this.etName);
+        boolean hasNameInput = InputUtils.checkEditText(this.etName);
 
         if (hasNameInput) {
             // Add new trait to API and local database.
