@@ -22,12 +22,20 @@
     <string name="edit_text_select_traits_search_hint">Search Traits</string>
     <string name="edit_text_select_wine_search_hint">Search Wines</string>
     <string name="edit_text_select_winery_search_hint">Search Wineries</string>
+    <string name="edit_text_view_note_color_traits">Color Traits</string>
+    <string name="edit_text_view_note_finish_traits">Finish Traits</string>
+    <string name="edit_text_view_note_nose_traits">Nose Traits</string>
+    <string name="edit_text_view_note_taste_traits">Taste Traits</string>
+    <string name="edit_text_view_note_tasting_date">Tasting Date</string>
+    <string name="edit_text_view_note_wine">Wine</string>
+    <string name="edit_text_view_note_winery">Winery</string>
     <string name="title_activity_add_note">Add New Tasting Note</string>
     <string name="title_activity_select_traits_color">Select Color Traits</string>
     <string name="title_activity_select_traits_default">Select Unknown Traits</string>
     <string name="title_activity_select_traits_finish">Select Finish Traits</string>
     <string name="title_activity_select_traits_nose">Select Nose Traits</string>
     <string name="title_activity_select_traits_taste">Select Taste Traits</string>
+    <string name="title_activity_view_note">View/Edit Tasting Note</string>
     <string name="title_activity_select_wine">Select Wine</string>
     <string name="title_activity_select_winery">Select Winery</string>
 </resources>

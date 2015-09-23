@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <LinearLayout
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding"
+        tools:context="com.robcutmore.vinotes.ui.AddNoteActivity">
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingTop="@dimen/default_padding"
+            android:text="@string/edit_text_view_note_tasting_date" />
+
+        <EditText
+            android:id="@+id/etTastingDate"
+            android:editable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:padding="@dimen/default_padding" />
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingTop="@dimen/default_padding"
+            android:text="@string/edit_text_view_note_winery" />
+
+        <EditText
+            android:id="@+id/etWinery"
+            android:editable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:padding="@dimen/default_padding" />
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingTop="@dimen/default_padding"
+            android:text="@string/edit_text_view_note_wine" />
+
+        <EditText
+            android:id="@+id/etWine"
+            android:editable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:padding="@dimen/default_padding" />
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingTop="@dimen/default_padding"
+            android:text="@string/edit_text_view_note_color_traits" />
+
+        <EditText
+            android:id="@+id/etColorTraits"
+            android:editable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:padding="@dimen/default_padding" />
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingTop="@dimen/default_padding"
+            android:text="@string/edit_text_view_note_nose_traits" />
+
+        <EditText
+            android:id="@+id/etNoseTraits"
+            android:editable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:padding="@dimen/default_padding" />
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingTop="@dimen/default_padding"
+            android:text="@string/edit_text_view_note_taste_traits" />
+
+        <EditText
+            android:id="@+id/etTasteTraits"
+            android:editable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:padding="@dimen/default_padding" />
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:paddingTop="@dimen/default_padding"
+            android:text="@string/edit_text_view_note_finish_traits" />
+
+        <EditText
+            android:id="@+id/etFinishTraits"
+            android:editable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:padding="@dimen/default_padding" />
+
+        <RatingBar
+            android:id="@+id/rbRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="1.0" />
+
+    </LinearLayout>
+
+</ScrollView>

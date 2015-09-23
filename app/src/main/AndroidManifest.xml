@@ -60,5 +60,15 @@
                 android:value=".ui.AddNoteActivity" />
         </activity>
 
+        <activity
+            android:label="@string/title_activity_view_note"
+            android:name=".ui.ViewNoteActivity"
+            android:parentActivityName=".ui.MainActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.MainActivity" />
+        </activity>
+
     </application>
 </manifest>

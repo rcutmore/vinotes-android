@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -41,6 +42,17 @@ public class MainActivity extends ActionBarActivity {
     private ArrayAdapter<Note> notesAdapter;
     private ListView lvNotes;
 
+    private final AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
+        /**
+         * Opens clicked note for viewing/editing.
+         */
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Note note = (Note) parent.getAdapter().getItem(position);
+            onViewNote(note);
+        }
+    };
+
     /**
      * Sets up activity and private variables.
      * Refreshes data from API and displays note list.
@@ -62,6 +74,7 @@ public class MainActivity extends ActionBarActivity {
         this.notesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, this.notes);
         this.lvNotes = (ListView) findViewById(R.id.lvNotes);
         this.lvNotes.setAdapter(notesAdapter);
+        this.lvNotes.setOnItemClickListener(this.clickListener);
 
         this.refreshNoteList(true);
     }
@@ -118,6 +131,19 @@ public class MainActivity extends ActionBarActivity {
     public void onAddNote(View view) {
         Intent intent = new Intent(this, AddNoteActivity.class);
         startActivityForResult(intent, this.NOTE_REQUEST_CODE);
+    }
+
+    /**
+     * Opens activity to view/edit note.
+     *
+     * @param note  note to view/edit
+     */
+    public void onViewNote(Note note) {
+        Bundle args = new Bundle();
+        args.putParcelable("note", note);
+        Intent intent = new Intent(this, ViewNoteActivity.class);
+        intent.putExtras(args);
+        startActivity(intent);
     }
 
     /**
