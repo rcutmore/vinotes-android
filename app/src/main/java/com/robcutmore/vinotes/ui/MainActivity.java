@@ -129,7 +129,7 @@ public class MainActivity extends ActionBarActivity {
      * Opens activity to add new note.
      */
     public void onAddNote(View view) {
-        Intent intent = new Intent(this, AddNoteActivity.class);
+        Intent intent = new Intent(this, ManageNoteActivity.class);
         startActivityForResult(intent, this.NOTE_REQUEST_CODE);
     }
 
@@ -141,7 +141,7 @@ public class MainActivity extends ActionBarActivity {
     public void onViewNote(Note note) {
         Bundle args = new Bundle();
         args.putParcelable("note", note);
-        Intent intent = new Intent(this, ViewNoteActivity.class);
+        Intent intent = new Intent(this, ManageNoteActivity.class);
         intent.putExtras(args);
         startActivity(intent);
     }
@@ -181,11 +181,11 @@ public class MainActivity extends ActionBarActivity {
             this.wineryDataSource.getAll(true);
             this.wineDataSource.getAll(true);
         }
-        ArrayList<Note> notesFromAPI = this.noteDataSource.getAll(refreshFromAPI);
+        ArrayList<Note> allNotes = this.noteDataSource.getAll(refreshFromAPI);
 
         // Add notes to note list.
         this.notes.clear();
-        this.notes.addAll(notesFromAPI);
+        this.notes.addAll(allNotes);
         this.notesAdapter.notifyDataSetChanged();
     }
 

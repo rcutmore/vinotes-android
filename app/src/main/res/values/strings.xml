@@ -30,12 +30,12 @@
     <string name="edit_text_view_note_wine">Wine</string>
     <string name="edit_text_view_note_winery">Winery</string>
     <string name="title_activity_add_note">Add New Tasting Note</string>
+    <string name="title_activity_edit_note">Edit Tasting Note</string>
     <string name="title_activity_select_traits_color">Select Color Traits</string>
     <string name="title_activity_select_traits_default">Select Unknown Traits</string>
     <string name="title_activity_select_traits_finish">Select Finish Traits</string>
     <string name="title_activity_select_traits_nose">Select Nose Traits</string>
     <string name="title_activity_select_traits_taste">Select Taste Traits</string>
-    <string name="title_activity_view_note">View/Edit Tasting Note</string>
     <string name="title_activity_select_wine">Select Wine</string>
     <string name="title_activity_select_winery">Select Winery</string>
 </resources>

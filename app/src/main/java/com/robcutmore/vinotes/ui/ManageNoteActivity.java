@@ -25,11 +25,10 @@ import java.util.Date;
 
 
 /**
- * AddNoteActivity is used to create a new tasting note.
- * Provides input for various note data and saves note.
+ * ManageNoteActivity is used to edit or create a new tasting note.
  */
-public class AddNoteActivity extends ActionBarActivity
-                             implements DatePickerFragment.OnDateSelectedListener {
+public class ManageNoteActivity extends ActionBarActivity
+                                implements DatePickerFragment.OnDateSelectedListener {
 
     private RetainedNoteFragment dataFragment;
 
@@ -42,6 +41,7 @@ public class AddNoteActivity extends ActionBarActivity
     private final int FINISH_TRAIT_REQUEST_CODE = 6;
 
     // Note data
+    private Note note = null;
     private Date tastingDate = null;
     private Winery winery = null;
     private Wine wine = null;
@@ -72,7 +72,7 @@ public class AddNoteActivity extends ActionBarActivity
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_note);
+        setContentView(R.layout.activity_manage_note);
 
         // Get references to user input.
         this.etTastingDate = (EditText) findViewById(R.id.etTastingDate);
@@ -96,6 +96,7 @@ public class AddNoteActivity extends ActionBarActivity
         // Initialize data source.
         this.noteDataSource = new NoteDataSource(this.getApplicationContext());
 
+        this.displayExistingNote();
         this.restoreActivityState();
     }
 
@@ -114,7 +115,7 @@ public class AddNoteActivity extends ActionBarActivity
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_note, menu);
+        getMenuInflater().inflate(R.menu.menu_manage_note, menu);
         return true;
     }
 
@@ -209,14 +210,19 @@ public class AddNoteActivity extends ActionBarActivity
      * @param view  button that was clicked
      */
     public void saveNote(final View view) {
-        Note note = this.noteDataSource.add(this.wine.getId(), this.tastingDate, this.rating);
-        if (note != null) {
-            Bundle args = new Bundle();
-            args.putParcelable("note", note);
-            Intent intent = getIntent();
-            intent.putExtras(args);
-            setResult(RESULT_OK, intent);
-            finish();
+        if (this.note != null) {
+            // Update existing note.
+        } else {
+            // Add new note.
+            Note note = this.noteDataSource.add(this.wine.getId(), this.tastingDate, this.rating);
+            if (note != null) {
+                Bundle args = new Bundle();
+                args.putParcelable("note", note);
+                Intent intent = getIntent();
+                intent.putExtras(args);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
         }
     }
 
@@ -289,6 +295,57 @@ public class AddNoteActivity extends ActionBarActivity
     }
 
     /**
+     * Fills user input with existing note data.
+     */
+    private void displayExistingNote() {
+        // Check for existing note from calling activity.
+        Intent intent = getIntent();
+        Bundle args = intent.getExtras();
+        if (args != null) {
+            this.note = args.getParcelable("note");
+        }
+
+        if (this.note != null) {
+            // Change title.
+            this.setTitle(this.getString(R.string.title_activity_edit_note));
+
+            // Display existing note.
+            this.setTastingDate(this.note.getTasted());
+            Wine wine = this.note.getWine();
+            this.setWinery(wine.getWinery());
+            this.setWine(wine);
+            this.setTraits("color", this.note.getColorTraits());
+            this.setTraits("nose", this.note.getNoseTraits());
+            this.setTraits("taste", this.note.getTasteTraits());
+            this.setTraits("finish", this.note.getFinishTraits());
+            this.setRating(this.note.getRating());
+        }
+    }
+
+    /**
+     * Checks to see if all input has been entered.
+     *
+     * @return true if all input is entered otherwise false
+     */
+    private boolean hasAllInput() {
+        // Check tasting date, winery, wine, and rating.
+        // Traits are optional so do not check them.
+        if (this.tastingDate == null || this.isInputEmpty(this.etTastingDate)) {
+            return false;
+        }
+        if (this.winery == null || this.isInputEmpty(this.etWinery)) {
+            return false;
+        }
+        if (this.wine == null || this.isInputEmpty(this.etWine)) {
+            return false;
+        }
+        if (this.rating == null || this.rating.equals(0)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Checks to see if given input is empty.
      *
      * @param userInput  EditText to check
@@ -296,6 +353,43 @@ public class AddNoteActivity extends ActionBarActivity
      */
     private boolean isInputEmpty(final EditText userInput) {
         return userInput.getText().toString().trim().length() == 0;
+    }
+
+    /**
+     * Checks to see if current input matches existing note.
+     * If there is no existing note then false is returned.
+     *
+     * @return true if input matches otherwise false
+     */
+    private boolean inputMatchesExistingNote() {
+        if (this.note != null) {
+            // Make sure each input matches existing note.
+            if (!this.tastingDate.equals(this.note.getTasted())) {
+                return false;
+            }
+            if (!this.wine.equals(this.note.getWine())) {
+                return false;
+            }
+            if (!this.colorTraits.equals(this.note.getColorTraits())) {
+                return false;
+            }
+            if (!this.noseTraits.equals(this.note.getNoseTraits())) {
+                return false;
+            }
+            if (!this.tasteTraits.equals(this.note.getTasteTraits())) {
+                return false;
+            }
+            if (!this.finishTraits.equals(this.note.getFinishTraits())) {
+                return false;
+            }
+            if (!this.rating.equals(this.note.getRating())) {
+                return false;
+            }
+            return true;
+        } else {
+            // There is no existing note so return false (i.e. current input cannot match).
+            return false;
+        }
     }
 
     /**
@@ -337,9 +431,9 @@ public class AddNoteActivity extends ActionBarActivity
      */
     private void setTraits(final String traitType, final ArrayList<Trait> traits) {
         // Get text for all selected traits.
-        String traitDisplay = "";
+        String traitDisplay = "None";
         for (Trait trait : traits) {
-            if (traitDisplay != "") {
+            if (!traitDisplay.equals("None")) {
                 traitDisplay = String.format("%s, %s", traitDisplay, trait.getName());
             } else {
                 traitDisplay = trait.getName();
@@ -365,6 +459,8 @@ public class AddNoteActivity extends ActionBarActivity
                 this.etFinishTraits.setText(traitDisplay);
                 break;
         }
+
+        this.validateInput();
     }
 
     /**
@@ -407,12 +503,12 @@ public class AddNoteActivity extends ActionBarActivity
      */
     private void setWinery(Winery winery) {
         // Only process change if given winery is different than currently selected winery.
-        // Otherwise wine input will be reset.
+        // If change is processed unnecessarily then wine input will be reset.
         boolean isNewWinery;
         if (this.winery != null && winery != null) {
-            isNewWinery = this.winery.getId() != winery.getId();
+            isNewWinery = !winery.equals(this.winery);
         } else {
-            isNewWinery = this.winery != winery;
+            isNewWinery = winery != this.winery;
         }
         if (isNewWinery) {
             // Set winery and reset selected wine.
@@ -459,30 +555,7 @@ public class AddNoteActivity extends ActionBarActivity
      * Enables button to save note if all input has been entered.
      */
     private void validateInput() {
-        boolean isValid = true;
-
-        // Check tasting date.
-        if (this.tastingDate == null || this.isInputEmpty(this.etTastingDate)) {
-            isValid = false;
-        }
-
-        // Check winery.
-        if (this.winery == null || this.isInputEmpty(this.etWinery)) {
-            isValid = false;
-        }
-
-        // Check wine.
-        if (this.wine == null || this.isInputEmpty(this.etWine)) {
-            isValid = false;
-        }
-
-        // Check rating.
-        if (this.rating == null || this.rating == 0) {
-            isValid = false;
-        }
-
-        // Enable or disable save button based on user input.
-        this.btnSave.setEnabled(isValid);
+        this.btnSave.setEnabled(this.hasAllInput() && !this.inputMatchesExistingNote());
     }
 
 }

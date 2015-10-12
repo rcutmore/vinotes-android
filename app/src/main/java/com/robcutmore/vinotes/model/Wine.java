@@ -89,6 +89,26 @@ public class Wine implements Parcelable {
         return this.vintage;
     }
 
+    // Object methods
+
+    /**
+     * Compares wine with other object to see if they are the same.
+     *
+     * @param other  other object to compare to
+     * @return true if the same otherwise false
+     */
+    @Override
+    public boolean equals(Object other) {
+        // Return false if other object isn't a wine object.
+        if (!(other instanceof Wine)) {
+            return false;
+        }
+
+        // Compare wine IDs.
+        Wine otherWine = (Wine) other;
+        return this.id.equals(otherWine.id);
+    }
+
     /**
      * Gets string representation of wine.
      *

@@ -63,6 +63,26 @@ public class Winery implements Parcelable {
         return this.name;
     }
 
+    // Object methods
+
+    /**
+     * Compares winery with other object to see if they are the same.
+     *
+     * @param other  other object to compare to
+     * @return true if the same otherwise false
+     */
+    @Override
+    public boolean equals(Object other) {
+        // Return false if other object isn't a winery object.
+        if (!(other instanceof Winery)) {
+            return false;
+        }
+
+        // Compare winery IDs.
+        Winery otherWinery = (Winery) other;
+        return this.id.equals(otherWinery.id);
+    }
+
     /**
      * Gets string representation of winery.
      *

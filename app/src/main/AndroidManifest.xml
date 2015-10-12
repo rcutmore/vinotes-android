@@ -22,7 +22,7 @@
         <activity
             android:label="@string/title_activity_add_note"
             android:launchMode="singleTop"
-            android:name=".ui.AddNoteActivity"
+            android:name=".ui.ManageNoteActivity"
             android:parentActivityName=".ui.MainActivity">
 
             <meta-data
@@ -33,41 +33,31 @@
         <activity
             android:label="@string/title_activity_select_winery"
             android:name=".ui.SelectWineryActivity"
-            android:parentActivityName=".ui.AddNoteActivity">
+            android:parentActivityName=".ui.ManageNoteActivity">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.AddNoteActivity" />
+                android:value=".ui.ManageNoteActivity" />
         </activity>
 
         <activity
             android:label="@string/title_activity_select_wine"
             android:name=".ui.SelectWineActivity"
-            android:parentActivityName=".ui.AddNoteActivity">
+            android:parentActivityName=".ui.ManageNoteActivity">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.AddNoteActivity" />
+                android:value=".ui.ManageNoteActivity" />
         </activity>
 
         <activity
             android:label=""
             android:name=".ui.SelectTraitsActivity"
-            android:parentActivityName=".ui.AddNoteActivity">
+            android:parentActivityName=".ui.ManageNoteActivity">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.AddNoteActivity" />
-        </activity>
-
-        <activity
-            android:label="@string/title_activity_view_note"
-            android:name=".ui.ViewNoteActivity"
-            android:parentActivityName=".ui.MainActivity">
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity" />
+                android:value=".ui.ManageNoteActivity" />
         </activity>
 
     </application>
