@@ -307,7 +307,7 @@ public class ManageNoteActivity extends ActionBarActivity
 
         if (this.note != null) {
             // Change title.
-            this.setTitle(this.getString(R.string.title_activity_edit_note));
+            this.setTitle(this.getString(R.string.title_note_edit));
 
             // Display existing note.
             this.setTastingDate(this.note.getTasted());

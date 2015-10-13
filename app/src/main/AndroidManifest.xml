@@ -20,7 +20,7 @@
         </activity>
 
         <activity
-            android:label="@string/title_activity_add_note"
+            android:label="@string/title_note_add"
             android:launchMode="singleTop"
             android:name=".ui.ManageNoteActivity"
             android:parentActivityName=".ui.MainActivity">
@@ -31,7 +31,7 @@
         </activity>
 
         <activity
-            android:label="@string/title_activity_select_winery"
+            android:label="@string/title_winery_select"
             android:name=".ui.SelectWineryActivity"
             android:parentActivityName=".ui.ManageNoteActivity">
 
@@ -41,7 +41,7 @@
         </activity>
 
         <activity
-            android:label="@string/title_activity_select_wine"
+            android:label="@string/title_wine_select"
             android:name=".ui.SelectWineActivity"
             android:parentActivityName=".ui.ManageNoteActivity">
 

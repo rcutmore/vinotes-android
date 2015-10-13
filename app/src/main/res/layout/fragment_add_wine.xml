@@ -9,7 +9,7 @@
     <EditText
         android:id="@+id/etWineName"
         android:gravity="center"
-        android:hint="@string/edit_text_add_wine_name_hint"
+        android:hint="@string/input_hint_wine_add_name"
         android:inputType="text"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
     <EditText
         android:id="@+id/etVintage"
         android:gravity="center"
-        android:hint="@string/edit_text_add_wine_vintage_hint"
+        android:hint="@string/input_hint_wine_add_vintage"
         android:inputType="number"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
@@ -28,6 +28,6 @@
         android:id="@+id/btnAddWine"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="@string/button_add_wine" />
+        android:text="@string/button_wine_add" />
 
 </LinearLayout>

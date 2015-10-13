@@ -9,7 +9,7 @@
     <EditText
         android:id="@+id/etWineryName"
         android:gravity="center"
-        android:hint="@string/edit_text_add_winery_hint"
+        android:hint="@string/input_hint_winery_add"
         android:inputType="text"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
@@ -19,6 +19,6 @@
         android:id="@+id/btnAddWinery"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="@string/button_add_winery" />
+        android:text="@string/button_winery_add" />
 
 </LinearLayout>

@@ -9,7 +9,7 @@
     <EditText
         android:id="@+id/etSearch"
         android:gravity="center"
-        android:hint="@string/edit_text_select_traits_search_hint"
+        android:hint="@string/input_hint_trait_search"
         android:inputType="text"
         android:layout_alignParentTop="true"
         android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:onClick="showAddTraitDialog"
-            android:text="@string/button_add_trait" />
+            android:text="@string/button_trait_add" />
 
         <Button
             android:id="@+id/btnClear"
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:onClick="clearSelectedTraits"
-            android:text="@string/button_clear_selected_traits" />
+            android:text="@string/button_traits_clear" />
 
         <Button
             android:id="@+id/btnDone"
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:onClick="returnSelectedTraits"
-            android:text="@string/button_select_traits" />
+            android:text="@string/button_traits_select" />
 
     </LinearLayout>
 

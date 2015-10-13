@@ -199,19 +199,19 @@ public class SelectTraitsActivity extends ActionBarActivity
         // Set title based on type of trait.
         switch (traitType) {
             case "color":
-                setTitle(R.string.title_activity_select_traits_color);
+                setTitle(R.string.title_traits_color_select);
                 break;
             case "nose":
-                setTitle(R.string.title_activity_select_traits_nose);
+                setTitle(R.string.title_traits_nose_select);
                 break;
             case "taste":
-                setTitle(R.string.title_activity_select_traits_taste);
+                setTitle(R.string.title_traits_taste_select);
                 break;
             case "finish":
-                setTitle(R.string.title_activity_select_traits_finish);
+                setTitle(R.string.title_traits_finish_select);
                 break;
             default:
-                setTitle(R.string.title_activity_select_traits_default);
+                setTitle(R.string.title_traits_default_select);
                 break;
         }
     }

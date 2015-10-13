@@ -1,41 +1,52 @@
 <resources>
+
+    <!-- Application -->
     <string name="app_name">Vinotes</string>
     <string name="action_settings">Settings</string>
-    <string name="button_add_note">Add Note</string>
-    <string name="button_add_trait">Add Trait</string>
-    <string name="button_add_wine">Add Wine</string>
-    <string name="button_add_winery">Add Winery</string>
-    <string name="button_clear_selected_traits">Clear</string>
-    <string name="button_save_note">Save Note</string>
-    <string name="button_select_traits">Done</string>
-    <string name="edit_text_add_note_color_traits_hint">Select Color Traits</string>
-    <string name="edit_text_add_note_finish_traits_hint">Select Finish Traits</string>
-    <string name="edit_text_add_note_nose_traits_hint">Select Nose Traits</string>
-    <string name="edit_text_add_note_taste_traits_hint">Select Taste Traits</string>
-    <string name="edit_text_add_note_tasting_date_hint">Enter Tasting Date</string>
-    <string name="edit_text_add_note_wine_hint">Select Wine</string>
-    <string name="edit_text_add_note_winery_hint">Select Winery</string>
-    <string name="edit_text_add_trait_name_hint">Enter Name Of Trait</string>
-    <string name="edit_text_add_wine_name_hint">Enter Name Of Wine</string>
-    <string name="edit_text_add_wine_vintage_hint">Enter Vintage Of Wine</string>
-    <string name="edit_text_add_winery_hint">Enter Name Of Winery</string>
-    <string name="edit_text_select_traits_search_hint">Search Traits</string>
-    <string name="edit_text_select_wine_search_hint">Search Wines</string>
-    <string name="edit_text_select_winery_search_hint">Search Wineries</string>
-    <string name="edit_text_view_note_color_traits">Color Traits</string>
-    <string name="edit_text_view_note_finish_traits">Finish Traits</string>
-    <string name="edit_text_view_note_nose_traits">Nose Traits</string>
-    <string name="edit_text_view_note_taste_traits">Taste Traits</string>
-    <string name="edit_text_view_note_tasting_date">Tasting Date</string>
-    <string name="edit_text_view_note_wine">Wine</string>
-    <string name="edit_text_view_note_winery">Winery</string>
-    <string name="title_activity_add_note">Add New Tasting Note</string>
-    <string name="title_activity_edit_note">Edit Tasting Note</string>
-    <string name="title_activity_select_traits_color">Select Color Traits</string>
-    <string name="title_activity_select_traits_default">Select Unknown Traits</string>
-    <string name="title_activity_select_traits_finish">Select Finish Traits</string>
-    <string name="title_activity_select_traits_nose">Select Nose Traits</string>
-    <string name="title_activity_select_traits_taste">Select Taste Traits</string>
-    <string name="title_activity_select_wine">Select Wine</string>
-    <string name="title_activity_select_winery">Select Winery</string>
+
+    <!-- Activity / Fragment Titles -->
+    <string name="title_note_add">Add New Tasting Note</string>
+    <string name="title_note_edit">Edit Tasting Note</string>
+    <string name="title_winery_select">Select Winery</string>
+    <string name="title_wine_select">Select Wine</string>
+    <string name="title_traits_default_select">Select Unknown Traits</string>
+    <string name="title_traits_color_select">Select Color Traits</string>
+    <string name="title_traits_nose_select">Select Nose Traits</string>
+    <string name="title_traits_taste_select">Select Taste Traits</string>
+    <string name="title_traits_finish_select">Select Finish Traits</string>
+
+    <!-- Buttons -->
+    <string name="button_note_add">Add Note</string>
+    <string name="button_note_save">Save Note</string>
+    <string name="button_winery_add">Add Winery</string>
+    <string name="button_wine_add">Add Wine</string>
+    <string name="button_trait_add">Add Trait</string>
+    <string name="button_traits_clear">Clear</string>
+    <string name="button_traits_select">Done</string>
+
+    <!-- Labels -->
+    <string name="label_tasting_date">Tasting Date</string>
+    <string name="label_winery">Winery</string>
+    <string name="label_wine">Wine</string>
+    <string name="label_color_traits">Color Traits</string>
+    <string name="label_nose_traits">Nose Traits</string>
+    <string name="label_taste_traits">Taste Traits</string>
+    <string name="label_finish_traits">Finish Traits</string>
+
+    <!-- Input Hints -->
+    <string name="input_hint_tasting_date_select">Enter Tasting Date</string>
+    <string name="input_hint_winery_add">Enter Name Of Winery</string>
+    <string name="input_hint_winery_search">Search Wineries</string>
+    <string name="input_hint_winery_select">Select Winery</string>
+    <string name="input_hint_wine_add_name">Enter Name Of Wine</string>
+    <string name="input_hint_wine_add_vintage">Enter Vintage Of Wine</string>
+    <string name="input_hint_wine_search">Search Wines</string>
+    <string name="input_hint_wine_select">Select Wine</string>
+    <string name="input_hint_trait_add">Enter Name Of Trait</string>
+    <string name="input_hint_trait_search">Search Traits</string>
+    <string name="input_hint_color_traits_select">Select Color Traits</string>
+    <string name="input_hint_nose_traits_select">Select Nose Traits</string>
+    <string name="input_hint_taste_traits_select">Select Taste Traits</string>
+    <string name="input_hint_finish_traits_select">Select Finish Traits</string>
+
 </resources>

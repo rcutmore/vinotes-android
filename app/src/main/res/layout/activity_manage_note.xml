@@ -17,14 +17,14 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:paddingTop="@dimen/default_padding"
-            android:text="@string/edit_text_view_note_tasting_date" />
+            android:text="@string/label_tasting_date" />
 
         <EditText
             android:id="@+id/etTastingDate"
             android:editable="false"
             android:focusableInTouchMode="false"
             android:gravity="center"
-            android:hint="@string/edit_text_add_note_tasting_date_hint"
+            android:hint="@string/input_hint_tasting_date_select"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:onClick="showDatePickerDialog"
@@ -34,14 +34,14 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:paddingTop="@dimen/default_padding"
-            android:text="@string/edit_text_view_note_winery" />
+            android:text="@string/label_winery" />
 
         <EditText
             android:id="@+id/etWinery"
             android:editable="false"
             android:focusableInTouchMode="false"
             android:gravity="center"
-            android:hint="@string/edit_text_add_note_winery_hint"
+            android:hint="@string/input_hint_winery_select"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:onClick="showWineryPicker"
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:paddingTop="@dimen/default_padding"
-            android:text="@string/edit_text_view_note_wine" />
+            android:text="@string/label_wine" />
 
         <EditText
             android:id="@+id/etWine"
@@ -59,7 +59,7 @@
             android:enabled="false"
             android:focusableInTouchMode="false"
             android:gravity="center"
-            android:hint="@string/edit_text_add_note_wine_hint"
+            android:hint="@string/input_hint_wine_select"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:onClick="showWinePicker"
@@ -69,14 +69,14 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:paddingTop="@dimen/default_padding"
-            android:text="@string/edit_text_view_note_color_traits" />
+            android:text="@string/label_color_traits" />
 
         <EditText
             android:id="@+id/etColorTraits"
             android:editable="false"
             android:focusableInTouchMode="false"
             android:gravity="center"
-            android:hint="@string/edit_text_add_note_color_traits_hint"
+            android:hint="@string/input_hint_color_traits_select"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:onClick="showTraitPicker"
@@ -86,14 +86,14 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:paddingTop="@dimen/default_padding"
-            android:text="@string/edit_text_view_note_nose_traits" />
+            android:text="@string/label_nose_traits" />
 
         <EditText
             android:id="@+id/etNoseTraits"
             android:editable="false"
             android:focusableInTouchMode="false"
             android:gravity="center"
-            android:hint="@string/edit_text_add_note_nose_traits_hint"
+            android:hint="@string/input_hint_nose_traits_select"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:onClick="showTraitPicker"
@@ -103,14 +103,14 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:paddingTop="@dimen/default_padding"
-            android:text="@string/edit_text_view_note_taste_traits" />
+            android:text="@string/label_taste_traits" />
 
         <EditText
             android:id="@+id/etTasteTraits"
             android:editable="false"
             android:focusableInTouchMode="false"
             android:gravity="center"
-            android:hint="@string/edit_text_add_note_taste_traits_hint"
+            android:hint="@string/input_hint_taste_traits_select"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:onClick="showTraitPicker"
@@ -120,14 +120,14 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:paddingTop="@dimen/default_padding"
-            android:text="@string/edit_text_view_note_finish_traits" />
+            android:text="@string/label_finish_traits" />
 
         <EditText
             android:id="@+id/etFinishTraits"
             android:editable="false"
             android:focusableInTouchMode="false"
             android:gravity="center"
-            android:hint="@string/edit_text_add_note_finish_traits_hint"
+            android:hint="@string/input_hint_finish_traits_select"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:onClick="showTraitPicker"
@@ -147,7 +147,7 @@
             android:layout_width="wrap_content"
             android:onClick="saveNote"
             android:padding="@dimen/default_padding"
-            android:text="@string/button_save_note" />
+            android:text="@string/button_note_save" />
 
     </LinearLayout>
 
