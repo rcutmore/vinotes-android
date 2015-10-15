@@ -67,6 +67,20 @@ public class SelectTraitsActivity extends ActionBarActivity
         }
     };
 
+    private final Comparator<Trait> traitComparator = new Comparator<Trait>() {
+        /**
+         * Sorts traits alphabetically.
+         *
+         * @param t1 first trait
+         * @param t2 second trait
+         * @return result of name comparison
+         */
+        @Override
+        public int compare(Trait t1, Trait t2) {
+            return t1.getName().compareToIgnoreCase(t2.getName());
+        }
+    };
+
     /**
      * Sets up activity and private variables.
      */
@@ -124,19 +138,7 @@ public class SelectTraitsActivity extends ActionBarActivity
     public void onTraitAdded(final Trait trait) {
         // Add to trait list and sort by trait name.
         this.traits.add(trait);
-        Collections.sort(this.traits, new Comparator<Trait>() {
-            /**
-             * Sorts traits alphabetically.
-             *
-             * @param t1  first trait
-             * @param t2  second trait
-             * @return result of name comparison
-             */
-            @Override
-            public int compare(Trait t1, Trait t2) {
-                return t1.getName().compareToIgnoreCase(t2.getName());
-            }
-        });
+        Collections.sort(this.traits, this.traitComparator);
         this.traitsAdapter.notifyDataSetChanged();
 
         // Select new trait.
@@ -153,6 +155,7 @@ public class SelectTraitsActivity extends ActionBarActivity
      */
     public void returnSelectedTraits(final View view) {
         Bundle args = new Bundle();
+        Collections.sort(this.selectedTraits, this.traitComparator);
         args.putParcelableArrayList("traits", this.selectedTraits);
         Intent intent = getIntent();
         intent.putExtras(args);
