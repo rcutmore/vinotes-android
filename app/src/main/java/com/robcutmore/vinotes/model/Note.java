@@ -109,6 +109,15 @@ public class Note implements Parcelable {
     }
 
     /**
+     * Adds given trait to list of color traits.
+     *
+     * @param colorTrait  trait to add
+     */
+    public void addColorTrait(final Trait colorTrait) {
+        this.colorTraits.add(colorTrait);
+    }
+
+    /**
      * Gets list of color traits of wine.
      *
      * @return list of color traits
@@ -124,6 +133,15 @@ public class Note implements Parcelable {
      */
     public void setColorTraits(final ArrayList<Trait> colorTraits) {
         this.colorTraits = colorTraits;
+    }
+
+    /**
+     * Adds given trait to list of nose traits.
+     *
+     * @param noseTrait  trait to add
+     */
+    public void addNoseTrait(final Trait noseTrait) {
+        this.noseTraits.add(noseTrait);
     }
 
     /**
@@ -145,6 +163,15 @@ public class Note implements Parcelable {
     }
 
     /**
+     * Adds given trait to list of taste traits.
+     *
+     * @param tasteTrait  trait to add
+     */
+    public void addTasteTrait(final Trait tasteTrait) {
+        this.tasteTraits.add(tasteTrait);
+    }
+
+    /**
      * Gets list of taste traits of wine.
      *
      * @return list of taste traits
@@ -160,6 +187,15 @@ public class Note implements Parcelable {
      */
     public void setTasteTraits(final ArrayList<Trait> tasteTraits) {
         this.tasteTraits = tasteTraits;
+    }
+
+    /**
+     * Adds given trait to list of finish traits.
+     *
+     * @param finishTrait  trait to add
+     */
+    public void addFinishTrait(final Trait finishTrait) {
+        this.finishTraits.add(finishTrait);
     }
 
     /**

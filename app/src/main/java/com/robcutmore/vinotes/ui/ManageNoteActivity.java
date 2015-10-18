@@ -214,7 +214,9 @@ public class ManageNoteActivity extends ActionBarActivity
             // Update existing note.
         } else {
             // Add new note.
-            Note note = this.noteDataSource.add(this.wine.getId(), this.tastingDate, this.rating);
+            Note note = this.noteDataSource.add(
+                this.wine, this.tastingDate, this.rating, this.colorTraits,
+                this.noseTraits, this.tasteTraits, this.finishTraits);
             if (note != null) {
                 Bundle args = new Bundle();
                 args.putParcelable("note", note);

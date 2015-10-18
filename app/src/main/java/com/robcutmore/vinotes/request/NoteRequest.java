@@ -2,6 +2,7 @@ package com.robcutmore.vinotes.request;
 
 
 import com.robcutmore.vinotes.model.Note;
+import com.robcutmore.vinotes.model.Trait;
 import com.robcutmore.vinotes.model.Wine;
 import com.robcutmore.vinotes.model.Winery;
 import com.robcutmore.vinotes.utils.DateUtils;
@@ -12,15 +13,20 @@ import java.util.Date;
 
 public class NoteRequest {
 
-    public static Note add(final long wineId, final Date tasted, final Integer rating) {
+    public static Note add(final Wine wine, final Date tasted, final Integer rating,
+                           final ArrayList<Trait> colorTraits, final ArrayList<Trait> noseTraits,
+                           final ArrayList<Trait> tasteTraits, final ArrayList<Trait> finishTraits) {
         //String response = sendPOST(wineId, tasted, rating);
         //ArrayList<Note> notes = parseResponse(response);
         //return (notes.size() > 0) ? notes.get(0) : null;
 
         // Test stub, remove this and uncomment code above.
-        Winery winery = new Winery(2, "Test");
-        Wine wine = new Wine(wineId, winery, "Test", 2014);
-        return new Note(4, wine, tasted, rating);
+        Note note = new Note(4, wine, tasted, rating);
+        note.setColorTraits(colorTraits);
+        note.setNoseTraits(noseTraits);
+        note.setTasteTraits(tasteTraits);
+        note.setFinishTraits(finishTraits);
+        return note;
     }
 
     public static Note get(final long id) {
