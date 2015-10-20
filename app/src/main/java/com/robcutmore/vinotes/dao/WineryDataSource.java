@@ -66,9 +66,9 @@ public class WineryDataSource extends DataSource {
         // Only remove from database, wineries cannot be removed from API.
         String table = this.dbHelper.getWineryTable();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connectToDatabase();
+        this.connect();
         this.database.delete(table, whereClause, null);
-        this.close();
+        this.disconnect();
     }
 
     /**
@@ -118,11 +118,11 @@ public class WineryDataSource extends DataSource {
      * Connects to database.
      */
     @Override
-    protected void connectToDatabase() {
+    protected void connect() {
         try {
-            this.open();
+            this.setDatabase();
         } catch (SQLException e) {
-            Log.w(WineryDataSource.class.getName(), "Error connecting to database.");
+            Log.w(WineryDataSource.class.getName(), "Error setting database.");
         }
     }
 
@@ -153,9 +153,9 @@ public class WineryDataSource extends DataSource {
 
         // Insert winery into database if it doesn't exist yet.
         String table = this.dbHelper.getWineryTable();
-        this.connectToDatabase();
+        this.connect();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
-        this.close();
+        this.disconnect();
     }
 
     /**
@@ -171,7 +171,7 @@ public class WineryDataSource extends DataSource {
         String orderBy = String.format("%s COLLATE NOCASE ASC", this.dbColumns.get("name"));
 
         // Query wineries table for all wineries.
-        this.connectToDatabase();
+        this.connect();
         Cursor cursor = this.database.query(table, columns, null, null, null, null, orderBy);
 
         // Store and return wineries.
@@ -182,7 +182,7 @@ public class WineryDataSource extends DataSource {
             cursor.moveToNext();
         }
         cursor.close();
-        this.close();
+        this.disconnect();
         return wineries;
     }
 
@@ -197,14 +197,14 @@ public class WineryDataSource extends DataSource {
         String table = this.dbHelper.getWineryTable();
         String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connectToDatabase();
+        this.connect();
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
 
         // Store and return winery.
         cursor.moveToFirst();
         Winery winery = !cursor.isAfterLast() ? this.cursorToWinery(cursor) : null;
         cursor.close();
-        this.close();
+        this.disconnect();
         return winery;
     }
 
@@ -212,9 +212,9 @@ public class WineryDataSource extends DataSource {
      * Deletes all data stored in wineries table.
      */
     private void removeAllFromDatabase() {
-        this.connectToDatabase();
+        this.connect();
         this.database.delete(this.dbHelper.getWineryTable(), null, null);
-        this.close();
+        this.disconnect();
     }
 
     /**

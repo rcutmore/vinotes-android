@@ -9,6 +9,9 @@ import java.sql.SQLException;
 import java.util.Map;
 
 
+/**
+ * Data source is an abstract base class for adding, retrieving, and deleting data.
+ */
 public abstract class DataSource {
 
     protected SQLiteDatabase database;
@@ -16,18 +19,33 @@ public abstract class DataSource {
     protected Map<String, String> dbColumns;
     protected boolean closeDatabaseWhenFinished = true;
 
-    protected void open() throws SQLException {
-        this.database = this.dbHelper.getWritableDatabase();
-    }
 
-    protected void close() {
+    /**
+     * Connects to database.
+     */
+    abstract protected void connect();
+
+    /**
+     * Disconnects from database.
+     */
+    protected void disconnect() {
         if (this.closeDatabaseWhenFinished) {
             this.dbHelper.close();
         }
     }
 
-    abstract protected void connectToDatabase();
-
+    /**
+     * @return array of database table column names
+     */
     abstract protected String[] getDatabaseTableColumns();
+
+    /**
+     * Sets database.
+     *
+     * @throws SQLException
+     */
+    protected void setDatabase() throws SQLException {
+        this.database = this.dbHelper.getWritableDatabase();
+    }
 
 }

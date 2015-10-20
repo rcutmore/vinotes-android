@@ -27,7 +27,6 @@ import java.util.Map;
 public class NoteDataSource extends DataSource {
 
     private Map<String, String> dbTraitColumns;
-
     private WineDataSource wineDataSource;
     private TraitDataSource traitDataSource;
 
@@ -87,9 +86,9 @@ public class NoteDataSource extends DataSource {
     public void remove(final long id) {
         String table = this.dbHelper.getNoteTable();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connectToDatabase();
+        this.connect();
         this.database.delete(table, whereClause, null);
-        this.close();
+        this.disconnect();
     }
 
     /**
@@ -139,11 +138,11 @@ public class NoteDataSource extends DataSource {
      * Connects to database.
      */
     @Override
-    protected void connectToDatabase() {
+    protected void connect() {
         try {
-            this.open();
+            this.setDatabase();
         } catch (SQLException e) {
-            Log.w(NoteDataSource.class.getName(), "Error connecting to database.");
+            Log.w(NoteDataSource.class.getName(), "Error setting database.");
         }
     }
 
@@ -183,7 +182,7 @@ public class NoteDataSource extends DataSource {
      * @param note  note to add to database
      */
     private void addToDatabase(final Note note) {
-        this.connectToDatabase();
+        this.connect();
         this.database.beginTransaction();
 
         // Add tasting note.
@@ -232,7 +231,7 @@ public class NoteDataSource extends DataSource {
         }
 
         this.database.endTransaction();
-        this.close();
+        this.disconnect();
     }
 
     /**
@@ -241,7 +240,7 @@ public class NoteDataSource extends DataSource {
      * @return an ArrayList containing Note objects
      */
     private ArrayList<Note> getAllFromDatabase() {
-        this.connectToDatabase();
+        this.connect();
 
         // Fetch all notes from database.
         String table = this.dbHelper.getNoteTable();
@@ -292,7 +291,7 @@ public class NoteDataSource extends DataSource {
         }
 
         notesCursor.close();
-        this.close();
+        this.disconnect();
         return notes;
     }
 
@@ -307,14 +306,14 @@ public class NoteDataSource extends DataSource {
         String table = this.dbHelper.getNoteTable();
         String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connectToDatabase();
+        this.connect();
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
 
         // Store and return tasting note.
         cursor.moveToFirst();
         Note note = !cursor.isAfterLast() ? this.cursorToNote(cursor) : null;
         cursor.close();
-        this.close();
+        this.disconnect();
         return note;
     }
 
@@ -322,12 +321,12 @@ public class NoteDataSource extends DataSource {
      * Deletes all notes from database.
      */
     private void removeAllFromDatabase() {
-        this.connectToDatabase();
+        this.connect();
         this.database.beginTransaction();
         this.database.delete(this.dbHelper.getNoteTable(), null, null);
         this.database.delete(this.dbHelper.getNoteTraitTable(), null, null);
         this.database.endTransaction();
-        this.close();
+        this.disconnect();
     }
 
     /**

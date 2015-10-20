@@ -65,9 +65,9 @@ public class TraitDataSource extends DataSource {
     public void remove(final long id) {
         String table = this.dbHelper.getTraitTable();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connectToDatabase();
+        this.connect();
         this.database.delete(table, whereClause, null);
-        this.close();
+        this.disconnect();
     }
 
     /**
@@ -117,11 +117,11 @@ public class TraitDataSource extends DataSource {
      * Connects to database.
      */
     @Override
-    protected void connectToDatabase() {
+    protected void connect() {
         try {
-            this.open();
+            this.setDatabase();
         } catch (SQLException e) {
-            Log.w(TraitDataSource.class.getName(), "Error connecting to database.");
+            Log.w(TraitDataSource.class.getName(), "Error setting database.");
         }
     }
 
@@ -152,9 +152,9 @@ public class TraitDataSource extends DataSource {
 
         // Insert trait into database if it doesn't exist yet.
         String table = this.dbHelper.getTraitTable();
-        this.connectToDatabase();
+        this.connect();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
-        this.close();
+        this.disconnect();
     }
 
     /**
@@ -170,7 +170,7 @@ public class TraitDataSource extends DataSource {
         String orderBy = String.format("%s COLLATE NOCASE ASC", this.dbColumns.get("name"));
 
         // Query traits table for all traits.
-        this.connectToDatabase();
+        this.connect();
         Cursor cursor = this.database.query(table, columns, null, null, null, null, orderBy);
 
         // Store and return traits.
@@ -181,7 +181,7 @@ public class TraitDataSource extends DataSource {
             cursor.moveToNext();
         }
         cursor.close();
-        this.close();
+        this.disconnect();
         return traits;
     }
 
@@ -196,14 +196,14 @@ public class TraitDataSource extends DataSource {
         String table = this.dbHelper.getTraitTable();
         String[] columns = this.getDatabaseTableColumns();
         String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connectToDatabase();
+        this.connect();
         Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
 
         // Store and return note trait.
         cursor.moveToFirst();
         Trait trait = !cursor.isAfterLast() ? this.cursorToTrait(cursor) : null;
         cursor.close();
-        this.close();
+        this.disconnect();
         return trait;
     }
 
@@ -211,9 +211,9 @@ public class TraitDataSource extends DataSource {
      * Deletes all traits from database.
      */
     private void removeAllFromDatabase() {
-        this.connectToDatabase();
+        this.connect();
         this.database.delete(this.dbHelper.getTraitTable(), null, null);
-        this.close();
+        this.disconnect();
     }
 
     /**
