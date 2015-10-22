@@ -13,6 +13,7 @@
         android:inputType="text"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:maxLength="150"
         android:maxLines="1" />
 
     <Button
