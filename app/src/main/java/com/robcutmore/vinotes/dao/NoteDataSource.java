@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.robcutmore.vinotes.database.DatabaseHelper;
 import com.robcutmore.vinotes.model.Note;
-import com.robcutmore.vinotes.model.Trait;
 import com.robcutmore.vinotes.request.NoteRequest;
 import com.robcutmore.vinotes.utils.DateUtils;
 import com.robcutmore.vinotes.model.Wine;
@@ -17,18 +16,16 @@ import com.robcutmore.vinotes.model.Wine;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
 
 
 /**
- * NoteDataSource manages adding, retrieving, and deleting note-related data.
+ * Manages adding, retrieving, and deleting note-related data.
  * Interacts with API and local database.
  */
 public class NoteDataSource extends DataSource {
 
-    private Map<String, String> dbTraitColumns;
     private WineDataSource wineDataSource;
-    private TraitDataSource traitDataSource;
+    private NoteTraitDataSource noteTraitDataSource;
 
     /**
      * Constructor.
@@ -36,9 +33,8 @@ public class NoteDataSource extends DataSource {
     public NoteDataSource(final Context context) {
         this.dbHelper = DatabaseHelper.getInstance(context);
         this.dbColumns = this.dbHelper.getNoteColumns();
-        this.dbTraitColumns = this.dbHelper.getNoteTraitColumns();
         this.wineDataSource = new WineDataSource(context, false);
-        this.traitDataSource = new TraitDataSource(context, false);
+        this.noteTraitDataSource = new NoteTraitDataSource(context, false);
     }
 
     /**
@@ -51,44 +47,21 @@ public class NoteDataSource extends DataSource {
         this.closeDatabaseWhenFinished = closeDatabaseWhenFinished;
     }
 
+    // Public methods
+
     /**
      * Adds new note.
      *
-     * @param wine  wine for new note
-     * @param tasted  tasting date for new note
-     * @param rating  rating for new note
-     * @param colorTraits  list of color traits
-     * @param noseTraits  list of nose traits
-     * @param tasteTraits  list of taste traits
-     * @param finishTraits  list of finish traits
+     * @param newNote  new note to add
      * @return Note object
      */
-    public Note add(final Wine wine, final Date tasted, final Integer rating,
-                    final ArrayList<Trait> colorTraits, final ArrayList<Trait> noseTraits,
-                    final ArrayList<Trait> tasteTraits, final ArrayList<Trait> finishTraits) {
-        // Add new note to API.
-        Note note = NoteRequest.add(
-            wine, tasted, rating, colorTraits, noseTraits, tasteTraits, finishTraits);
-
-        // If note was successfully added to API then add to local database as well.
+    public Note add(final Note newNote) {
+        // Add new note to API and, if successful, add to database as well.
+        Note note = NoteRequest.add(newNote);
         if (note != null) {
             this.addToDatabase(note);
         }
-
         return note;
-    }
-
-    /**
-     * Deletes note with given id.
-     *
-     * @param id  id of note to delete
-     */
-    public void remove(final long id) {
-        String table = this.dbHelper.getNoteTable();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connect();
-        this.database.delete(table, whereClause, null);
-        this.disconnect();
     }
 
     /**
@@ -98,12 +71,11 @@ public class NoteDataSource extends DataSource {
      * @return Note object
      */
     public Note get(final long id) {
-        // Fetch note from local database. If missing then request from API.
+        // Fetch note from local database.
+        // If missing then request from API and add to database if found.
         Note note = this.getFromDatabase(id);
         if (note == null) {
             note = NoteRequest.get(id);
-
-            // If note was found then add to database since it was missing.
             if (note != null) {
                 this.addToDatabase(note);
             }
@@ -135,6 +107,37 @@ public class NoteDataSource extends DataSource {
     }
 
     /**
+     * Deletes note with given id.
+     *
+     * @param note  note to delete
+     */
+    public void remove(final Note note) {
+        String table = this.dbHelper.getNoteTable();
+        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), note.getId());
+        this.connect();
+        this.noteTraitDataSource.removeTraitsFromDatabase(note);
+        this.database.delete(table, whereClause, null);
+        this.disconnect();
+    }
+
+    /**
+     * Updates given note.
+     *
+     * @param note  note with updated attributes
+     * @return updated note from API
+     */
+    public Note update(final Note note) {
+        // Update note via API and, if successful, update database as well.
+        Note updatedNote = NoteRequest.update(note);
+        if (updatedNote != null) {
+            this.updateDatabase(updatedNote);
+        }
+        return note;
+    }
+
+    // Protected / private database methods.
+
+    /**
      * Connects to database.
      */
     @Override
@@ -154,24 +157,10 @@ public class NoteDataSource extends DataSource {
     @Override
     protected String[] getDatabaseTableColumns() {
         String[] columns = {
-            this.dbColumns.get("id"),
-            this.dbColumns.get("wine"),
-            this.dbColumns.get("tasted"),
-            this.dbColumns.get("rating")
-        };
-        return columns;
-    }
-
-    /**
-     * Fetches database column names for note_traits table.
-     *
-     * @return array containing column names
-     */
-    private String[] getTraitDatabaseTableColumns() {
-        String[] columns = {
-            this.dbTraitColumns.get("note"),
-            this.dbTraitColumns.get("trait"),
-            this.dbTraitColumns.get("type"),
+                this.dbColumns.get("id"),
+                this.dbColumns.get("wine"),
+                this.dbColumns.get("tasted"),
+                this.dbColumns.get("rating")
         };
         return columns;
     }
@@ -186,49 +175,16 @@ public class NoteDataSource extends DataSource {
         this.database.beginTransaction();
 
         // Add tasting note.
-        long noteId = note.getId();
         String noteTable = this.dbHelper.getNoteTable();
         ContentValues noteValues = new ContentValues();
-        noteValues.put(this.dbColumns.get("id"), noteId);
+        noteValues.put(this.dbColumns.get("id"), note.getId());
         noteValues.put(this.dbColumns.get("wine"), note.getWine().getId());
         noteValues.put(this.dbColumns.get("tasted"), DateUtils.convertDateToTimestamp(note.getTasted()));
         noteValues.put(this.dbColumns.get("rating"), note.getRating());
         this.database.insertWithOnConflict(noteTable, null, noteValues, SQLiteDatabase.CONFLICT_IGNORE);
 
-        // Add note color traits.
-        String noteTraitTable = this.dbHelper.getNoteTraitTable();
-        ContentValues traitValues = new ContentValues();
-        traitValues.put(this.dbTraitColumns.get("note"), noteId);
-        traitValues.put(this.dbTraitColumns.get("type"), "color");
-        for (Trait trait : note.getColorTraits()) {
-            traitValues.put(this.dbTraitColumns.get("trait"), trait.getId());
-            this.database.insertWithOnConflict(
-                noteTraitTable, null, traitValues, SQLiteDatabase.CONFLICT_IGNORE);
-        }
-
-        // Add note nose traits.
-        traitValues.put(this.dbTraitColumns.get("type"), "nose");
-        for (Trait trait : note.getNoseTraits()) {
-            traitValues.put(this.dbTraitColumns.get("trait"), trait.getId());
-            this.database.insertWithOnConflict(
-                noteTraitTable, null, traitValues, SQLiteDatabase.CONFLICT_IGNORE);
-        }
-
-        // Add note taste traits.
-        traitValues.put(this.dbTraitColumns.get("type"), "taste");
-        for (Trait trait : note.getTasteTraits()) {
-            traitValues.put(this.dbTraitColumns.get("trait"), trait.getId());
-            this.database.insertWithOnConflict(
-                noteTraitTable, null, traitValues, SQLiteDatabase.CONFLICT_IGNORE);
-        }
-
-        // Add note finish traits.
-        traitValues.put(this.dbTraitColumns.get("type"), "finish");
-        for (Trait trait : note.getFinishTraits()) {
-            traitValues.put(this.dbTraitColumns.get("trait"), trait.getId());
-            this.database.insertWithOnConflict(
-                noteTraitTable, null, traitValues, SQLiteDatabase.CONFLICT_IGNORE);
-        }
+        // Add traits.
+        this.noteTraitDataSource.addTraitsToDatabase(note);
 
         this.database.endTransaction();
         this.disconnect();
@@ -248,48 +204,15 @@ public class NoteDataSource extends DataSource {
         String orderBy = String.format("%s DESC", this.dbColumns.get("tasted"));
         Cursor notesCursor = this.database.query(table, columns, null, null, null, null, orderBy);
 
-        // Process all results.
-        notesCursor.moveToFirst();
+        // Process all results and return notes.
         ArrayList<Note> notes = new ArrayList<>();
+        notesCursor.moveToFirst();
         while (!notesCursor.isAfterLast()) {
             Note note = this.cursorToNote(notesCursor);
-
-            // Fetch all IDs of note traits.
-            table = this.dbHelper.getNoteTraitTable();
-            columns = this.getTraitDatabaseTableColumns();
-            String where = String.format("%s = %d", this.dbTraitColumns.get("note"), note.getId());
-            Cursor traitsCursor = this.database.query(table, columns, where, null, null, null, null);
-
-            while (!traitsCursor.isAfterLast()) {
-                // Set trait.
-                String traitType = traitsCursor.getString(2);
-                Trait trait = this.cursorToTrait(traitsCursor);
-                if (trait != null) {
-                    switch (traitType) {
-                        case "color":
-                            note.addColorTrait(trait);
-                            break;
-                        case "nose":
-                            note.addNoseTrait(trait);
-                            break;
-                        case "taste":
-                            note.addTasteTrait(trait);
-                            break;
-                        case "finish":
-                            note.addFinishTrait(trait);
-                            break;
-                        default:
-                            // Invalid trait type so do not add.
-                    }
-                }
-                traitsCursor.moveToNext();
-            }
-
+            note = this.noteTraitDataSource.getTraitsFromDatabase(note);
             notes.add(note);
-            traitsCursor.close();
             notesCursor.moveToNext();
         }
-
         notesCursor.close();
         this.disconnect();
         return notes;
@@ -330,6 +253,31 @@ public class NoteDataSource extends DataSource {
     }
 
     /**
+     * Updates note information in database.
+     *
+     * @param note  note to update in database
+     */
+    private void updateDatabase(final Note note) {
+        this.connect();
+        this.database.beginTransaction();
+
+        // Update note information.
+        ContentValues newValues = new ContentValues();
+        newValues.put(this.dbColumns.get("wine"), note.getWine().getId());
+        newValues.put(this.dbColumns.get("tasted"), DateUtils.convertDateToTimestamp(note.getTasted()));
+        newValues.put(this.dbColumns.get("rating"), note.getRating());
+        String where = String.format("%s = %d", this.dbColumns.get("id"), note.getId());
+        this.database.update(this.dbHelper.getNoteTable(), newValues, where, null);
+
+        // Refresh note traits in case any were updated.
+        this.noteTraitDataSource.removeTraitsFromDatabase(note);
+        this.noteTraitDataSource.addTraitsToDatabase(note);
+
+        this.database.endTransaction();
+        this.disconnect();
+    }
+
+    /**
      * Creates note using data at current position of given cursor.
      *
      * @param cursor  cursor containing note data
@@ -345,11 +293,6 @@ public class NoteDataSource extends DataSource {
         // Create tasting note object with information from cursor.
         Wine wine = this.wineDataSource.get(wineId);
         return new Note(id, wine, tasted, rating);
-    }
-
-    private Trait cursorToTrait(final Cursor cursor) {
-        long id = cursor.getLong(1);
-        return this.traitDataSource.get(id);
     }
 
 }

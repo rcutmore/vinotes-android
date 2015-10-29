@@ -2,7 +2,6 @@ package com.robcutmore.vinotes.request;
 
 
 import com.robcutmore.vinotes.model.Note;
-import com.robcutmore.vinotes.model.Trait;
 import com.robcutmore.vinotes.model.Wine;
 import com.robcutmore.vinotes.model.Winery;
 import com.robcutmore.vinotes.utils.DateUtils;
@@ -13,20 +12,14 @@ import java.util.Date;
 
 public class NoteRequest {
 
-    public static Note add(final Wine wine, final Date tasted, final Integer rating,
-                           final ArrayList<Trait> colorTraits, final ArrayList<Trait> noseTraits,
-                           final ArrayList<Trait> tasteTraits, final ArrayList<Trait> finishTraits) {
+    public static Note add(final Note noteToAdd) {
         //String response = sendPOST(wineId, tasted, rating);
         //ArrayList<Note> notes = parseResponse(response);
         //return (notes.size() > 0) ? notes.get(0) : null;
 
         // Test stub, remove this and uncomment code above.
-        Note note = new Note(4, wine, tasted, rating);
-        note.setColorTraits(colorTraits);
-        note.setNoseTraits(noseTraits);
-        note.setTasteTraits(tasteTraits);
-        note.setFinishTraits(finishTraits);
-        return note;
+        noteToAdd.setId(4);
+        return noteToAdd;
     }
 
     public static Note get(final long id) {
@@ -41,6 +34,15 @@ public class NoteRequest {
         return notes;
     }
 
+    public static Note update(final Note note) {
+        //String response = sendPUT(wine);
+        //ArrayList<Note> notes = parseResponse(response);
+        //return (notes.size() > 0) ? notes.get(0) : null;
+
+        // Test stub, remove this and uncomment code above.
+        return note;
+    }
+
     private static String sendGET(final Long id) {
         // Test stub, replace with request to API.
         return "";
@@ -51,6 +53,11 @@ public class NoteRequest {
     }
 
     private static String sendPOST(final long wineId, final Date tasted, final Integer rating) {
+        // Test stub, replace with request to API.
+        return "";
+    }
+
+    private static String sendPUT(final Wine wine) {
         // Test stub, replace with request to API.
         return "";
     }

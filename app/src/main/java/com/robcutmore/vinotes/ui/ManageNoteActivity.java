@@ -25,7 +25,7 @@ import java.util.Date;
 
 
 /**
- * ManageNoteActivity is used to edit or create a new tasting note.
+ * Provides input to edit an existing tasting note or to create a new tasting note.
  */
 public class ManageNoteActivity extends ActionBarActivity
                                 implements DatePickerFragment.OnDateSelectedListener {
@@ -210,21 +210,29 @@ public class ManageNoteActivity extends ActionBarActivity
      * @param view  button that was clicked
      */
     public void saveNote(final View view) {
+        Note note;
         if (this.note != null) {
             // Update existing note.
+            note = this.noteDataSource.update(new Note(
+                this.note.getId(), this.wine, this.tastingDate, this.rating,
+                this.colorTraits, this.noseTraits, this.tasteTraits, this.finishTraits
+            ));
         } else {
             // Add new note.
-            Note note = this.noteDataSource.add(
+            note = this.noteDataSource.add(new Note(
                 this.wine, this.tastingDate, this.rating, this.colorTraits,
-                this.noseTraits, this.tasteTraits, this.finishTraits);
-            if (note != null) {
-                Bundle args = new Bundle();
-                args.putParcelable("note", note);
-                Intent intent = getIntent();
-                intent.putExtras(args);
-                setResult(RESULT_OK, intent);
-                finish();
-            }
+                this.noseTraits, this.tasteTraits, this.finishTraits
+            ));
+        }
+
+        // Return new or updated note if successful.
+        if (note != null) {
+            Bundle args = new Bundle();
+            args.putParcelable("note", note);
+            Intent intent = getIntent();
+            intent.putExtras(args);
+            setResult(RESULT_OK, intent);
+            finish();
         }
     }
 

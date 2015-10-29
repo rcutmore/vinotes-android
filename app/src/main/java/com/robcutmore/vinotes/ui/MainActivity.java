@@ -25,11 +25,12 @@ import java.util.Comparator;
 
 
 /**
- * MainActivity lists all stored tasting notes.
+ * Lists all stored tasting notes.
  */
 public class MainActivity extends ActionBarActivity {
 
-    private final int NOTE_REQUEST_CODE = 1;
+    private final int ADD_NOTE_REQUEST_CODE = 1;
+    private final int EDIT_NOTE_REQUEST_CODE = 2;
 
     // Data sources
     private TraitDataSource traitDataSource;
@@ -115,8 +116,10 @@ public class MainActivity extends ActionBarActivity {
      */
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        boolean handleNote = requestCode == this.NOTE_REQUEST_CODE && resultCode == RESULT_OK;
-        if (handleNote) {
+        boolean handleAddNote = requestCode == this.ADD_NOTE_REQUEST_CODE && resultCode == RESULT_OK;
+        boolean handleEditNote = requestCode == this.EDIT_NOTE_REQUEST_CODE && resultCode == RESULT_OK;
+
+        if (handleAddNote || handleEditNote) {
             Bundle args = (data != null) ? data.getExtras() : null;
             if (args != null) {
                 Note note = args.getParcelable("note");
@@ -130,7 +133,7 @@ public class MainActivity extends ActionBarActivity {
      */
     public void onAddNote(View view) {
         Intent intent = new Intent(this, ManageNoteActivity.class);
-        startActivityForResult(intent, this.NOTE_REQUEST_CODE);
+        startActivityForResult(intent, this.ADD_NOTE_REQUEST_CODE);
     }
 
     /**
@@ -143,7 +146,7 @@ public class MainActivity extends ActionBarActivity {
         args.putParcelable("note", note);
         Intent intent = new Intent(this, ManageNoteActivity.class);
         intent.putExtras(args);
-        startActivity(intent);
+        startActivityForResult(intent, this.EDIT_NOTE_REQUEST_CODE);
     }
 
     /**
@@ -152,20 +155,25 @@ public class MainActivity extends ActionBarActivity {
      * @param note  new note to add
      */
     private void addNote(final Note note) {
-        this.notes.add(note);
-        Collections.sort(this.notes, new Comparator<Note>() {
-            /**
-             * Sorts notes by tasting date.
-             *
-             * @param n1  first note
-             * @param n2  second note
-             * @return result of date comparison
-             */
-            @Override
-            public int compare(Note n1, Note n2) {
-                return n2.getTasted().compareTo(n1.getTasted());
-            }
-        });
+        int previousIndex = this.notes.indexOf(note);
+        if (previousIndex > -1) {
+            this.notes.set(previousIndex, note);
+        } else {
+            this.notes.add(note);
+            Collections.sort(this.notes, new Comparator<Note>() {
+                /**
+                 * Sorts notes by tasting date.
+                 *
+                 * @param n1 first note
+                 * @param n2 second note
+                 * @return result of date comparison
+                 */
+                @Override
+                public int compare(Note n1, Note n2) {
+                    return n2.getTasted().compareTo(n1.getTasted());
+                }
+            });
+        }
         this.notesAdapter.notifyDataSetChanged();
     }
 

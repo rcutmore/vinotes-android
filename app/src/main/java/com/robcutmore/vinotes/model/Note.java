@@ -27,38 +27,68 @@ public class Note implements Parcelable {
     /**
      * Constructor.
      *
-     * @param wine  wine of note
+     * @param wine  note's wine
+     * @param tastingDate  note's tasting date
+     * @param rating  rating of wine
      */
-    public Note(final Wine wine) {
-        this.wine = wine;
+    public Note(final Wine wine, final Date tastingDate, final Integer rating) {
         this.id = null;
-        this.tasted = null;
-        this.rating = null;
+        this.wine = wine;
+        this.tasted = tastingDate;
+        this.rating = rating;
     }
 
     /**
      * Constructor.
      *
-     * @param id  ID of note
-     * @param wine  wine of note
+     * @param wine  note's wine
+     * @param tastingDate  note's tasting date
+     * @param rating  rating of wine
+     * @param colorTraits  color traits of wine
+     * @param noseTraits  nose traits of wine
+     * @param tasteTraits  taste traits of wine
+     * @param finishTraits  finish traits of wine
      */
-    public Note(final long id, final Wine wine) {
-        this(wine);
+    public Note(final Wine wine, final Date tastingDate, final Integer rating,
+                final ArrayList<Trait> colorTraits, final ArrayList<Trait> noseTraits,
+                final ArrayList<Trait> tasteTraits, final ArrayList<Trait> finishTraits) {
+        this(wine, tastingDate, rating);
+        this.colorTraits = colorTraits;
+        this.noseTraits = noseTraits;
+        this.tasteTraits = tasteTraits;
+        this.finishTraits = finishTraits;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param id  note's ID (unique identifier)
+     * @param wine  note's wine
+     * @param tastingDate  note's tasting date
+     * @param rating  rating of wine
+     */
+    public Note(final long id, final Wine wine, final Date tastingDate, final Integer rating) {
+        this(wine, tastingDate, rating);
         this.id = id;
     }
 
     /**
      * Constructor.
      *
-     * @param id  ID of note
-     * @param wine  wine of note
-     * @param tasted  tasting date of note
+     * @param id  note's ID (unique identifier)
+     * @param wine  note's wine
+     * @param tastingDate  note's tasting date
      * @param rating  rating of wine
+     * @param colorTraits  color traits of wine
+     * @param noseTraits  nose traits of wine
+     * @param tasteTraits  taste traits of wine
+     * @param finishTraits  finish traits of wine
      */
-    public Note(final long id, final Wine wine, final Date tasted, final Integer rating) {
-        this(id, wine);
-        this.tasted = tasted;
-        this.rating = rating;
+    public Note(final long id, final Wine wine, final Date tastingDate, final Integer rating,
+                final ArrayList<Trait> colorTraits, final ArrayList<Trait> noseTraits,
+                final ArrayList<Trait> tasteTraits, final ArrayList<Trait> finishTraits) {
+        this(wine, tastingDate, rating, colorTraits, noseTraits, tasteTraits, finishTraits);
+        this.id = id;
     }
 
     /**
@@ -242,6 +272,26 @@ public class Note implements Parcelable {
         } else {
             this.rating = rating;
         }
+    }
+
+    // Object methods
+
+    /**
+     * Compares note with other object to see if they are the same.
+     *
+     * @param other  object to compare to
+     * @return true if the same otherwise false
+     */
+    @Override
+    public boolean equals(Object other) {
+        // Return false if other object isn't a note object.
+        if (!(other instanceof Note)) {
+            return false;
+        }
+
+        // Compare note IDs.
+        Note otherNote = (Note) other;
+        return this.id.equals(otherNote.id);
     }
 
     /**
