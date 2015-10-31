@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 
 /**
- * WineDataSource manages adding, retrieving, and deleting wine-related data.
+ * Manages adding, retrieving, and deleting wine-related data.
  * Interacts with API and local database.
  */
 public class WineDataSource extends DataSource {
@@ -43,37 +43,21 @@ public class WineDataSource extends DataSource {
         this.closeDatabaseWhenFinished = closeDatabaseWhenFinished;
     }
 
+    // Public methods
+
     /**
      * Adds new wine.
      *
-     * @param wineryId  id of winery for new wine
-     * @param name  name of new wine
-     * @param vintage  vintage (year) of new wine
+     * @param newWine  new wine to add
      * @return Wine object
      */
-    public Wine add(final long wineryId, final String name, final int vintage) {
-        // Add new wine to API.
-        Wine wine = WineRequest.add(wineryId, name, vintage);
-
-        // If wine was successfully added to API then add to local database as well.
+    public Wine add(final Wine newWine) {
+        // Add new wine to API and, if successful, add to database as well.
+        Wine wine = WineRequest.add(newWine);
         if (wine != null) {
             this.addToDatabase(wine);
         }
-
         return wine;
-    }
-
-    /**
-     * Deletes wine with given id.
-     *
-     * @param id  id of wine to delete
-     */
-    public void remove(final long id) {
-        String table = this.dbHelper.getWineTable();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connect();
-        this.database.delete(table, whereClause, null);
-        this.disconnect();
     }
 
     /**
@@ -83,12 +67,11 @@ public class WineDataSource extends DataSource {
      * @return Wine object
      */
     public Wine get(final long id) {
-        // Fetch winery from local database. If missing then request from API.
+        // Fetch wine from local database.
+        // If missing then request from API and, if found, add to database.
         Wine wine = this.getFromDatabase(id);
         if (wine == null) {
             wine = WineRequest.get(id);
-
-            // If wine is found then add to database since it was missing.
             if (wine != null) {
                 this.addToDatabase(wine);
             }
@@ -97,11 +80,11 @@ public class WineDataSource extends DataSource {
     }
 
     /**
-     * Fetches and returns all wines, either from API or database.
-     * When fetching wines from API database is repopulated.
+     * Fetches all wines, either from API or database.
+     * Repopulates database when fetching wines from API.
      *
-     * @param refreshFromAPI  whether or not to refresh with data from API
-     * @return an ArrayList containing Winery objects
+     * @param refreshFromAPI  true or false to refresh with data from API
+     * @return ArrayList containing Wine objects
      */
     public ArrayList<Wine> getAll(final boolean refreshFromAPI) {
         ArrayList<Wine> wines;
@@ -123,11 +106,25 @@ public class WineDataSource extends DataSource {
      * Fetch all wines from database for given winery.
      *
      * @param wineryId  id of winery to get wines for
-     * @return an ArrayList containing Wine objects
+     * @return ArrayList containing Wine objects
      */
     public ArrayList<Wine> getAllForWinery(final long wineryId) {
         return this.getAllFromDatabase(wineryId);
     }
+
+    /**
+     * Deletes given wine.
+     *
+     * @param wine  wine to delete
+     */
+    public void remove(final Wine wine) {
+        this.connect();
+        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), wine.getId());
+        this.database.delete(this.dbHelper.getWineTable(), whereClause, null);
+        this.disconnect();
+    }
+
+    // Protected / private database methods
 
     /**
      * Connects to database.
@@ -142,9 +139,7 @@ public class WineDataSource extends DataSource {
     }
 
     /**
-     * Fetches database column names.
-     *
-     * @return an array containing column names for wines table
+     * @return Array containing column names for wines database table
      */
     @Override
     protected String[] getDatabaseTableColumns() {
@@ -160,19 +155,16 @@ public class WineDataSource extends DataSource {
     /**
      * Adds given wine to database.
      *
-     * @param wine  Wine object to add to database
+     * @param wine  wine to add to database
      */
     private void addToDatabase(final Wine wine) {
-        // Prepare wine values to be inserted into database.
+        this.connect();
+        String table = this.dbHelper.getWineTable();
         ContentValues values = new ContentValues();
         values.put(this.dbColumns.get("id"), wine.getId());
         values.put(this.dbColumns.get("winery"), wine.getWinery().getId());
         values.put(this.dbColumns.get("name"), wine.getName());
         values.put(this.dbColumns.get("vintage"), wine.getVintage());
-
-        // Insert wine into database if it doesn't exist yet.
-        String table = this.dbHelper.getWineTable();
-        this.connect();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         this.disconnect();
     }
@@ -181,31 +173,29 @@ public class WineDataSource extends DataSource {
      * Fetches all wines from database.
      *
      * @param wineryId  id of winery to get wines for
-     * @return an ArrayList containing Wine objects
+     * @return ArrayList containing Wine objects
      */
     private ArrayList<Wine> getAllFromDatabase(final Long wineryId) {
+        this.connect();
+
+        // Fetch all wines from database.
         String table = this.dbHelper.getWineTable();
         String[] columns = this.getDatabaseTableColumns();
-
-        // See if we need to filter for a given winery.
-        String whereClause;
+        String where;
         if (wineryId == null) {
-            whereClause = null;
+            where = null;
         } else {
-            whereClause = String.format("%s = %d", this.dbColumns.get("winery"), wineryId);
+            where = String.format("%s = %d", this.dbColumns.get("winery"), wineryId);
         }
+        String orderBy = String.format(
+            "%s COLLATE NOCASE ASC, %s DESC",
+            this.dbColumns.get("name"), this.dbColumns.get("vintage")
+        );
+        Cursor cursor = this.database.query(table, columns, where, null, null, null, orderBy);
 
-        // Order results by wine name and vintage.
-        String orderBy = String.format("%s COLLATE NOCASE ASC, %s DESC",
-                                       this.dbColumns.get("name"), this.dbColumns.get("vintage"));
-
-        // Query wines table for all wines.
-        this.connect();
-        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, orderBy);
-
-        // Store and return wines.
-        cursor.moveToFirst();
+        // Process all results and return wines.
         ArrayList<Wine> wines = new ArrayList<>();
+        cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             wines.add(this.cursorToWine(cursor));
             cursor.moveToNext();
@@ -222,14 +212,15 @@ public class WineDataSource extends DataSource {
      * @return Wine object
      */
     private Wine getFromDatabase(final long id) {
-        // Query wines table for wine with given id.
+        this.connect();
+
+        // Fetch wine with given id from database.
         String table = this.dbHelper.getWineTable();
         String[] columns = this.getDatabaseTableColumns();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connect();
-        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
+        String where = String.format("%s = %d", this.dbColumns.get("id"), id);
+        Cursor cursor = this.database.query(table, columns, where, null, null, null, null);
 
-        // Store and return wine.
+        // Return wine.
         cursor.moveToFirst();
         Wine wine = !cursor.isAfterLast() ? this.cursorToWine(cursor) : null;
         cursor.close();
@@ -247,7 +238,7 @@ public class WineDataSource extends DataSource {
     }
 
     /**
-     * Use data at current position of cursor to create Wine object.
+     * Creates wine using data at current position of cursor.
      *
      * @param cursor  cursor containing wine data
      * @return Wine object
@@ -259,7 +250,7 @@ public class WineDataSource extends DataSource {
         String name = cursor.getString(2);
         int vintage = cursor.getInt(3);
 
-        // Create wine object using information from cursor.
+        // Create wine object with information from cursor.
         final Winery winery = this.wineryDataSource.get(wineryId);
         return new Wine(id, winery, name, vintage);
     }

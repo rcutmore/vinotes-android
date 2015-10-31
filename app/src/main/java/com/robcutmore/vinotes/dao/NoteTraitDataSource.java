@@ -56,9 +56,7 @@ public class NoteTraitDataSource extends DataSource {
     }
 
     /**
-     * Fetches database column names for note_traits table.
-     *
-     * @return array containing column names
+     * @return Array containing column names for note_traits database table
      */
     @Override
     protected String[] getDatabaseTableColumns() {

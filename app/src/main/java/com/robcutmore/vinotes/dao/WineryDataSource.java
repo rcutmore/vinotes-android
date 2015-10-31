@@ -16,8 +16,8 @@ import java.util.ArrayList;
 
 
 /**
- * WineryDataSource manages adding, retrieving, and deleting winery-related data.
- * It interacts with API and local database.
+ * Manages adding, retrieving, and deleting winery-related data.
+ * Interacts with API and local database.
  */
 public class WineryDataSource extends DataSource {
 
@@ -39,51 +39,35 @@ public class WineryDataSource extends DataSource {
         this.closeDatabaseWhenFinished = closeDatabaseWhenFinished;
     }
 
+    // Public methods
+
     /**
-     * Add new winery.
+     * Adds new winery.
      *
-     * @param name  String for name of new winery
+     * @param newWinery  new winery to add
      * @return Winery object
      */
-    public Winery add(final String name) {
-        // Add new winery to API.
-        Winery winery = WineryRequest.add(name);
-
-        // If winery was successfully added to API then add to local database as well.
+    public Winery add(final Winery newWinery) {
+        // Add new winery to API and, if successful, add to database as well.
+        Winery winery = WineryRequest.add(newWinery);
         if (winery != null) {
             this.addToDatabase(winery);
         }
-
         return winery;
-    }
-
-    /**
-     * Delete winery with given id.
-     *
-     * @param id  long id for winery to delete.
-     */
-    public void remove(final long id) {
-        // Only remove from database, wineries cannot be removed from API.
-        String table = this.dbHelper.getWineryTable();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connect();
-        this.database.delete(table, whereClause, null);
-        this.disconnect();
     }
 
     /**
      * Fetches winery with given id.
      *
-     * @param id  long for id of winery to retrieve
+     * @param id  id of winery to retrieve
      * @return Winery object
      */
     public Winery get(final long id) {
-        // Fetch winery from local database. If missing then request from API.
+        // Fetch winery from local database.
+        // If missing then request from API and, if found, add to database.
         Winery winery = this.getFromDatabase(id);
         if (winery == null) {
             winery = WineryRequest.get(id);
-
-            // If winery is found then add to database since it was missing.
             if (winery != null) {
                 this.addToDatabase(winery);
             }
@@ -92,11 +76,11 @@ public class WineryDataSource extends DataSource {
     }
 
     /**
-     * Fetches and returns all wineries, either from API or database.
-     * When fetching wineries from API database is repopulated.
+     * Fetches all wines, either from API or database.
+     * Repopulates database when fetching wines from API.
      *
-     * @param refreshFromAPI  Boolean for whether or not to refresh data from API
-     * @return ArrayList containing all wineries
+     * @param refreshFromAPI  true or false to refresh with data from API
+     * @return ArrayList containing Winery objects
      */
     public ArrayList<Winery> getAll(final boolean refreshFromAPI) {
         ArrayList<Winery> wineries;
@@ -115,6 +99,20 @@ public class WineryDataSource extends DataSource {
     }
 
     /**
+     * Deletes given winery.
+     *
+     * @param winery  winery to delete.
+     */
+    public void remove(final Winery winery) {
+        this.connect();
+        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), winery.getId());
+        this.database.delete(this.dbHelper.getWineryTable(), whereClause, null);
+        this.disconnect();
+    }
+
+    // Protected / private database methods
+
+    /**
      * Connects to database.
      */
     @Override
@@ -127,9 +125,7 @@ public class WineryDataSource extends DataSource {
     }
 
     /**
-     * Fetches database column names.
-     *
-     * @return String array containing database column names
+     * @return Array containing column names for wineries database table
      */
     @Override
     protected String[] getDatabaseTableColumns() {
@@ -143,17 +139,14 @@ public class WineryDataSource extends DataSource {
     /**
      * Adds given winery to database.
      *
-     * @param winery  Winery object to add to database
+     * @param winery  winery to add to database
      */
     private void addToDatabase(final Winery winery) {
-        // Prepare winery values to be inserted into database.
+        this.connect();
+        String table = this.dbHelper.getWineryTable();
         ContentValues values = new ContentValues();
         values.put(this.dbColumns.get("id"), winery.getId());
         values.put(this.dbColumns.get("name"), winery.getName());
-
-        // Insert winery into database if it doesn't exist yet.
-        String table = this.dbHelper.getWineryTable();
-        this.connect();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         this.disconnect();
     }
@@ -161,22 +154,20 @@ public class WineryDataSource extends DataSource {
     /**
      * Fetches all wineries from database.
      *
-     * @return ArrayList containing all Winery objects stored in database.
+     * @return ArrayList containing Winery objects.
      */
     private ArrayList<Winery> getAllFromDatabase() {
+        this.connect();
+
+        // Fetch all wineries from database.
         String table = this.dbHelper.getWineryTable();
         String[] columns = this.getDatabaseTableColumns();
-
-        // Order results by winery name.
         String orderBy = String.format("%s COLLATE NOCASE ASC", this.dbColumns.get("name"));
-
-        // Query wineries table for all wineries.
-        this.connect();
         Cursor cursor = this.database.query(table, columns, null, null, null, null, orderBy);
 
-        // Store and return wineries.
-        cursor.moveToFirst();
+        // Process all results and return wineries.
         ArrayList<Winery> wineries = new ArrayList<>();
+        cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             wineries.add(this.cursorToWinery(cursor));
             cursor.moveToNext();
@@ -189,18 +180,19 @@ public class WineryDataSource extends DataSource {
     /**
      * Fetches winery with given id from database.
      *
-     * @param id  long for id of winery to retrieve
-     * @return Winery object for given id
+     * @param id  id of winery to retrieve
+     * @return Winery object
      */
     private Winery getFromDatabase(final long id) {
-        // Query wineries table for winery with given id.
+        this.connect();
+
+        // Fetch winery with given id from database.
         String table = this.dbHelper.getWineryTable();
         String[] columns = this.getDatabaseTableColumns();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connect();
-        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
+        String where = String.format("%s = %d", this.dbColumns.get("id"), id);
+        Cursor cursor = this.database.query(table, columns, where, null, null, null, null);
 
-        // Store and return winery.
+        // Return winery.
         cursor.moveToFirst();
         Winery winery = !cursor.isAfterLast() ? this.cursorToWinery(cursor) : null;
         cursor.close();
@@ -209,7 +201,7 @@ public class WineryDataSource extends DataSource {
     }
 
     /**
-     * Deletes all data stored in wineries table.
+     * Deletes all wineries from database.
      */
     private void removeAllFromDatabase() {
         this.connect();
@@ -218,9 +210,9 @@ public class WineryDataSource extends DataSource {
     }
 
     /**
-     * Convert data at current position of cursor to a Winery object.
+     * Creates winery using data at current position of cursor.
      *
-     * @param cursor  Cursor containing winery data
+     * @param cursor  cursor containing winery data
      * @return Winery object
      */
     private Winery cursorToWinery(final Cursor cursor) {

@@ -9,14 +9,14 @@ import java.util.ArrayList;
 
 public class WineRequest {
 
-    public static Wine add(final long wineryId, final String name, final int vintage) {
+    public static Wine add(final Wine wineToAdd) {
         //String response = sendPOST(wineryId, name, vintage);
         //ArrayList<Wine> wines = parseResponse(response);
         //return (wines.size() > 0) ? wines.get(0) : null;
 
         // Test stub, remove this and uncomment code above.
-        Winery winery = new Winery(wineryId, "Test");
-        return new Wine(4, winery, name, vintage);
+        wineToAdd.setId(4);
+        return wineToAdd;
     }
 
     public static Wine get(final long id) {

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 
 /**
- * TraitDataSource manages adding, retrieving, and deleting trait-related data.
+ * Manages adding, retrieving, and deleting trait-related data.
  * Interacts with API and local database.
  */
 public class TraitDataSource extends DataSource {
@@ -39,35 +39,21 @@ public class TraitDataSource extends DataSource {
         this.closeDatabaseWhenFinished = closeDatabaseWhenFinished;
     }
 
+    // Public methods
+
     /**
      * Adds new trait.
      *
-     * @param name  name of new trait
+     * @param newTrait  new trait to add
      * @return Trait object
      */
-    public Trait add(final String name) {
-        // Add new note trait to API.
-        Trait trait = TraitRequest.add(name);
-
-        // If note trait was successfully added to API then add to local database as well.
+    public Trait add(final Trait newTrait) {
+        // Add new note trait to API and, if successful, add to database as well.
+        Trait trait = TraitRequest.add(newTrait);
         if (trait != null) {
             this.addToDatabase(trait);
         }
-
         return trait;
-    }
-
-    /**
-     * Deletes trait with given id.
-     *
-     * @param id  id of trait to delete
-     */
-    public void remove(final long id) {
-        String table = this.dbHelper.getTraitTable();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connect();
-        this.database.delete(table, whereClause, null);
-        this.disconnect();
     }
 
     /**
@@ -78,11 +64,10 @@ public class TraitDataSource extends DataSource {
      */
     public Trait get(final long id) {
         // Fetch winery from local database. If missing then request from API.
+        // If missing then request from API and, if found, add to database.
         Trait trait = this.getFromDatabase(id);
         if (trait == null) {
             trait = TraitRequest.get(id);
-
-            // If trait is found then add to database since it was missing.
             if (trait != null) {
                 this.addToDatabase(trait);
             }
@@ -91,11 +76,11 @@ public class TraitDataSource extends DataSource {
     }
 
     /**
-     * Fetches and returns all traits, either from API or database.
+     * Fetches all traits, either from API or database.
      * Repopulates database when fetching traits from API.
      *
      * @param refreshFromAPI  true or false to refresh with data from API
-     * @return an ArrayList containing Trait objects
+     * @return ArrayList containing Trait objects
      */
     public ArrayList<Trait> getAll(final boolean refreshFromAPI) {
         ArrayList<Trait> traits;
@@ -114,6 +99,20 @@ public class TraitDataSource extends DataSource {
     }
 
     /**
+     * Deletes given trait.
+     *
+     * @param trait  trait to delete
+     */
+    public void remove(final Trait trait) {
+        this.connect();
+        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), trait.getId());
+        this.database.delete(this.dbHelper.getTraitTable(), whereClause, null);
+        this.disconnect();
+    }
+
+    // Protected / private database methods.
+
+    /**
      * Connects to database.
      */
     @Override
@@ -126,9 +125,7 @@ public class TraitDataSource extends DataSource {
     }
 
     /**
-     * Fetches database column names for traits table.
-     *
-     * @return an array containing column names
+     * @return Array containing column names for traits database table
      */
     @Override
     protected String[] getDatabaseTableColumns() {
@@ -145,14 +142,11 @@ public class TraitDataSource extends DataSource {
      * @param trait  trait to add to database
      */
     private void addToDatabase(final Trait trait) {
-        // Prepare trait values to be inserted into database.
+        this.connect();
+        String table = this.dbHelper.getTraitTable();
         ContentValues values = new ContentValues();
         values.put(this.dbColumns.get("id"), trait.getId());
         values.put(this.dbColumns.get("name"), trait.getName());
-
-        // Insert trait into database if it doesn't exist yet.
-        String table = this.dbHelper.getTraitTable();
-        this.connect();
         this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         this.disconnect();
     }
@@ -160,22 +154,20 @@ public class TraitDataSource extends DataSource {
     /**
      * Fetches all traits from database.
      *
-     * @return an ArrayList containing Trait objects
+     * @return ArrayList containing Trait objects
      */
     private ArrayList<Trait> getAllFromDatabase() {
+        this.connect();
+
+        // Fetch all traits from database.
         String table = this.dbHelper.getTraitTable();
         String[] columns = this.getDatabaseTableColumns();
-
-        // Order results by trait name.
         String orderBy = String.format("%s COLLATE NOCASE ASC", this.dbColumns.get("name"));
-
-        // Query traits table for all traits.
-        this.connect();
         Cursor cursor = this.database.query(table, columns, null, null, null, null, orderBy);
 
-        // Store and return traits.
-        cursor.moveToFirst();
+        // Process all results and return traits.
         ArrayList<Trait> traits = new ArrayList<>();
+        cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             traits.add(this.cursorToTrait(cursor));
             cursor.moveToNext();
@@ -192,14 +184,15 @@ public class TraitDataSource extends DataSource {
      * @return Trait object
      */
     private Trait getFromDatabase(final long id) {
-        // Query traits table for trait with given id.
+        this.connect();
+
+        // Fetch trait with given id from database.
         String table = this.dbHelper.getTraitTable();
         String[] columns = this.getDatabaseTableColumns();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connect();
-        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
+        String where = String.format("%s = %d", this.dbColumns.get("id"), id);
+        Cursor cursor = this.database.query(table, columns, where, null, null, null, null);
 
-        // Store and return note trait.
+        // Return trait.
         cursor.moveToFirst();
         Trait trait = !cursor.isAfterLast() ? this.cursorToTrait(cursor) : null;
         cursor.close();
@@ -227,7 +220,7 @@ public class TraitDataSource extends DataSource {
         long id = cursor.getLong(0);
         String name = cursor.getString(1);
 
-        // Create note trait object with information from cursor.
+        // Create trait object with information from cursor.
         return new Trait(id, name);
     }
 

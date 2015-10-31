@@ -8,13 +8,14 @@ import java.util.ArrayList;
 
 public final class TraitRequest {
 
-    public static Trait add(final String name) {
+    public static Trait add(final Trait traitToAdd) {
         //String response = sendPOST(name);
         //ArrayList<Trait> traits = parseResponse(response);
         //return (traits.size() > 0) ? traits.get(0) : null;
 
         // Test stub, remove this and uncomment code above.
-        return new Trait(11, name);
+        traitToAdd.setId(11);
+        return traitToAdd;
     }
 
     public static Trait get(final long id) {

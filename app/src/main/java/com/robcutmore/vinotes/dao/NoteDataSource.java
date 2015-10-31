@@ -72,7 +72,7 @@ public class NoteDataSource extends DataSource {
      */
     public Note get(final long id) {
         // Fetch note from local database.
-        // If missing then request from API and add to database if found.
+        // If missing then request from API and, if found, add to database.
         Note note = this.getFromDatabase(id);
         if (note == null) {
             note = NoteRequest.get(id);
@@ -88,7 +88,7 @@ public class NoteDataSource extends DataSource {
      * Repopulates database when fetching notes from API.
      *
      * @param refreshFromAPI  true or false to refresh with data from API
-     * @return an ArrayList containing Note objects
+     * @return ArrayList containing Note objects
      */
     public ArrayList<Note> getAll(final boolean refreshFromAPI) {
         ArrayList<Note> notes;
@@ -107,16 +107,15 @@ public class NoteDataSource extends DataSource {
     }
 
     /**
-     * Deletes note with given id.
+     * Deletes given note.
      *
      * @param note  note to delete
      */
     public void remove(final Note note) {
-        String table = this.dbHelper.getNoteTable();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), note.getId());
         this.connect();
         this.noteTraitDataSource.removeTraitsFromDatabase(note);
-        this.database.delete(table, whereClause, null);
+        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), note.getId());
+        this.database.delete(this.dbHelper.getNoteTable(), whereClause, null);
         this.disconnect();
     }
 
@@ -135,7 +134,7 @@ public class NoteDataSource extends DataSource {
         return note;
     }
 
-    // Protected / private database methods.
+    // Protected / private database methods
 
     /**
      * Connects to database.
@@ -150,17 +149,15 @@ public class NoteDataSource extends DataSource {
     }
 
     /**
-     * Fetches database column names for notes table.
-     *
-     * @return array containing column names
+     * @return Array containing column names for notes database table
      */
     @Override
     protected String[] getDatabaseTableColumns() {
         String[] columns = {
-                this.dbColumns.get("id"),
-                this.dbColumns.get("wine"),
-                this.dbColumns.get("tasted"),
-                this.dbColumns.get("rating")
+            this.dbColumns.get("id"),
+            this.dbColumns.get("wine"),
+            this.dbColumns.get("tasted"),
+            this.dbColumns.get("rating")
         };
         return columns;
     }
@@ -174,16 +171,16 @@ public class NoteDataSource extends DataSource {
         this.connect();
         this.database.beginTransaction();
 
-        // Add tasting note.
-        String noteTable = this.dbHelper.getNoteTable();
-        ContentValues noteValues = new ContentValues();
-        noteValues.put(this.dbColumns.get("id"), note.getId());
-        noteValues.put(this.dbColumns.get("wine"), note.getWine().getId());
-        noteValues.put(this.dbColumns.get("tasted"), DateUtils.convertDateToTimestamp(note.getTasted()));
-        noteValues.put(this.dbColumns.get("rating"), note.getRating());
-        this.database.insertWithOnConflict(noteTable, null, noteValues, SQLiteDatabase.CONFLICT_IGNORE);
+        // Add note.
+        String table = this.dbHelper.getNoteTable();
+        ContentValues values = new ContentValues();
+        values.put(this.dbColumns.get("id"), note.getId());
+        values.put(this.dbColumns.get("wine"), note.getWine().getId());
+        values.put(this.dbColumns.get("tasted"), DateUtils.convertDateToTimestamp(note.getTasted()));
+        values.put(this.dbColumns.get("rating"), note.getRating());
+        this.database.insertWithOnConflict(table, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 
-        // Add traits.
+        // Add note traits.
         this.noteTraitDataSource.addTraitsToDatabase(note);
 
         this.database.endTransaction();
@@ -193,7 +190,7 @@ public class NoteDataSource extends DataSource {
     /**
      * Fetches all notes from database.
      *
-     * @return an ArrayList containing Note objects
+     * @return ArrayList containing Note objects
      */
     private ArrayList<Note> getAllFromDatabase() {
         this.connect();
@@ -202,18 +199,18 @@ public class NoteDataSource extends DataSource {
         String table = this.dbHelper.getNoteTable();
         String[] columns = this.getDatabaseTableColumns();
         String orderBy = String.format("%s DESC", this.dbColumns.get("tasted"));
-        Cursor notesCursor = this.database.query(table, columns, null, null, null, null, orderBy);
+        Cursor cursor = this.database.query(table, columns, null, null, null, null, orderBy);
 
         // Process all results and return notes.
         ArrayList<Note> notes = new ArrayList<>();
-        notesCursor.moveToFirst();
-        while (!notesCursor.isAfterLast()) {
-            Note note = this.cursorToNote(notesCursor);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Note note = this.cursorToNote(cursor);
             note = this.noteTraitDataSource.getTraitsFromDatabase(note);
             notes.add(note);
-            notesCursor.moveToNext();
+            cursor.moveToNext();
         }
-        notesCursor.close();
+        cursor.close();
         this.disconnect();
         return notes;
     }
@@ -225,14 +222,15 @@ public class NoteDataSource extends DataSource {
      * @return Note object
      */
     private Note getFromDatabase(final long id) {
-        // Query notes table for note with given id.
+        this.connect();
+
+        // Fetch note with given id from database.
         String table = this.dbHelper.getNoteTable();
         String[] columns = this.getDatabaseTableColumns();
-        String whereClause = String.format("%s = %d", this.dbColumns.get("id"), id);
-        this.connect();
-        Cursor cursor = this.database.query(table, columns, whereClause, null, null, null, null);
+        String where = String.format("%s = %d", this.dbColumns.get("id"), id);
+        Cursor cursor = this.database.query(table, columns, where, null, null, null, null);
 
-        // Store and return tasting note.
+        // Return note.
         cursor.moveToFirst();
         Note note = !cursor.isAfterLast() ? this.cursorToNote(cursor) : null;
         cursor.close();
@@ -246,8 +244,8 @@ public class NoteDataSource extends DataSource {
     private void removeAllFromDatabase() {
         this.connect();
         this.database.beginTransaction();
-        this.database.delete(this.dbHelper.getNoteTable(), null, null);
         this.database.delete(this.dbHelper.getNoteTraitTable(), null, null);
+        this.database.delete(this.dbHelper.getNoteTable(), null, null);
         this.database.endTransaction();
         this.disconnect();
     }
@@ -290,7 +288,7 @@ public class NoteDataSource extends DataSource {
         Date tasted = DateUtils.convertTimestampToDate(cursor.getLong(2));
         int rating = cursor.getInt(3);
 
-        // Create tasting note object with information from cursor.
+        // Create note object with information from cursor.
         Wine wine = this.wineDataSource.get(wineId);
         return new Note(id, wine, tasted, rating);
     }

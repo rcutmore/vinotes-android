@@ -289,8 +289,10 @@ public class ManageNoteActivity extends ActionBarActivity
      * @param view  EditText that was clicked
      */
     public void showWinePicker(final View view) {
+        Bundle args = new Bundle();
+        args.putParcelable("winery", this.winery);
         Intent intent = new Intent(this, SelectWineActivity.class);
-        intent.putExtra("wineryId", this.winery.getId());
+        intent.putExtras(args);
         startActivityForResult(intent, this.WINE_REQUEST_CODE);
     }
 

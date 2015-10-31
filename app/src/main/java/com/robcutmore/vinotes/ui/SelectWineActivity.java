@@ -17,6 +17,7 @@ import android.widget.ListView;
 import com.robcutmore.vinotes.R;
 import com.robcutmore.vinotes.dao.WineDataSource;
 import com.robcutmore.vinotes.model.Wine;
+import com.robcutmore.vinotes.model.Winery;
 
 import java.util.ArrayList;
 
@@ -32,7 +33,7 @@ public class SelectWineActivity extends ActionBarActivity
     private ListView lvWines;
 
     // Wine components
-    private Long wineryId;
+    private Winery winery = null;
     private WineDataSource wineDataSource;
     private ArrayList<Wine> wines;
     private ArrayAdapter<Wine> winesAdapter;
@@ -80,10 +81,12 @@ public class SelectWineActivity extends ActionBarActivity
         this.lvWines = (ListView) findViewById(R.id.lvWines);
         this.lvWines.setOnItemClickListener(this.clickListener);
 
-        // Get ID of selected winery (sent from previous activity).
+        // Get selected winery from calling activity.
         Intent intent = getIntent();
         Bundle args = intent.getExtras();
-        this.wineryId = (args != null) ? args.getLong("wineryId") : null;
+        if (args != null) {
+            this.winery = args.getParcelable("winery");
+        }
 
         this.setupWineComponents();
     }
@@ -153,7 +156,7 @@ public class SelectWineActivity extends ActionBarActivity
         // Send any search text that's been entered, along with selected winery ID.
         Bundle args = new Bundle();
         args.putString("searchText", this.etWineSearch.getText().toString());
-        args.putLong("wineryId", this.wineryId);
+        args.putParcelable("winery", this.winery);
 
         // Create and show fragment.
         AddWineFragment newFragment = new AddWineFragment();
@@ -186,7 +189,7 @@ public class SelectWineActivity extends ActionBarActivity
 
         // Set up wine list.
         if (this.wines == null) {
-            this.wines = this.wineDataSource.getAllForWinery(this.wineryId);
+            this.wines = this.wineDataSource.getAllForWinery(this.winery.getId());
         }
 
         // Set up wine adapter.

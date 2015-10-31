@@ -94,15 +94,13 @@ public class AddWineryFragment extends DialogFragment {
      * Adds and returns new winery to calling activity.
      */
     private void addWinery() {
+        // Make sure input has been entered before adding winery.
         boolean hasNameInput = InputUtils.checkEditText(this.etWineryName);
-
         if (hasNameInput) {
-            // Add new winery to API and local database.
-            String wineryName = this.etWineryName.getText().toString();
-            Winery newWinery = this.wineryDataSource.add(wineryName);
-
-            // Return new winery.
+            Winery wineryToAdd = new Winery(this.etWineryName.getText().toString());
+            Winery newWinery = this.wineryDataSource.add(wineryToAdd);
             this.callbackListener.onWineryAdded(newWinery);
+            dismiss();
         }
     }
 

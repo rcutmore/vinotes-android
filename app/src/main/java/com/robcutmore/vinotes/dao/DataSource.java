@@ -10,7 +10,7 @@ import java.util.Map;
 
 
 /**
- * Data source is an abstract base class for adding, retrieving, and deleting data.
+ * Abstract base class for managing API and database data.
  */
 public abstract class DataSource {
 
@@ -35,7 +35,7 @@ public abstract class DataSource {
     }
 
     /**
-     * @return array of database table column names
+     * @return Array of database table column names
      */
     abstract protected String[] getDatabaseTableColumns();
 
