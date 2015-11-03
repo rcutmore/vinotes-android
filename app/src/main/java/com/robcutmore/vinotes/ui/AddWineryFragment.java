@@ -3,11 +3,15 @@ package com.robcutmore.vinotes.ui;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -88,6 +92,21 @@ public class AddWineryFragment extends DialogFragment {
         });
 
         return view;
+    }
+
+    /**
+     * Sets size when activity is resumed.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Set size based on screen orientation.
+        Context appContext = getActivity().getApplicationContext();
+        WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
+        params.height = InputUtils.getDialogFragmentHeightPixels(appContext);
+        params.width = InputUtils.getDialogFragmentWidthPixels(appContext);
+        getDialog().getWindow().setAttributes(params);
     }
 
     /**

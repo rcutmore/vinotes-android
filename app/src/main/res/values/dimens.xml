@@ -3,4 +3,12 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="default_padding">16dp</dimen>
+
+    <!-- DialogFragment -->
+    <item name="dialog_fragment_height_percent_default" format="float" type="dimen">1.0</item>
+    <item name="dialog_fragment_height_percent_landscape" format="float" type="dimen">0.75</item>
+    <item name="dialog_fragment_height_percent_portrait" format="float" type="dimen">0.5</item>
+    <item name="dialog_fragment_width_percent_default" format="float" type="dimen">1.0</item>
+    <item name="dialog_fragment_width_percent_landscape" format="float" type="dimen">0.75</item>
+    <item name="dialog_fragment_width_percent_portrait" format="float" type="dimen">1.0</item>
 </resources>
