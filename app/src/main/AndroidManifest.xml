@@ -11,7 +11,7 @@
 
         <activity
             android:label="@string/app_name"
-            android:name=".ui.MainActivity">
+            android:name=".ui.HomeActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,11 +23,11 @@
             android:label="@string/title_note_add"
             android:launchMode="singleTop"
             android:name=".ui.ManageNoteActivity"
-            android:parentActivityName=".ui.MainActivity">
+            android:parentActivityName=".ui.HomeActivity">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity" />
+                android:value=".ui.HomeActivity" />
         </activity>
 
         <activity

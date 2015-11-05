@@ -27,7 +27,7 @@ import java.util.Comparator;
 /**
  * Lists all stored tasting notes.
  */
-public class MainActivity extends ActionBarActivity {
+public class HomeActivity extends ActionBarActivity {
 
     private final int ADD_NOTE_REQUEST_CODE = 1;
     private final int EDIT_NOTE_REQUEST_CODE = 2;
