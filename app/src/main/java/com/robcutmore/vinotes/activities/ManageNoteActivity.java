@@ -1,4 +1,4 @@
-package com.robcutmore.vinotes.ui;
+package com.robcutmore.vinotes.activities;
 
 
 import android.app.FragmentManager;
@@ -14,6 +14,8 @@ import android.widget.RatingBar;
 
 import com.robcutmore.vinotes.R;
 import com.robcutmore.vinotes.dao.NoteDataSource;
+import com.robcutmore.vinotes.fragments.DatePickerFragment;
+import com.robcutmore.vinotes.fragments.RetainedNoteFragment;
 import com.robcutmore.vinotes.model.Note;
 import com.robcutmore.vinotes.model.Trait;
 import com.robcutmore.vinotes.model.Wine;

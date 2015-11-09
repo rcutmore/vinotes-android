@@ -1,4 +1,4 @@
-package com.robcutmore.vinotes.ui;
+package com.robcutmore.vinotes.activities;
 
 
 import android.content.Intent;
@@ -15,30 +15,28 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.robcutmore.vinotes.R;
-import com.robcutmore.vinotes.dao.WineDataSource;
-import com.robcutmore.vinotes.model.Wine;
+import com.robcutmore.vinotes.dao.WineryDataSource;
+import com.robcutmore.vinotes.fragments.AddWineryFragment;
 import com.robcutmore.vinotes.model.Winery;
 
 import java.util.ArrayList;
 
 
 /**
- * Activity for selecting a wine stored in local database.
+ * SelectWineryActivity allows user to select an existing winery or add and select a new winery.
  */
-public class SelectWineActivity extends ActionBarActivity
-                                implements AddWineFragment.OnWineAddedListener {
+public class SelectWineryActivity extends ActionBarActivity
+                                  implements AddWineryFragment.OnWineryAddedListener {
 
     // User input
-    private EditText etWineSearch;
-    private ListView lvWines;
+    private EditText etWinerySearch;
+    private ListView lvWineries;
 
-    // Wine components
-    private Winery winery = null;
-    private WineDataSource wineDataSource;
-    private ArrayList<Wine> wines;
-    private ArrayAdapter<Wine> winesAdapter;
+    // Winery components
+    private WineryDataSource wineryDataSource;
+    private ArrayList<Winery> wineries;
+    private ArrayAdapter<Winery> wineriesAdapter;
 
-    // Filters lvWines as user types in etWineSearch.
     private final TextWatcher searchWatcher = new TextWatcher() {
         @Override
         public void afterTextChanged(Editable s) {}
@@ -47,21 +45,20 @@ public class SelectWineActivity extends ActionBarActivity
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
         /**
-         * Filters wines list as user types.
+         * Filters wineries list view as user types.
          */
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // Filter list view.
-            winesAdapter.getFilter().filter(s);
+            wineriesAdapter.getFilter().filter(s);
         }
     };
 
     private final AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            // Return clicked wine to calling activity.
-            Wine wine = (Wine) parent.getAdapter().getItem(position);
-            returnSelectedWine(wine);
+            // Return clicked winery to calling activity.
+            Winery winery = (Winery) parent.getAdapter().getItem(position);
+            returnSelectedWinery(winery);
         }
     };
 
@@ -73,31 +70,24 @@ public class SelectWineActivity extends ActionBarActivity
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_select_wine);
+        setContentView(R.layout.activity_select_winery);
 
         // Set up user input.
-        this.etWineSearch = (EditText) findViewById(R.id.etWineSearch);
-        this.etWineSearch.addTextChangedListener(this.searchWatcher);
-        this.lvWines = (ListView) findViewById(R.id.lvWines);
-        this.lvWines.setOnItemClickListener(this.clickListener);
+        this.etWinerySearch = (EditText) findViewById(R.id.etWinerySearch);
+        this.etWinerySearch.addTextChangedListener(this.searchWatcher);
+        this.lvWineries = (ListView) findViewById(R.id.lvWineries);
+        this.lvWineries.setOnItemClickListener(this.clickListener);
 
-        // Get selected winery from calling activity.
-        Intent intent = getIntent();
-        Bundle args = intent.getExtras();
-        if (args != null) {
-            this.winery = args.getParcelable("winery");
-        }
-
-        this.setupWineComponents();
+        this.setupWineryComponents();
     }
 
     /**
-     * Sets up wine components when activity is resumed.
+     * Sets up winery components when activity is resumed.
      */
     @Override
     protected void onResume() {
         super.onResume();
-        this.setupWineComponents();
+        this.setupWineryComponents();
     }
 
     /**
@@ -106,7 +96,7 @@ public class SelectWineActivity extends ActionBarActivity
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.etWineSearch.removeTextChangedListener(this.searchWatcher);
+        this.etWinerySearch.removeTextChangedListener(this.searchWatcher);
     }
 
     /**
@@ -115,7 +105,7 @@ public class SelectWineActivity extends ActionBarActivity
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_select_wine, menu);
+        getMenuInflater().inflate(R.menu.menu_select_winery, menu);
         return true;
     }
 
@@ -138,40 +128,39 @@ public class SelectWineActivity extends ActionBarActivity
     }
 
     /**
-     * Returns newly added wine.
+     * Returns newly added winery.
      *
-     * @param wine  new wine
+     * @param winery  new winery
      */
     @Override
-    public void onWineAdded(final Wine wine) {
-        this.returnSelectedWine(wine);
+    public void onWineryAdded(final Winery winery) {
+        this.returnSelectedWinery(winery);
     }
 
     /**
-     * Displays dialog to add a new wine.
+     * Displays dialog to add a new winery.
      *
      * @param view  button that was clicked
      */
-    public void showAddWineDialog(final View view) {
-        // Send any search text that's been entered, along with selected winery ID.
+    public void showAddWineryDialog(final View view) {
+        // Send any search text that's been entered.
         Bundle args = new Bundle();
-        args.putString("searchText", this.etWineSearch.getText().toString());
-        args.putParcelable("winery", this.winery);
+        args.putString("searchText", this.etWinerySearch.getText().toString());
 
         // Create and show fragment.
-        AddWineFragment newFragment = new AddWineFragment();
+        AddWineryFragment newFragment = new AddWineryFragment();
         newFragment.setArguments(args);
-        newFragment.show(getFragmentManager(), "wineAdder");
+        newFragment.show(getFragmentManager(), "wineryAdder");
     }
 
     /**
-     * Returns selected wine to calling activity.
+     * Returns selected winery to calling activity.
      *
-     * @param wine  selected wine
+     * @param winery  selected winery
      */
-    public void returnSelectedWine(final Wine wine) {
-        Bundle args =  new Bundle();
-        args.putParcelable("wine", wine);
+    private void returnSelectedWinery(final Winery winery) {
+        Bundle args = new Bundle();
+        args.putParcelable("winery", winery);
         Intent intent = getIntent();
         intent.putExtras(args);
         setResult(RESULT_OK, intent);
@@ -179,28 +168,28 @@ public class SelectWineActivity extends ActionBarActivity
     }
 
     /**
-     * Sets up required wine components for activity if needed.
+     * Sets up required winery components for activity if needed.
      */
-    private void setupWineComponents() {
+    private void setupWineryComponents() {
         // Set up data source.
-        if (this.wineDataSource == null) {
-            this.wineDataSource = new WineDataSource(this.getApplicationContext());
+        if (this.wineryDataSource == null) {
+            this.wineryDataSource = new WineryDataSource(this.getApplicationContext());
         }
 
-        // Set up wine list.
-        if (this.wines == null) {
-            this.wines = this.wineDataSource.getAllForWinery(this.winery.getId());
+        // Set up winery list.
+        if (this.wineries == null) {
+            this.wineries = this.wineryDataSource.getAll(false);
         }
 
-        // Set up wine adapter.
-        if (this.winesAdapter == null) {
-            this.winesAdapter = new ArrayAdapter<>(
+        // Set up winery adapter.
+        if (this.wineriesAdapter == null) {
+            this.wineriesAdapter = new ArrayAdapter<Winery>(
                     this,
                     android.R.layout.simple_list_item_1,
-                    this.wines
+                    this.wineries
             );
-            this.lvWines.setAdapter(this.winesAdapter);
         }
+        this.lvWineries.setAdapter(this.wineriesAdapter);
     }
 
 }

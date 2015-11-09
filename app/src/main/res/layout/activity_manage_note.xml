@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:padding="@dimen/default_padding"
-        tools:context="com.robcutmore.vinotes.ui.ManageNoteActivity">
+        tools:context="com.robcutmore.vinotes.activities.ManageNoteActivity">
 
         <TextView
             android:layout_height="wrap_content"

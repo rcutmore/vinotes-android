@@ -1,4 +1,4 @@
-package com.robcutmore.vinotes.ui;
+package com.robcutmore.vinotes.fragments;
 
 
 import android.app.Fragment;
