@@ -14,6 +14,12 @@ public final class WineryRequest {
         //return (wineries.size() > 0) ? wineries.get(0) : null;
 
         // Test stub, remove this and uncomment code above.
+        try {
+            // Simulate time for network request.
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            // Just for test purposes so handling error doesn't matter.
+        }
         wineryToAdd.setId(14);
         return wineryToAdd;
     }

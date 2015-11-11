@@ -14,15 +14,15 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.robcutmore.vinotes.R;
-import com.robcutmore.vinotes.dao.WineryDataSource;
 import com.robcutmore.vinotes.models.Winery;
+import com.robcutmore.vinotes.tasks.AddWineryTask;
 import com.robcutmore.vinotes.utils.InputUtils;
 
 
 /**
- * AddWineryFragment allows user to add a new winery and returns it to the calling activity.
+ * Provides input to add a new winery and return it to calling activity.
  */
-public class AddWineryFragment extends DialogFragment {
+public class AddWineryFragment extends DialogFragment implements AddWineryTask.TaskListener {
 
     /**
      * Interface to be implemented by calling activity for returning newly added winery.
@@ -33,7 +33,6 @@ public class AddWineryFragment extends DialogFragment {
 
     private OnWineryAddedListener callbackListener;
     private EditText etWineryName;
-    private WineryDataSource wineryDataSource;
 
     /**
      * Constructor.
@@ -55,7 +54,9 @@ public class AddWineryFragment extends DialogFragment {
             this.callbackListener = (OnWineryAddedListener) activity;
         } catch (ClassCastException e) {
             String errorMessage = String.format(
-                "%s must implement OnWineryAddedListener.", activity.toString());
+                "%s must implement OnWineryAddedListener.",
+                activity.toString()
+            );
             Log.w(activity.getClass().getName(), errorMessage);
         }
     }
@@ -75,7 +76,6 @@ public class AddWineryFragment extends DialogFragment {
         // Initialize input and data source.
         this.etWineryName = (EditText) view.findViewById(R.id.etWineryName);
         this.etWineryName.setText(searchText);
-        this.wineryDataSource = new WineryDataSource(getActivity().getApplicationContext());
 
         // Add onClick handler for button.
         Button addWineryButton = (Button) view.findViewById(R.id.btnAddWinery);
@@ -108,16 +108,26 @@ public class AddWineryFragment extends DialogFragment {
     }
 
     /**
-     * Adds and returns new winery to calling activity.
+     * Sends new winery to callback listener.
+     *
+     * @param winery  new winery
+     */
+    @Override
+    public void onTaskFinished(Winery winery) {
+        this.callbackListener.onWineryAdded(winery);
+        dismiss();
+    }
+
+    /**
+     * Adds new winery.
      */
     private void addWinery() {
         // Make sure input has been entered before adding winery.
         boolean hasNameInput = InputUtils.checkEditText(this.etWineryName);
         if (hasNameInput) {
             Winery wineryToAdd = new Winery(this.etWineryName.getText().toString());
-            Winery newWinery = this.wineryDataSource.add(wineryToAdd);
-            this.callbackListener.onWineryAdded(newWinery);
-            dismiss();
+            AddWineryTask task = new AddWineryTask(this.getActivity(), this);
+            task.execute(wineryToAdd);
         }
     }
 
