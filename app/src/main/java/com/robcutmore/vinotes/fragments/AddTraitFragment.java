@@ -14,15 +14,15 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.robcutmore.vinotes.R;
-import com.robcutmore.vinotes.dao.TraitDataSource;
 import com.robcutmore.vinotes.model.Trait;
+import com.robcutmore.vinotes.tasks.AddTraitTask;
 import com.robcutmore.vinotes.utils.InputUtils;
 
 
 /**
- * AddTraitFragment allows user to add a new trait and returns it to the calling activity.
+ * Provides input to add a new trait and return it to calling activity.
  */
-public class AddTraitFragment extends DialogFragment {
+public class AddTraitFragment extends DialogFragment implements AddTraitTask.TaskListener {
 
     /**
      * Interface to be implemented by calling activity for returning newly added trait.
@@ -33,7 +33,6 @@ public class AddTraitFragment extends DialogFragment {
 
     private OnTraitAddedListener callbackListener;
     private EditText etName;
-    private TraitDataSource traitDataSource;
 
     /**
      * Constructor.
@@ -42,7 +41,7 @@ public class AddTraitFragment extends DialogFragment {
     public AddTraitFragment() {}
 
     /**
-     * Set up callback listener for returning added trait.
+     * Sets up callback listener for returning new trait.
      *
      * @param activity  calling activity
      */
@@ -55,7 +54,9 @@ public class AddTraitFragment extends DialogFragment {
             this.callbackListener = (OnTraitAddedListener) activity;
         } catch (ClassCastException e) {
             String errorMessage = String.format(
-                    "%s must implement OnTraitAddedListener.", activity.toString());
+                "%s must implement OnTraitAddedListener.",
+                activity.toString()
+            );
             Log.w(activity.getClass().getName(), errorMessage);
         }
     }
@@ -76,7 +77,6 @@ public class AddTraitFragment extends DialogFragment {
         // Initialize input and data source.
         this.etName = (EditText) view.findViewById(R.id.etName);
         this.etName.setText(searchText);
-        this.traitDataSource = new TraitDataSource(getActivity().getApplicationContext());
 
         // Add onClick handler for button.
         Button addTraitButton = (Button) view.findViewById(R.id.btnAdd);
@@ -109,16 +109,26 @@ public class AddTraitFragment extends DialogFragment {
     }
 
     /**
-     * Adds and returns new trait to calling activity.
+     * Sends new trait to callback listener.
+     *
+     * @param trait  new trait
+     */
+    @Override
+    public void onTaskFinished(Trait trait) {
+        this.callbackListener.onTraitAdded(trait);
+        dismiss();
+    }
+
+    /**
+     * Adds new trait.
      */
     private void addTrait() {
         // Make sure input has been entered before adding trait.
         boolean hasNameInput = InputUtils.checkEditText(this.etName);
         if (hasNameInput) {
             Trait traitToAdd = new Trait(this.etName.getText().toString());
-            Trait newTrait = this.traitDataSource.add(traitToAdd);
-            this.callbackListener.onTraitAdded(newTrait);
-            dismiss();
+            AddTraitTask task = new AddTraitTask(this.getActivity(), this);
+            task.execute(traitToAdd);
         }
     }
 

@@ -14,6 +14,12 @@ public final class TraitRequest {
         //return (traits.size() > 0) ? traits.get(0) : null;
 
         // Test stub, remove this and uncomment code above.
+        try {
+            // Simulate time for network request.
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            // Just for test purposes so handling error doesn't matter.
+        }
         traitToAdd.setId(11);
         return traitToAdd;
     }
