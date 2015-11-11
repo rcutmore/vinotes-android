@@ -1,7 +1,7 @@
 package com.robcutmore.vinotes.request;
 
 
-import com.robcutmore.vinotes.model.Trait;
+import com.robcutmore.vinotes.models.Trait;
 
 import java.util.ArrayList;
 

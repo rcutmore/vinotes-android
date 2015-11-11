@@ -1,8 +1,8 @@
 package com.robcutmore.vinotes.request;
 
 
-import com.robcutmore.vinotes.model.Wine;
-import com.robcutmore.vinotes.model.Winery;
+import com.robcutmore.vinotes.models.Wine;
+import com.robcutmore.vinotes.models.Winery;
 
 import java.util.ArrayList;
 

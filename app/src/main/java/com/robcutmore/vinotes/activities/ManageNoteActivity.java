@@ -16,10 +16,10 @@ import com.robcutmore.vinotes.R;
 import com.robcutmore.vinotes.dao.NoteDataSource;
 import com.robcutmore.vinotes.fragments.DatePickerFragment;
 import com.robcutmore.vinotes.fragments.RetainedNoteFragment;
-import com.robcutmore.vinotes.model.Note;
-import com.robcutmore.vinotes.model.Trait;
-import com.robcutmore.vinotes.model.Wine;
-import com.robcutmore.vinotes.model.Winery;
+import com.robcutmore.vinotes.models.Note;
+import com.robcutmore.vinotes.models.Trait;
+import com.robcutmore.vinotes.models.Wine;
+import com.robcutmore.vinotes.models.Winery;
 import com.robcutmore.vinotes.utils.DateUtils;
 
 import java.util.ArrayList;

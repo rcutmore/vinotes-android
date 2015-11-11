@@ -17,7 +17,7 @@ import com.robcutmore.vinotes.dao.NoteDataSource;
 import com.robcutmore.vinotes.dao.TraitDataSource;
 import com.robcutmore.vinotes.dao.WineDataSource;
 import com.robcutmore.vinotes.dao.WineryDataSource;
-import com.robcutmore.vinotes.model.Note;
+import com.robcutmore.vinotes.models.Note;
 
 import java.util.ArrayList;
 import java.util.Collections;

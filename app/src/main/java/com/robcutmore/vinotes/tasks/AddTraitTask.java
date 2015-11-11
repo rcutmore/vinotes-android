@@ -5,7 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.robcutmore.vinotes.dao.TraitDataSource;
-import com.robcutmore.vinotes.model.Trait;
+import com.robcutmore.vinotes.models.Trait;
 
 
 /**

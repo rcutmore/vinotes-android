@@ -8,10 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.robcutmore.vinotes.database.DatabaseHelper;
-import com.robcutmore.vinotes.model.Note;
+import com.robcutmore.vinotes.models.Note;
 import com.robcutmore.vinotes.request.NoteRequest;
 import com.robcutmore.vinotes.utils.DateUtils;
-import com.robcutmore.vinotes.model.Wine;
+import com.robcutmore.vinotes.models.Wine;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

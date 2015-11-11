@@ -4,8 +4,8 @@ package com.robcutmore.vinotes.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 
-import com.robcutmore.vinotes.model.Wine;
-import com.robcutmore.vinotes.model.Winery;
+import com.robcutmore.vinotes.models.Wine;
+import com.robcutmore.vinotes.models.Winery;
 
 import java.util.Date;
 

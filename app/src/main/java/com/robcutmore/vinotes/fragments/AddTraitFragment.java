@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.robcutmore.vinotes.R;
-import com.robcutmore.vinotes.model.Trait;
+import com.robcutmore.vinotes.models.Trait;
 import com.robcutmore.vinotes.tasks.AddTraitTask;
 import com.robcutmore.vinotes.utils.InputUtils;
 

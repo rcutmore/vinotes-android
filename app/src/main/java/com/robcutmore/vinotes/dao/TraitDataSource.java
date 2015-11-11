@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.robcutmore.vinotes.database.DatabaseHelper;
-import com.robcutmore.vinotes.model.Trait;
+import com.robcutmore.vinotes.models.Trait;
 import com.robcutmore.vinotes.request.TraitRequest;
 
 import java.sql.SQLException;

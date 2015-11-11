@@ -15,7 +15,7 @@ import android.widget.EditText;
 
 import com.robcutmore.vinotes.R;
 import com.robcutmore.vinotes.dao.WineryDataSource;
-import com.robcutmore.vinotes.model.Winery;
+import com.robcutmore.vinotes.models.Winery;
 import com.robcutmore.vinotes.utils.InputUtils;
 
 

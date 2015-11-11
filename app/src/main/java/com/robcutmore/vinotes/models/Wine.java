@@ -1,4 +1,4 @@
-package com.robcutmore.vinotes.model;
+package com.robcutmore.vinotes.models;
 
 
 import android.os.Parcel;

@@ -17,7 +17,7 @@ import android.widget.ListView;
 import com.robcutmore.vinotes.R;
 import com.robcutmore.vinotes.dao.TraitDataSource;
 import com.robcutmore.vinotes.fragments.AddTraitFragment;
-import com.robcutmore.vinotes.model.Trait;
+import com.robcutmore.vinotes.models.Trait;
 
 import java.util.ArrayList;
 import java.util.Collections;

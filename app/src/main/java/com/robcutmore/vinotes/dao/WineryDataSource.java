@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.robcutmore.vinotes.database.DatabaseHelper;
-import com.robcutmore.vinotes.model.Winery;
+import com.robcutmore.vinotes.models.Winery;
 import com.robcutmore.vinotes.request.WineryRequest;
 
 import java.sql.SQLException;
