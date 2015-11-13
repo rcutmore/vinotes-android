@@ -15,6 +15,12 @@ public class WineRequest {
         //return (wines.size() > 0) ? wines.get(0) : null;
 
         // Test stub, remove this and uncomment code above.
+        try {
+            // Simulate time for network request.
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            // Just for test purposes so handling error doesn't matter.
+        }
         wineToAdd.setId(4);
         return wineToAdd;
     }

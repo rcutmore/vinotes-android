@@ -14,16 +14,16 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.robcutmore.vinotes.R;
-import com.robcutmore.vinotes.dao.WineDataSource;
 import com.robcutmore.vinotes.models.Wine;
 import com.robcutmore.vinotes.models.Winery;
+import com.robcutmore.vinotes.tasks.AddWineTask;
 import com.robcutmore.vinotes.utils.InputUtils;
 
 
 /**
- * AddWineFragment allows user to add a new wine and returns it to the calling activity.
+ * Provides input to add a new wine and return it to calling activity.
  */
-public class AddWineFragment extends DialogFragment {
+public class AddWineFragment extends DialogFragment implements AddWineTask.TaskListener {
 
     /**
      * Interface to be implemented by calling activity for returning newly added wine.
@@ -36,7 +36,6 @@ public class AddWineFragment extends DialogFragment {
     private Winery winery;
     private EditText etWineName;
     private EditText etVintage;
-    private WineDataSource wineDataSource;
 
     /**
      * Constructor.
@@ -86,7 +85,6 @@ public class AddWineFragment extends DialogFragment {
         this.etWineName = (EditText) view.findViewById(R.id.etWineName);
         this.etWineName.setText(searchText);
         this.etVintage = (EditText) view.findViewById(R.id.etVintage);
-        this.wineDataSource = new WineDataSource(getActivity().getApplicationContext());
 
         // Add onClick handler for button.
         Button addWineButton = (Button) view.findViewById(R.id.btnAddWine);
@@ -119,7 +117,18 @@ public class AddWineFragment extends DialogFragment {
     }
 
     /**
-     * Adds and returns new wine to calling activity.
+     * Sends new wine to callback listener.
+     *
+     * @param wine  new wine
+     */
+    @Override
+    public void onTaskFinished(Wine wine) {
+        this.callbackListener.onWineAdded(wine);
+        dismiss();
+    }
+
+    /**
+     * Adds new wine.
      */
     private void addWine() {
         // Make sure input has been entered before adding wine.
@@ -131,9 +140,8 @@ public class AddWineFragment extends DialogFragment {
                 this.etWineName.getText().toString(),
                 Integer.parseInt(this.etVintage.getText().toString())
             );
-            Wine newWine = this.wineDataSource.add(wineToAdd);
-            this.callbackListener.onWineAdded(newWine);
-            dismiss();
+            AddWineTask task = new AddWineTask(this.getActivity(), this);
+            task.execute(wineToAdd);
         }
     }
 
