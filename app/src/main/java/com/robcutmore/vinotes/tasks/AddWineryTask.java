@@ -9,12 +9,12 @@ import com.robcutmore.vinotes.models.Winery;
 
 
 /**
- * Adds and returns new winery.
+ * Adds and returns winery.
  */
-public class AddWineryTask extends AsyncTask<Winery, Void, Winery> {
+public class AddWineryTask extends AsyncTask<Void, Void, Winery> {
 
     /**
-     * Interface to be implemented by calling activity for returning newly added winery.
+     * Interface to be implemented by calling activity for returning winery.
      */
     public interface TaskListener {
         void onTaskFinished(Winery winery);
@@ -22,6 +22,7 @@ public class AddWineryTask extends AsyncTask<Winery, Void, Winery> {
 
     private TaskListener callbackListener;
     private WineryDataSource wineryDataSource;
+    private Winery winery;
 
     /**
      * Constructor.
@@ -29,30 +30,29 @@ public class AddWineryTask extends AsyncTask<Winery, Void, Winery> {
      * @param context  calling activity's context
      * @param listener  callback listener to set
      */
-    public AddWineryTask(final Context context, final TaskListener listener) {
+    public AddWineryTask(final Context context, final TaskListener listener, final Winery winery) {
         this.callbackListener = listener;
         this.wineryDataSource = new WineryDataSource(context.getApplicationContext());
+        this.winery = winery;
     }
 
     /**
      * Adds new winery to API and database.
      *
-     * @param wineries  wineries to add
      * @return new winery
      */
     @Override
-    protected Winery doInBackground(Winery... wineries) {
-        Winery wineryToAdd = wineries[0];
-        return this.wineryDataSource.add(wineryToAdd);
+    protected Winery doInBackground(final Void... params) {
+        return this.wineryDataSource.add(this.winery);
     }
 
     /**
-     * Sends newly added winery to callback listener.
+     * Sends winery to callback listener.
      *
      * @param winery  new winery
      */
     @Override
-    protected void onPostExecute(Winery winery) {
+    protected void onPostExecute(final Winery winery) {
         super.onPostExecute(winery);
         if (this.callbackListener != null) {
             this.callbackListener.onTaskFinished(winery);

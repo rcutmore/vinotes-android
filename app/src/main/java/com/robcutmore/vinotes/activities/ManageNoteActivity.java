@@ -270,15 +270,15 @@ public class ManageNoteActivity extends ActionBarActivity
         if (this.note != null) {
             // Update note.
             Note note = new Note(
-                    this.note.getId(), this.wine, this.tastingDate, this.rating,
-                    this.colorTraits, this.noseTraits, this.tasteTraits, this.finishTraits
+                this.note.getId(), this.wine, this.tastingDate, this.rating,
+                this.colorTraits, this.noseTraits, this.tasteTraits, this.finishTraits
             );
             new ManageNoteTask(this, this, note, true).execute();
         } else {
             // Add note.
             Note note = new Note(
-                    this.wine, this.tastingDate, this.rating, this.colorTraits,
-                    this.noseTraits, this.tasteTraits, this.finishTraits
+                this.wine, this.tastingDate, this.rating, this.colorTraits,
+                this.noseTraits, this.tasteTraits, this.finishTraits
             );
             new ManageNoteTask(this, this, note, false).execute();
         }

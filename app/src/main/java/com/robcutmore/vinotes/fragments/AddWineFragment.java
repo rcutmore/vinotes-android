@@ -140,8 +140,7 @@ public class AddWineFragment extends DialogFragment implements AddWineTask.TaskL
                 this.etWineName.getText().toString(),
                 Integer.parseInt(this.etVintage.getText().toString())
             );
-            AddWineTask task = new AddWineTask(this.getActivity(), this);
-            task.execute(wineToAdd);
+            new AddWineTask(this.getActivity(), this, wineToAdd).execute();
         }
     }
 

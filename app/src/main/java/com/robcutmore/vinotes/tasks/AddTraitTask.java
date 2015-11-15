@@ -9,12 +9,12 @@ import com.robcutmore.vinotes.models.Trait;
 
 
 /**
- * Adds and returns new trait.
+ * Adds and returns trait.
  */
-public class AddTraitTask extends AsyncTask<Trait, Void, Trait> {
+public class AddTraitTask extends AsyncTask<Void, Void, Trait> {
 
     /**
-     * Interface to be implemented by calling activity for returning newly added trait.
+     * Interface to be implemented by calling activity for returning trait.
      */
     public interface TaskListener {
         void onTaskFinished(Trait trait);
@@ -22,6 +22,7 @@ public class AddTraitTask extends AsyncTask<Trait, Void, Trait> {
 
     private TaskListener callbackListener;
     private TraitDataSource traitDataSource;
+    private Trait trait;
 
     /**
      * Constructor.
@@ -29,30 +30,29 @@ public class AddTraitTask extends AsyncTask<Trait, Void, Trait> {
      * @param context  calling activity's context
      * @param listener  callback listener to set
      */
-    public AddTraitTask(final Context context, final TaskListener listener) {
+    public AddTraitTask(final Context context, final TaskListener listener, final Trait trait) {
         this.callbackListener = listener;
         this.traitDataSource = new TraitDataSource(context.getApplicationContext());
+        this.trait = trait;
     }
 
     /**
      * Adds new trait to API and database.
      *
-     * @param traits  traits to add
      * @return new trait
      */
     @Override
-    protected Trait doInBackground(Trait... traits) {
-        Trait traitToAdd = traits[0];
-        return this.traitDataSource.add(traitToAdd);
+    protected Trait doInBackground(final Void... params) {
+        return this.traitDataSource.add(this.trait);
     }
 
     /**
-     * Sends newly added trait to callback listener.
+     * Sends trait to callback listener.
      *
      * @param trait  new trait
      */
     @Override
-    protected void onPostExecute(Trait trait) {
+    protected void onPostExecute(final Trait trait) {
         super.onPostExecute(trait);
         if (this.callbackListener != null) {
             this.callbackListener.onTaskFinished(trait);

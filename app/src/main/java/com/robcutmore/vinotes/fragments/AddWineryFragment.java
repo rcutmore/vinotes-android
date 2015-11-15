@@ -126,8 +126,7 @@ public class AddWineryFragment extends DialogFragment implements AddWineryTask.T
         boolean hasNameInput = InputUtils.checkEditText(this.etWineryName);
         if (hasNameInput) {
             Winery wineryToAdd = new Winery(this.etWineryName.getText().toString());
-            AddWineryTask task = new AddWineryTask(this.getActivity(), this);
-            task.execute(wineryToAdd);
+            new AddWineryTask(this.getActivity(), this, wineryToAdd).execute();
         }
     }
 

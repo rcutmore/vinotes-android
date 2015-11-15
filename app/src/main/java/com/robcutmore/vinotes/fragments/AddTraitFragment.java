@@ -127,8 +127,7 @@ public class AddTraitFragment extends DialogFragment implements AddTraitTask.Tas
         boolean hasNameInput = InputUtils.checkEditText(this.etName);
         if (hasNameInput) {
             Trait traitToAdd = new Trait(this.etName.getText().toString());
-            AddTraitTask task = new AddTraitTask(this.getActivity(), this);
-            task.execute(traitToAdd);
+            new AddTraitTask(this.getActivity(), this, traitToAdd).execute();
         }
     }
 

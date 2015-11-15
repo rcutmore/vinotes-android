@@ -9,12 +9,12 @@ import com.robcutmore.vinotes.models.Wine;
 
 
 /**
- * Adds and returns new wine.
+ * Adds and returns wine.
  */
-public class AddWineTask extends AsyncTask<Wine, Void, Wine> {
+public class AddWineTask extends AsyncTask<Void, Void, Wine> {
 
     /**
-     * Interface to be implemented by calling activity for returning newly added wine.
+     * Interface to be implemented by calling activity for returning wine.
      */
     public interface TaskListener {
         void onTaskFinished(Wine wine);
@@ -22,6 +22,7 @@ public class AddWineTask extends AsyncTask<Wine, Void, Wine> {
 
     private TaskListener callbackListener;
     private WineDataSource wineDataSource;
+    private Wine wine;
 
     /**
      * Constructor.
@@ -29,30 +30,29 @@ public class AddWineTask extends AsyncTask<Wine, Void, Wine> {
      * @param context  calling activity's context
      * @param listener  callback listener to set
      */
-    public AddWineTask(final Context context, final TaskListener listener) {
+    public AddWineTask(final Context context, final TaskListener listener, final Wine wine) {
         this.callbackListener = listener;
         this.wineDataSource = new WineDataSource(context.getApplicationContext());
+        this.wine = wine;
     }
 
     /**
      * Adds new wine to API and database.
      *
-     * @param wines  wines to add
      * @return new wine
      */
     @Override
-    protected Wine doInBackground(Wine... wines) {
-        Wine wineToAdd = wines[0];
-        return this.wineDataSource.add(wineToAdd);
+    protected Wine doInBackground(final Void... params) {
+        return this.wineDataSource.add(this.wine);
     }
 
     /**
-     * Sends newly added wine to callback listener.
+     * Sends wine to callback listener.
      *
      * @param wine  new wine
      */
     @Override
-    protected void onPostExecute(Wine wine) {
+    protected void onPostExecute(final Wine wine) {
         super.onPostExecute(wine);
         if (this.callbackListener != null) {
             this.callbackListener.onTaskFinished(wine);

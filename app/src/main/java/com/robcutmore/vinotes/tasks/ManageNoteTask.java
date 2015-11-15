@@ -9,12 +9,12 @@ import com.robcutmore.vinotes.models.Note;
 
 
 /**
- * Adds and returns new note.
+ * Adds/updates and returns note.
  */
 public class ManageNoteTask extends AsyncTask<Void, Void, Note> {
 
     /**
-     * Interface to be implemented by calling activity for returning newly added note.
+     * Interface to be implemented by calling activity for returning note.
      */
     public interface TaskListener {
         void onTaskFinished(Note note);
@@ -47,7 +47,7 @@ public class ManageNoteTask extends AsyncTask<Void, Void, Note> {
      * @return note
      */
     @Override
-    protected Note doInBackground(Void... params) {
+    protected Note doInBackground(final Void... params) {
         if (this.updateNote) {
             return this.noteDataSource.update(this.note);
         } else {
@@ -61,7 +61,7 @@ public class ManageNoteTask extends AsyncTask<Void, Void, Note> {
      * @param note  new/updated note
      */
     @Override
-    protected void onPostExecute(Note note) {
+    protected void onPostExecute(final Note note) {
         super.onPostExecute(note);
         if (this.callbackListener != null) {
             this.callbackListener.onTaskFinished(note);
