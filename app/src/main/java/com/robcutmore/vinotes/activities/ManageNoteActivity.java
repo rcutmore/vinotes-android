@@ -13,24 +13,26 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 
 import com.robcutmore.vinotes.R;
-import com.robcutmore.vinotes.dao.NoteDataSource;
 import com.robcutmore.vinotes.fragments.DatePickerFragment;
 import com.robcutmore.vinotes.fragments.RetainedNoteFragment;
 import com.robcutmore.vinotes.models.Note;
 import com.robcutmore.vinotes.models.Trait;
 import com.robcutmore.vinotes.models.Wine;
 import com.robcutmore.vinotes.models.Winery;
+import com.robcutmore.vinotes.tasks.ManageNoteTask;
 import com.robcutmore.vinotes.utils.DateUtils;
+import com.robcutmore.vinotes.utils.InputUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
 
 
 /**
- * Provides input to edit an existing tasting note or to create a new tasting note.
+ * Provides input to edit existing tasting note or to create new tasting note.
  */
 public class ManageNoteActivity extends ActionBarActivity
-                                implements DatePickerFragment.OnDateSelectedListener {
+                                implements DatePickerFragment.OnDateSelectedListener,
+                                           ManageNoteTask.TaskListener {
 
     private RetainedNoteFragment dataFragment;
 
@@ -64,8 +66,8 @@ public class ManageNoteActivity extends ActionBarActivity
     private RatingBar rbRating;
     private Button btnSave;
 
-    // Data sources
-    private NoteDataSource noteDataSource;
+
+    // Activity lifecycle methods
 
     /**
      * Sets up activity and private variables.
@@ -94,9 +96,6 @@ public class ManageNoteActivity extends ActionBarActivity
                 setRating((int) rating);
             }
         });
-
-        // Initialize data source.
-        this.noteDataSource = new NoteDataSource(this.getApplicationContext());
 
         this.displayExistingNote();
         this.restoreActivityState();
@@ -202,32 +201,18 @@ public class ManageNoteActivity extends ActionBarActivity
      *
      * @param tastingDate  selected tasting date
      */
+    @Override
     public void onDateSelected(final Date tastingDate) {
         this.setTastingDate(tastingDate);
     }
 
     /**
-     * Saves and returns new note.
+     * Sends new/updated note to callback listener.
      *
-     * @param view  button that was clicked
+     * @param note  new/updated note
      */
-    public void saveNote(final View view) {
-        Note note;
-        if (this.note != null) {
-            // Update existing note.
-            note = this.noteDataSource.update(new Note(
-                this.note.getId(), this.wine, this.tastingDate, this.rating,
-                this.colorTraits, this.noseTraits, this.tasteTraits, this.finishTraits
-            ));
-        } else {
-            // Add new note.
-            note = this.noteDataSource.add(new Note(
-                this.wine, this.tastingDate, this.rating, this.colorTraits,
-                this.noseTraits, this.tasteTraits, this.finishTraits
-            ));
-        }
-
-        // Return new or updated note if successful.
+    @Override
+    public void onTaskFinished(final Note note) {
         if (note != null) {
             Bundle args = new Bundle();
             args.putParcelable("note", note);
@@ -238,173 +223,8 @@ public class ManageNoteActivity extends ActionBarActivity
         }
     }
 
-    /**
-     * Displays fragment for selecting tasting date.
-     *
-     * @param view  EditText that was clicked
-     */
-    public void showDatePickerDialog(final View view) {
-        DatePickerFragment newFragment = new DatePickerFragment();
-        newFragment.show(getFragmentManager(), "datePicker");
-    }
 
-    /**
-     * Displays fragment for selecting wine traits.
-     *
-     * @param view  EditText that was clicked
-     */
-    public void showTraitPicker(final View view) {
-        // Determine which trait type to open activity for.
-        String traitType = "";
-        ArrayList<Trait> traits = new ArrayList<>();
-        int requestCode = 0;
-        if (view == this.etColorTraits) {
-            traits = this.colorTraits;
-            traitType = "color";
-            requestCode = this.COLOR_TRAIT_REQUEST_CODE;
-        } else if (view == this.etNoseTraits) {
-            traits = this.noseTraits;
-            traitType = "nose";
-            requestCode = this.NOSE_TRAIT_REQUEST_CODE;
-        } else if (view == this.etTasteTraits) {
-            traits = this.tasteTraits;
-            traitType = "taste";
-            requestCode = this.TASTE_TRAIT_REQUEST_CODE;
-        } else if (view == this.etFinishTraits) {
-            traits = this.finishTraits;
-            traitType = "finish";
-            requestCode = this.FINISH_TRAIT_REQUEST_CODE;
-        }
-
-        // Start activity.
-        Bundle args = new Bundle();
-        args.putParcelableArrayList("traits", traits);
-        args.putString("traitType", traitType);
-        Intent intent = new Intent(this, SelectTraitsActivity.class);
-        intent.putExtras(args);
-        startActivityForResult(intent, requestCode);
-    }
-
-    /**
-     * Starts activity to select wine for note.
-     *
-     * @param view  EditText that was clicked
-     */
-    public void showWinePicker(final View view) {
-        Bundle args = new Bundle();
-        args.putParcelable("winery", this.winery);
-        Intent intent = new Intent(this, SelectWineActivity.class);
-        intent.putExtras(args);
-        startActivityForResult(intent, this.WINE_REQUEST_CODE);
-    }
-
-    /**
-     * Starts activity to select winery for note.
-     *
-     * @param view  EditText that was clicked
-     */
-    public void showWineryPicker(final View view) {
-        Intent intent = new Intent(this, SelectWineryActivity.class);
-        startActivityForResult(intent, this.WINERY_REQUEST_CODE);
-    }
-
-    /**
-     * Fills user input with existing note data.
-     */
-    private void displayExistingNote() {
-        // Check for existing note from calling activity.
-        Intent intent = getIntent();
-        Bundle args = intent.getExtras();
-        if (args != null) {
-            this.note = args.getParcelable("note");
-        }
-
-        if (this.note != null) {
-            // Change title.
-            this.setTitle(this.getString(R.string.title_note_edit));
-
-            // Display existing note.
-            this.setTastingDate(this.note.getTasted());
-            Wine wine = this.note.getWine();
-            this.setWinery(wine.getWinery());
-            this.setWine(wine);
-            this.setTraits("color", this.note.getColorTraits());
-            this.setTraits("nose", this.note.getNoseTraits());
-            this.setTraits("taste", this.note.getTasteTraits());
-            this.setTraits("finish", this.note.getFinishTraits());
-            this.setRating(this.note.getRating());
-        }
-    }
-
-    /**
-     * Checks to see if all input has been entered.
-     *
-     * @return true if all input is entered otherwise false
-     */
-    private boolean hasAllInput() {
-        // Check tasting date, winery, wine, and rating.
-        // Traits are optional so do not check them.
-        if (this.tastingDate == null || this.isInputEmpty(this.etTastingDate)) {
-            return false;
-        }
-        if (this.winery == null || this.isInputEmpty(this.etWinery)) {
-            return false;
-        }
-        if (this.wine == null || this.isInputEmpty(this.etWine)) {
-            return false;
-        }
-        if (this.rating == null || this.rating.equals(0)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Checks to see if given input is empty.
-     *
-     * @param userInput  EditText to check
-     * @return true if input is empty otherwise false
-     */
-    private boolean isInputEmpty(final EditText userInput) {
-        return userInput.getText().toString().trim().length() == 0;
-    }
-
-    /**
-     * Checks to see if current input matches existing note.
-     * If there is no existing note then false is returned.
-     *
-     * @return true if input matches otherwise false
-     */
-    private boolean inputMatchesExistingNote() {
-        if (this.note != null) {
-            // Make sure each input matches existing note.
-            if (!this.tastingDate.equals(this.note.getTasted())) {
-                return false;
-            }
-            if (!this.wine.equals(this.note.getWine())) {
-                return false;
-            }
-            if (!this.colorTraits.equals(this.note.getColorTraits())) {
-                return false;
-            }
-            if (!this.noseTraits.equals(this.note.getNoseTraits())) {
-                return false;
-            }
-            if (!this.tasteTraits.equals(this.note.getTasteTraits())) {
-                return false;
-            }
-            if (!this.finishTraits.equals(this.note.getFinishTraits())) {
-                return false;
-            }
-            if (!this.rating.equals(this.note.getRating())) {
-                return false;
-            }
-            return true;
-        } else {
-            // There is no existing note so return false (i.e. current input cannot match).
-            return false;
-        }
-    }
+    // Manage activity state methods
 
     /**
      * Restores persisted note data.
@@ -436,6 +256,32 @@ public class ManageNoteActivity extends ActionBarActivity
         this.dataFragment.setWinery(this.winery);
         this.dataFragment.setWine(this.wine);
         this.dataFragment.setRating(this.rating);
+    }
+
+
+    // Manage note data methods
+
+    /**
+     * Saves new/updated note.
+     *
+     * @param view  button that was clicked
+     */
+    public void saveNote(final View view) {
+        if (this.note != null) {
+            // Update note.
+            Note note = new Note(
+                    this.note.getId(), this.wine, this.tastingDate, this.rating,
+                    this.colorTraits, this.noseTraits, this.tasteTraits, this.finishTraits
+            );
+            new ManageNoteTask(this, this, note, true).execute();
+        } else {
+            // Add note.
+            Note note = new Note(
+                    this.wine, this.tastingDate, this.rating, this.colorTraits,
+                    this.noseTraits, this.tasteTraits, this.finishTraits
+            );
+            new ManageNoteTask(this, this, note, false).execute();
+        }
     }
 
     /**
@@ -562,6 +408,167 @@ public class ManageNoteActivity extends ActionBarActivity
         this.etWine.setText(wineText);
 
         this.validateInput();
+    }
+
+
+    // User input methods
+
+    /**
+     * Displays fragment for selecting tasting date.
+     *
+     * @param view  EditText that was clicked
+     */
+    public void showDatePickerDialog(final View view) {
+        DatePickerFragment newFragment = new DatePickerFragment();
+        newFragment.show(getFragmentManager(), "datePicker");
+    }
+
+    /**
+     * Displays fragment for selecting wine traits.
+     *
+     * @param view  EditText that was clicked
+     */
+    public void showTraitPicker(final View view) {
+        // Determine which trait type to open activity for.
+        String traitType = "";
+        ArrayList<Trait> traits = new ArrayList<>();
+        int requestCode = 0;
+        if (view == this.etColorTraits) {
+            traits = this.colorTraits;
+            traitType = "color";
+            requestCode = this.COLOR_TRAIT_REQUEST_CODE;
+        } else if (view == this.etNoseTraits) {
+            traits = this.noseTraits;
+            traitType = "nose";
+            requestCode = this.NOSE_TRAIT_REQUEST_CODE;
+        } else if (view == this.etTasteTraits) {
+            traits = this.tasteTraits;
+            traitType = "taste";
+            requestCode = this.TASTE_TRAIT_REQUEST_CODE;
+        } else if (view == this.etFinishTraits) {
+            traits = this.finishTraits;
+            traitType = "finish";
+            requestCode = this.FINISH_TRAIT_REQUEST_CODE;
+        }
+
+        // Start activity.
+        Bundle args = new Bundle();
+        args.putParcelableArrayList("traits", traits);
+        args.putString("traitType", traitType);
+        Intent intent = new Intent(this, SelectTraitsActivity.class);
+        intent.putExtras(args);
+        startActivityForResult(intent, requestCode);
+    }
+
+    /**
+     * Starts activity to select wine for note.
+     *
+     * @param view  EditText that was clicked
+     */
+    public void showWinePicker(final View view) {
+        Bundle args = new Bundle();
+        args.putParcelable("winery", this.winery);
+        Intent intent = new Intent(this, SelectWineActivity.class);
+        intent.putExtras(args);
+        startActivityForResult(intent, this.WINE_REQUEST_CODE);
+    }
+
+    /**
+     * Starts activity to select winery for note.
+     *
+     * @param view  EditText that was clicked
+     */
+    public void showWineryPicker(final View view) {
+        Intent intent = new Intent(this, SelectWineryActivity.class);
+        startActivityForResult(intent, this.WINERY_REQUEST_CODE);
+    }
+
+    /**
+     * Fills user input with existing note data.
+     */
+    private void displayExistingNote() {
+        // Check for existing note from calling activity.
+        Intent intent = getIntent();
+        Bundle args = intent.getExtras();
+        if (args != null) {
+            this.note = args.getParcelable("note");
+        }
+
+        if (this.note != null) {
+            // Change title.
+            this.setTitle(this.getString(R.string.title_note_edit));
+
+            // Display existing note.
+            this.setTastingDate(this.note.getTasted());
+            Wine wine = this.note.getWine();
+            this.setWinery(wine.getWinery());
+            this.setWine(wine);
+            this.setTraits("color", this.note.getColorTraits());
+            this.setTraits("nose", this.note.getNoseTraits());
+            this.setTraits("taste", this.note.getTasteTraits());
+            this.setTraits("finish", this.note.getFinishTraits());
+            this.setRating(this.note.getRating());
+        }
+    }
+
+    /**
+     * Checks to see if all input has been entered.
+     *
+     * @return true if all input is entered otherwise false
+     */
+    private boolean hasAllInput() {
+        // Check tasting date, winery, wine, and rating.
+        // Traits are optional so do not check them.
+        if (this.tastingDate == null || InputUtils.isEditTextEmpty(this.etTastingDate)) {
+            return false;
+        }
+        if (this.winery == null || InputUtils.isEditTextEmpty(this.etWinery)) {
+            return false;
+        }
+        if (this.wine == null || InputUtils.isEditTextEmpty(this.etWine)) {
+            return false;
+        }
+        if (this.rating == null || this.rating.equals(0)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks to see if current input matches existing note.
+     * If there is no existing note then false is returned.
+     *
+     * @return true if input matches otherwise false
+     */
+    private boolean inputMatchesExistingNote() {
+        if (this.note != null) {
+            // Make sure each input matches existing note.
+            if (!this.tastingDate.equals(this.note.getTasted())) {
+                return false;
+            }
+            if (!this.wine.equals(this.note.getWine())) {
+                return false;
+            }
+            if (!this.colorTraits.equals(this.note.getColorTraits())) {
+                return false;
+            }
+            if (!this.noseTraits.equals(this.note.getNoseTraits())) {
+                return false;
+            }
+            if (!this.tasteTraits.equals(this.note.getTasteTraits())) {
+                return false;
+            }
+            if (!this.finishTraits.equals(this.note.getFinishTraits())) {
+                return false;
+            }
+            if (!this.rating.equals(this.note.getRating())) {
+                return false;
+            }
+            return true;
+        } else {
+            // There is no existing note so return false (i.e. current input cannot match).
+            return false;
+        }
     }
 
     /**

@@ -18,6 +18,12 @@ public class NoteRequest {
         //return (notes.size() > 0) ? notes.get(0) : null;
 
         // Test stub, remove this and uncomment code above.
+        try {
+            // Simulate time for network request.
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            // Just for test purposes so handling error doesn't matter.
+        }
         noteToAdd.setId(4);
         return noteToAdd;
     }
@@ -40,6 +46,12 @@ public class NoteRequest {
         //return (notes.size() > 0) ? notes.get(0) : null;
 
         // Test stub, remove this and uncomment code above.
+        try {
+            // Simulate time for network request.
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            // Just for test purposes so handling error doesn't matter.
+        }
         return note;
     }
 
