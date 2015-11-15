@@ -32,6 +32,7 @@ public class AddWineryTask extends AsyncTask<Void, Void, Winery> {
      *
      * @param context  calling activity's context
      * @param listener  callback listener to set
+     * @param winery  winery to be added
      */
     public AddWineryTask(final Context context, final TaskListener listener, final Winery winery) {
         this.progress = new ProgressDialog(context);

@@ -32,6 +32,7 @@ public class AddTraitTask extends AsyncTask<Void, Void, Trait> {
      *
      * @param context  calling activity's context
      * @param listener  callback listener to set
+     * @param trait  trait to be added
      */
     public AddTraitTask(final Context context, final TaskListener listener, final Trait trait) {
         this.progress = new ProgressDialog(context);
