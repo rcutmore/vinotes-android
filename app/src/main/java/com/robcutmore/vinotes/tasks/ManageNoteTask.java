@@ -1,9 +1,11 @@
 package com.robcutmore.vinotes.tasks;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.robcutmore.vinotes.R;
 import com.robcutmore.vinotes.dao.NoteDataSource;
 import com.robcutmore.vinotes.models.Note;
 
@@ -20,6 +22,7 @@ public class ManageNoteTask extends AsyncTask<Void, Void, Note> {
         void onTaskFinished(Note note);
     }
 
+    private ProgressDialog progress;
     private TaskListener callbackListener;
     private NoteDataSource noteDataSource;
     private Note note;
@@ -35,10 +38,23 @@ public class ManageNoteTask extends AsyncTask<Void, Void, Note> {
      */
     public ManageNoteTask(final Context context, final TaskListener listener,
                           final Note note, final boolean updateNote) {
+        this.progress = new ProgressDialog(context);
+        this.progress.setMessage(context.getString(R.string.progress_save_note));
         this.callbackListener = listener;
         this.noteDataSource = new NoteDataSource(context.getApplicationContext());
         this.note = note;
         this.updateNote = updateNote;
+    }
+
+    /**
+     * Shows progress dialog.
+     */
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        this.progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        this.progress.setCancelable(false);
+        this.progress.show();
     }
 
     /**
@@ -63,6 +79,7 @@ public class ManageNoteTask extends AsyncTask<Void, Void, Note> {
     @Override
     protected void onPostExecute(final Note note) {
         super.onPostExecute(note);
+        this.progress.dismiss();
         if (this.callbackListener != null) {
             this.callbackListener.onTaskFinished(note);
         }

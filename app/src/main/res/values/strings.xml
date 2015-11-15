@@ -49,4 +49,10 @@
     <string name="input_hint_taste_traits_select">Select Taste Traits</string>
     <string name="input_hint_finish_traits_select">Select Finish Traits</string>
 
+    <!-- Progress Dialogs -->
+    <string name="progress_save_winery">Saving winery...</string>
+    <string name="progress_save_wine">Saving wine...</string>
+    <string name="progress_save_trait">Saving trait...</string>
+    <string name="progress_save_note">Saving note...</string>
+
 </resources>
