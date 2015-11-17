@@ -50,6 +50,7 @@
     <string name="input_hint_finish_traits_select">Select Finish Traits</string>
 
     <!-- Progress Dialogs -->
+    <string name="progress_fetch_data">Loading data...</string>
     <string name="progress_save_winery">Saving winery...</string>
     <string name="progress_save_wine">Saving wine...</string>
     <string name="progress_save_trait">Saving trait...</string>

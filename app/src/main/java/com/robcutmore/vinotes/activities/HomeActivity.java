@@ -1,7 +1,6 @@
 package com.robcutmore.vinotes.activities;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -13,11 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.robcutmore.vinotes.R;
-import com.robcutmore.vinotes.dao.NoteDataSource;
-import com.robcutmore.vinotes.dao.TraitDataSource;
-import com.robcutmore.vinotes.dao.WineDataSource;
-import com.robcutmore.vinotes.dao.WineryDataSource;
 import com.robcutmore.vinotes.models.Note;
+import com.robcutmore.vinotes.tasks.FetchDataTask;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,16 +23,10 @@ import java.util.Comparator;
 /**
  * Lists all stored tasting notes.
  */
-public class HomeActivity extends ActionBarActivity {
+public class HomeActivity extends ActionBarActivity implements FetchDataTask.TaskListener {
 
     private final int ADD_NOTE_REQUEST_CODE = 1;
     private final int EDIT_NOTE_REQUEST_CODE = 2;
-
-    // Data sources
-    private TraitDataSource traitDataSource;
-    private NoteDataSource noteDataSource;
-    private WineDataSource wineDataSource;
-    private WineryDataSource wineryDataSource;
 
     // Note list
     private ArrayList<Note> notes;
@@ -63,13 +53,6 @@ public class HomeActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize data sources.
-        Context appContext = this.getApplicationContext();
-        this.traitDataSource = new TraitDataSource(appContext);
-        this.wineryDataSource = new WineryDataSource(appContext);
-        this.wineDataSource = new WineDataSource(appContext);
-        this.noteDataSource = new NoteDataSource(appContext);
-
         // Connect list view to note array list.
         this.notes = new ArrayList<>();
         this.notesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, this.notes);
@@ -77,7 +60,8 @@ public class HomeActivity extends ActionBarActivity {
         this.lvNotes.setAdapter(notesAdapter);
         this.lvNotes.setOnItemClickListener(this.clickListener);
 
-        this.refreshNoteList(true);
+        // Refresh all data from API and display notes.
+        new FetchDataTask(this, this, true).execute();
     }
 
     /**
@@ -118,7 +102,6 @@ public class HomeActivity extends ActionBarActivity {
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         boolean handleAddNote = requestCode == this.ADD_NOTE_REQUEST_CODE && resultCode == RESULT_OK;
         boolean handleEditNote = requestCode == this.EDIT_NOTE_REQUEST_CODE && resultCode == RESULT_OK;
-
         if (handleAddNote || handleEditNote) {
             Bundle args = (data != null) ? data.getExtras() : null;
             if (args != null) {
@@ -126,6 +109,18 @@ public class HomeActivity extends ActionBarActivity {
                 this.addNote(note);
             }
         }
+    }
+
+    /**
+     * Displays all notes.
+     *
+     * @param notes  all notes
+     */
+    @Override
+    public void onTaskFinished(final ArrayList<Note> notes) {
+        this.notes.clear();
+        this.notes.addAll(notes);
+        this.notesAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -174,26 +169,6 @@ public class HomeActivity extends ActionBarActivity {
                 }
             });
         }
-        this.notesAdapter.notifyDataSetChanged();
-    }
-
-    /**
-     * Refreshes app data and displays updated note list.
-     *
-     * @param refreshFromAPI  true or false for refreshing data from API
-     */
-    private void refreshNoteList(final boolean refreshFromAPI) {
-        // See if data should be refreshed from API.
-        if (refreshFromAPI) {
-            this.traitDataSource.getAll(true);
-            this.wineryDataSource.getAll(true);
-            this.wineDataSource.getAll(true);
-        }
-        ArrayList<Note> allNotes = this.noteDataSource.getAll(refreshFromAPI);
-
-        // Add notes to note list.
-        this.notes.clear();
-        this.notes.addAll(allNotes);
         this.notesAdapter.notifyDataSetChanged();
     }
 
