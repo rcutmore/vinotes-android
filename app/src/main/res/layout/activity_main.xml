@@ -7,11 +7,18 @@
     android:padding="@dimen/default_padding"
     tools:context=".MainActivity">
 
-    <ListView
-        android:id="@+id/lvNotes"
-        android:layout_above="@+id/btnAddNote"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeLayout"
         android:layout_height="match_parent"
-        android:layout_width="match_parent"/>
+        android:layout_width="match_parent">
+
+        <ListView
+            android:id="@+id/lvNotes"
+            android:layout_above="@+id/btnAddNote"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <Button
         android:id="@+id/btnAddNote"

@@ -34,6 +34,7 @@ public class FetchDataTask extends AsyncTask<Void, Void, ArrayList<Note>> {
     private WineDataSource wineDataSource;
     private NoteDataSource noteDataSource;
     private boolean refreshFromApi;
+    private boolean showProgress;
 
     /**
      * Constructor.
@@ -41,9 +42,14 @@ public class FetchDataTask extends AsyncTask<Void, Void, ArrayList<Note>> {
      * @param context  calling activity's context
      * @param listener  callback listener to set
      * @param refreshFromApi  whether or not to refresh data from API
+     * @param showProgress  whether or not to show progress during task execution
      */
-    public FetchDataTask(final Context context,
-                           final TaskListener listener, final boolean refreshFromApi) {
+    public FetchDataTask(
+            final Context context,
+            final TaskListener listener,
+            final boolean refreshFromApi,
+            final boolean showProgress
+    ) {
         this.progress = new ProgressDialog(context);
         this.progress.setMessage(context.getString(R.string.progress_fetch_data));
         this.callbackListener = listener;
@@ -56,6 +62,7 @@ public class FetchDataTask extends AsyncTask<Void, Void, ArrayList<Note>> {
         this.noteDataSource = new NoteDataSource(appContext);
 
         this.refreshFromApi = refreshFromApi;
+        this.showProgress = showProgress;
     }
 
     /**
@@ -64,9 +71,11 @@ public class FetchDataTask extends AsyncTask<Void, Void, ArrayList<Note>> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        this.progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        this.progress.setCancelable(true);
-        this.progress.show();
+        if (this.showProgress) {
+            this.progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            this.progress.setCancelable(true);
+            this.progress.show();
+        }
     }
 
     /**
@@ -92,7 +101,9 @@ public class FetchDataTask extends AsyncTask<Void, Void, ArrayList<Note>> {
     @Override
     protected void onPostExecute(final ArrayList<Note> notes) {
         super.onPostExecute(notes);
-        this.progress.dismiss();
+        if (this.showProgress) {
+            this.progress.dismiss();
+        }
         if (this.callbackListener != null) {
             this.callbackListener.onTaskFinished(notes);
         }

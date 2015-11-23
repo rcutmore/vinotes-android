@@ -2,6 +2,7 @@ package com.robcutmore.vinotes.activities;
 
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -23,15 +24,21 @@ import java.util.Comparator;
 /**
  * Lists all stored tasting notes.
  */
-public class HomeActivity extends ActionBarActivity implements FetchDataTask.TaskListener {
+public class HomeActivity
+        extends ActionBarActivity
+        implements SwipeRefreshLayout.OnRefreshListener, FetchDataTask.TaskListener {
 
+    // Request codes
     private final int ADD_NOTE_REQUEST_CODE = 1;
     private final int EDIT_NOTE_REQUEST_CODE = 2;
+
+    // User input
+    private SwipeRefreshLayout swipeLayout;
+    private ListView lvNotes;
 
     // Note list
     private ArrayList<Note> notes;
     private ArrayAdapter<Note> notesAdapter;
-    private ListView lvNotes;
 
     private final AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
         /**
@@ -49,7 +56,7 @@ public class HomeActivity extends ActionBarActivity implements FetchDataTask.Tas
      * Refreshes data from API and displays note list.
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -60,15 +67,18 @@ public class HomeActivity extends ActionBarActivity implements FetchDataTask.Tas
         this.lvNotes.setAdapter(notesAdapter);
         this.lvNotes.setOnItemClickListener(this.clickListener);
 
-        // Refresh all data from API and display notes.
-        new FetchDataTask(this, this, true).execute();
+        // Set SwipeRefreshLayout.
+        this.swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
+        this.swipeLayout.setOnRefreshListener(this);
+
+        this.fetchNotes(false, true);
     }
 
     /**
      * Sets up options menu.
      */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -78,7 +88,7 @@ public class HomeActivity extends ActionBarActivity implements FetchDataTask.Tas
      * Sets up option items.
      */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         // Handle action bar item clicks here. The action bar will automatically handle clicks on
         // the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
@@ -90,6 +100,39 @@ public class HomeActivity extends ActionBarActivity implements FetchDataTask.Tas
 
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * Opens activity to add new note.
+     *
+     * @param view  button that was clicked
+     */
+    public void onAddNote(final View view) {
+        Intent intent = new Intent(this, ManageNoteActivity.class);
+        startActivityForResult(intent, this.ADD_NOTE_REQUEST_CODE);
+    }
+
+    /**
+     * Refreshes all data from API.
+     */
+    @Override
+    public void onRefresh() {
+        this.fetchNotes(true, false);
+    }
+
+    /**
+     * Displays all notes.
+     *
+     * @param notes  notes from database or API
+     */
+    @Override
+    public void onTaskFinished(final ArrayList<Note> notes) {
+        this.swipeLayout.setRefreshing(false);
+        this.notes.clear();
+        this.notes.addAll(notes);
+        this.notesAdapter.notifyDataSetChanged();
+    }
+
+    // Protected methods
 
     /**
      * Handles result from adding a new note.
@@ -112,37 +155,19 @@ public class HomeActivity extends ActionBarActivity implements FetchDataTask.Tas
     }
 
     /**
-     * Displays all notes.
-     *
-     * @param notes  all notes
-     */
-    @Override
-    public void onTaskFinished(final ArrayList<Note> notes) {
-        this.notes.clear();
-        this.notes.addAll(notes);
-        this.notesAdapter.notifyDataSetChanged();
-    }
-
-    /**
-     * Opens activity to add new note.
-     */
-    public void onAddNote(View view) {
-        Intent intent = new Intent(this, ManageNoteActivity.class);
-        startActivityForResult(intent, this.ADD_NOTE_REQUEST_CODE);
-    }
-
-    /**
      * Opens activity to view/edit note.
      *
      * @param note  note to view/edit
      */
-    public void onViewNote(Note note) {
+    protected void onViewNote(final Note note) {
         Bundle args = new Bundle();
         args.putParcelable("note", note);
         Intent intent = new Intent(this, ManageNoteActivity.class);
         intent.putExtras(args);
         startActivityForResult(intent, this.EDIT_NOTE_REQUEST_CODE);
     }
+
+    // Private methods
 
     /**
      * Adds note to note list.
@@ -170,6 +195,15 @@ public class HomeActivity extends ActionBarActivity implements FetchDataTask.Tas
             });
         }
         this.notesAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * Fetches notes.
+     *
+     * @param refreshFromAPI  whether or not to refresh data from API
+     */
+    private void fetchNotes(final boolean refreshFromAPI, final boolean showProgress) {
+        new FetchDataTask(this, this, refreshFromAPI, showProgress).execute();
     }
 
 }
