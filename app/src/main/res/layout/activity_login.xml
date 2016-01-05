@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:padding="@dimen/default_padding">
+
+    <EditText
+        android:id="@+id/accountEmail"
+        android:gravity="center"
+        android:hint="@string/input_hint_account_email"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:padding="@dimen/default_padding" />
+
+    <EditText
+        android:id="@+id/accountPassword"
+        android:gravity="center"
+        android:hint="@string/input_hint_account_password"
+        android:layout_below="@+id/accountEmail"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:padding="@dimen/default_padding" />
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/accountPassword"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:onClick="login"
+        android:text="@string/button_login" />
+
+    <TextView
+        android:id="@+id/newUser"
+        android:gravity="center"
+        android:layout_below="@+id/submit"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:padding="@dimen/default_padding"
+        android:text="@string/label_account_new_user" />
+
+</RelativeLayout>

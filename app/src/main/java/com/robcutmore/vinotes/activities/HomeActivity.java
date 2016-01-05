@@ -1,21 +1,30 @@
 package com.robcutmore.vinotes.activities;
 
 
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.robcutmore.vinotes.R;
+import com.robcutmore.vinotes.authentication.AccountUtils;
 import com.robcutmore.vinotes.models.Note;
 import com.robcutmore.vinotes.tasks.FetchDataTask;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,6 +36,10 @@ import java.util.Comparator;
 public class HomeActivity
         extends ActionBarActivity
         implements SwipeRefreshLayout.OnRefreshListener, FetchDataTask.TaskListener {
+
+    // Authentication
+    AccountManager accountManager;
+    String authToken;
 
     // Request codes
     private final int ADD_NOTE_REQUEST_CODE = 1;
@@ -58,7 +71,11 @@ public class HomeActivity
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
+        this.accountManager = AccountManager.get(this);
+        this.fetchAuthToken();
 
         // Connect list view to note array list.
         this.notes = new ArrayList<>();
@@ -198,12 +215,81 @@ public class HomeActivity
     }
 
     /**
+     * Fetch authentication token from account manager.
+     */
+    private void fetchAuthToken() {
+        String accountType = AccountUtils.ACCOUNT_TYPE;
+        String authTokenType = AccountUtils.AUTH_TOKEN_TYPE_FULL_ACCESS;
+
+        // Set up callback method for retrieving auth token.
+        AccountManagerCallback callback = new AccountManagerCallback<Bundle>() {
+            /**
+             * Attempts to retrieve results from fetching authentication token.
+             *
+             * @param future  AccountManagerFuture containing authentication token
+             */
+            @Override
+            public void run(final AccountManagerFuture<Bundle> future) {
+                try {
+                    // Fetch and return authentication token.
+                    Bundle result = future.getResult();
+                    setAuthToken(result.getString(AccountManager.KEY_AUTHTOKEN));
+
+                } catch (OperationCanceledException e) {
+                    final String errorMessage = e.getMessage();
+                    if (!TextUtils.isEmpty(errorMessage)) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getBaseContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                } catch (IOException e) {
+                    final String errorMessage = e.getMessage();
+                    if (!TextUtils.isEmpty(errorMessage)) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getBaseContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                } catch (AuthenticatorException e) {
+                    final String errorMessage = e.getMessage();
+                    if (!TextUtils.isEmpty(errorMessage)) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getBaseContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            }
+        };
+
+        // Retrieve auth token.
+        this.accountManager.getAuthTokenByFeatures(
+                accountType, authTokenType, null, this, null, null, callback, null);
+    }
+
+    /**
      * Fetches notes.
      *
      * @param refreshFromAPI  whether or not to refresh data from API
      */
     private void fetchNotes(final boolean refreshFromAPI, final boolean showProgress) {
         new FetchDataTask(this, this, refreshFromAPI, showProgress).execute();
+    }
+
+    /**
+     * Sets authentication token.
+     *
+     * @param authToken  authentication token to set
+     */
+    private void setAuthToken(final String authToken) {
+        this.authToken = authToken;
     }
 
 }

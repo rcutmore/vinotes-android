@@ -4,7 +4,14 @@
     <string name="app_name">Vinotes</string>
     <string name="action_settings">Settings</string>
 
+    <!-- Account Authentication / Registration -->
+    <string name="auth_error_token_type">Invalid auth token type</string>
+    <string name="auth_pref_title">Vinotes Preferences</string>
+    <string name="registration_error_password_mismatch">Passwords do not match</string>
+
     <!-- Activity / Fragment Titles -->
+    <string name="title_login">Login</string>
+    <string name="title_register">Register</string>
     <string name="title_note_add">Add New Tasting Note</string>
     <string name="title_note_edit">Edit Tasting Note</string>
     <string name="title_winery_select">Select Winery</string>
@@ -16,6 +23,8 @@
     <string name="title_traits_finish_select">Select Finish Traits</string>
 
     <!-- Buttons -->
+    <string name="button_login">Login</string>
+    <string name="button_register">Register</string>
     <string name="button_note_add">Add Note</string>
     <string name="button_note_save">Save Note</string>
     <string name="button_winery_add">Add Winery</string>
@@ -25,6 +34,8 @@
     <string name="button_traits_select">Done</string>
 
     <!-- Labels -->
+    <string name="label_account_existing_user">Already have an account?</string>
+    <string name="label_account_new_user">New user?</string>
     <string name="label_tasting_date">Tasting Date</string>
     <string name="label_winery">Winery</string>
     <string name="label_wine">Wine</string>
@@ -34,6 +45,9 @@
     <string name="label_finish_traits">Finish Traits</string>
 
     <!-- Input Hints -->
+    <string name="input_hint_account_email">Enter Email Address</string>
+    <string name="input_hint_account_password">Enter Password</string>
+    <string name="input_hint_account_password_repeat">Enter Password Again</string>
     <string name="input_hint_tasting_date_select">Enter Tasting Date</string>
     <string name="input_hint_winery_add">Enter Name Of Winery</string>
     <string name="input_hint_winery_search">Search Wineries</string>
